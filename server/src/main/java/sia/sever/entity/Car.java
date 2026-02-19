@@ -2,7 +2,6 @@ package sia.sever.entity;
 
 import jakarta.persistence.*;
 
-
 @Entity
 @Table(name = "Car")
 public class Car {
