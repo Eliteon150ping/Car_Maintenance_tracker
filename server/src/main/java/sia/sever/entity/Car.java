@@ -12,7 +12,7 @@ public class Car {
     private Long id;
 
     @Column(nullable = false)
-    private String make;
+    private String brand;
 
     @Column(nullable = false)
     private String model;
@@ -28,8 +28,8 @@ public class Car {
 
     //Constructor
     public Car(){}
-    public Car(String make, String model, int year, String colour, int mileage) {
-        this.make = make;
+    public Car(String brand, String model, int year, String colour, int mileage) {
+        this.brand = brand;
         this.model = model;
         this.year = year;
         this.colour = colour;
@@ -42,7 +42,7 @@ public class Car {
     }
 
     public String getMake(){
-        return make;
+        return brand;
     }
 
     public String getModel(){
@@ -62,8 +62,8 @@ public class Car {
     }
 
     //Setters
-    public void setMake(String make){
-        this.make = make;
+    public void setMake(String brand){
+        this.brand = brand;
     }
 
     public void setModel(String model){

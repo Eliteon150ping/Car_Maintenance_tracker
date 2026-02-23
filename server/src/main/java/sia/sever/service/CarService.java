@@ -7,11 +7,12 @@ public interface CarService {
 
     Car createCar(Car car);
     List<Car> getAllCars();
-    Car updateCar(Car car);
+    Car updateCar(Long id, Car car);
     void deleteCar(Long id);
     Car getCarById(Long id);
     List<Car> getAllCarsByBrand(String brand);
     List<Car> getAllCarsByModel(String model);
-    List<Car> getAllCarsByYear(int year);
+    List<Car> getAllCarsByYear(Integer year);
+    List<Car> getAllCarsByBrandAndModelAndYear(String brand,String model, Integer year);
 
 }

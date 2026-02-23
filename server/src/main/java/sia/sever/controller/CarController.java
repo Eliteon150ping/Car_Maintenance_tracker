@@ -1,15 +1,14 @@
 package sia.sever.controller;
 
-import org.hibernate.annotations.Filter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sia.sever.entity.Car;
 import sia.sever.service.CarService;
-
 import java.util.List;
 
-@RestController("") // Insert frontend url here later...
+@RestController
+@RequestMapping("/car") // Insert frontend url here later...
 public class CarController {
 
  /*
@@ -44,46 +43,37 @@ public class CarController {
     @GetMapping
     public ResponseEntity<List<Car>> getALlCars(){
         List<Car> allCars = carService.getAllCars();
-        return new ResponseEntity<>(allCars, HttpStatus.OK);
+        return ResponseEntity.ok(allCars);
     }
 
     // Get car by id
-    @GetMapping()
+    @GetMapping("/{id}")
     public ResponseEntity<Car> getCarById(@PathVariable Long id){
         Car getCarById = carService.getCarById(id);
         return ResponseEntity.ok(getCarById);
     }
 
     // Update car by id
-    @PutMapping()
+    @PutMapping("/{id}")
     public ResponseEntity<Car> updateCarById(@PathVariable Long id, @RequestBody Car car){
         Car updatedCar = carService.updateCar(id, car);
         return ResponseEntity.ok(updatedCar);
     }
 
     // Delete car by id
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     public ResponseEntity<Car> deleteCarById(@PathVariable Long id){
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();
     }
 
     // Filter by brand/model/year
-    @Filter(name = "")
-    public ResponseEntity<List<Car>> filterByBrand(String brand){
-        List<Car> carsByBrand = carService.getAllCarsByBrand(brand);
-        return new ResponseEntity<>(carsByBrand, HttpStatus.OK);
-    }
-
-    @Filter(name = "")
-    public ResponseEntity<List<Car>> filterByModel(String model){
-        List<Car> carsByModel = carService.getAllCarsByBrand(model);
-        return new ResponseEntity<>(carsByModel, HttpStatus.OK);
-    }
-
-    @Filter(name = "")
-    public ResponseEntity<List<Car>> filterByYear(int year){
-        List<Car> carsByYear = carService.getAllCarsByBrand(String.valueOf(year));
-        return new ResponseEntity<>(carsByYear, HttpStatus.OK);
+    @GetMapping("/car/filter")
+    public ResponseEntity<List<Car>> FilterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
+                                                            @RequestParam(value = "model", required = false) String model,
+                                                            @RequestParam(value = "year", required = false)  Integer year)
+    {
+        List<Car> carsByBrandModelYear = carService.getAllCarsByBrandAndModelAndYear(brand, model, year);
+        return new ResponseEntity<>(carsByBrandModelYear, HttpStatus.OK);
     }
 }

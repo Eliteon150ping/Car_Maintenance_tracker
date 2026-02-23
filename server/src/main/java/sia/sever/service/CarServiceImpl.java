@@ -30,7 +30,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Car updateCar(Car car){
+    public Car updateCar(Long id, Car car){
         return carRepository.save(car);
     }
 
@@ -56,7 +56,28 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<Car> getAllCarsByYear(int year){
+    public List<Car> getAllCarsByYear(Integer year){
         return carRepository.findByYear(year);
     }
+
+    @Override
+    public List<Car> getAllCarsByBrandAndModelAndYear(String brand, String model, Integer year){
+        if(brand != null && model != null && year != null){
+            return carRepository.findByBrandAndModelAndYear(brand, model, year);
+        }else if(brand != null && model != null){
+            return carRepository.findByBrandAndModel(brand, model);
+        }else if(brand != null){
+            return carRepository.findByBrand(brand);
+        } else if(model != null){
+            return carRepository.findByModel(model);
+        }else if(year != null){
+            return carRepository.findByYear(year);
+        }else {
+            return carRepository.findAll();
+        }
+    }
 }
+
+
+
+
