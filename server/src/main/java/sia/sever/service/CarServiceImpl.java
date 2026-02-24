@@ -11,6 +11,9 @@ import java.util.List;
 @Service
 public class CarServiceImpl implements CarService {
 
+    // We use the methods for the repository interface here to connect the database and service
+    // through the repository since it acts as a bridge for deciding which methods to call from the
+    // data given by the controller
     private final CarRepository carRepository;
 
     @Autowired
@@ -34,8 +37,10 @@ public class CarServiceImpl implements CarService {
     // Update an existing car
     @Override
     public Car updateCar(Long id, Car updatedCar){
+        // First Check if an entity exists before continuing with updating
         Car existingCar = carRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cannot update car not found with ID: " + id));
+        // If entity exists then update all its selected fields using the getter and setter methods
         existingCar.setBrand(updatedCar.getBrand());
         existingCar.setModel(updatedCar.getModel());
         existingCar.setYear(updatedCar.getYear());
@@ -47,6 +52,7 @@ public class CarServiceImpl implements CarService {
     // Delete a car
     @Override
     public void deleteCar(Long id){
+        // First check if an entity exists before trying to delete it
         if(!carRepository.existsById(id)){
             throw new RuntimeException("Cannot delete car not found with ID" + id);
         }

@@ -8,7 +8,7 @@ import sia.sever.service.CarService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/car") // Insert frontend url here later...
+@RequestMapping("/api/myCars") // Insert API Endpoint here...
 public class CarController {
 
  /*

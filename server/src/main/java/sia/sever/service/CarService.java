@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface CarService {
 
+    // These methods must be defined in the class that uses this interface(eg. CarServiceImpl)
     Car createCar(Car car);
     List<Car> getAllCars();
     Car updateCar(Long id, Car car);

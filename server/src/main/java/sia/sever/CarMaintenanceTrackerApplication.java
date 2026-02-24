@@ -10,5 +10,10 @@ public class CarMaintenanceTrackerApplication {
         SpringApplication.run(CarMaintenanceTrackerApplication.class, args);
 
     }
-
 }
+
+/*
+    This is how spring layers work with each other:
+     Controller → Service → Repository → Database
+
+*/
