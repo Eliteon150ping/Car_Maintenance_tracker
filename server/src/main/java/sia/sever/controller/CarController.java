@@ -68,7 +68,7 @@ public class CarController {
     }
 
     // Filter by brand/model/year
-    @GetMapping("/car/filter")
+    @GetMapping("/filter")
     public ResponseEntity<List<Car>> FilterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
                                                             @RequestParam(value = "model", required = false) String model,
                                                             @RequestParam(value = "year", required = false)  Integer year)

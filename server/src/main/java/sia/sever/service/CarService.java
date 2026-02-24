@@ -10,9 +10,6 @@ public interface CarService {
     Car updateCar(Long id, Car car);
     void deleteCar(Long id);
     Car getCarById(Long id);
-    List<Car> getAllCarsByBrand(String brand);
-    List<Car> getAllCarsByModel(String model);
-    List<Car> getAllCarsByYear(Integer year);
     List<Car> getAllCarsByBrandAndModelAndYear(String brand,String model, Integer year);
 
 }

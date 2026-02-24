@@ -16,10 +16,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
    // So if you want custom methods for filtering, make them here:
 
-    List<Car> findByBrand(String brand);
-    List<Car> findByModel(String model);
+    List<Car> findByBrandContainingIgnoreCase(String brand);
+    List<Car> findByModelContainingIgnoreCase(String model);
     List<Car> findByYear(int year);
-    List<Car> findByBrandAndModel(String brand, String model);
-    List<Car> findByBrandAndModelAndYear(String brand,String model,int year);
+    List<Car> findByBrandContainingIgnoreCaseAndModelContainingIgnoreCase(String brand, String model);
+    List<Car> findByBrandContainingIgnoreCaseAndYear(String brand, int year);
+    List<Car> findByModelContainingIgnoreCaseAndYear(String model, int year);
+    List<Car> findByBrandContainingIgnoreCaseAndModelContainingIgnoreCaseAndYear(String brand, String model, int year);
 
 }
