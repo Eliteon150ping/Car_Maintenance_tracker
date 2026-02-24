@@ -41,7 +41,7 @@ public class Car {
         return id;
     }
 
-    public String getMake(){
+    public String getBrand(){
         return brand;
     }
 
@@ -62,7 +62,7 @@ public class Car {
     }
 
     //Setters
-    public void setMake(String brand){
+    public void setBrand(String brand){
         this.brand = brand;
     }
 

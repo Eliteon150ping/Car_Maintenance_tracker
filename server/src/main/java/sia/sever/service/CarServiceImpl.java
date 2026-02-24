@@ -33,13 +33,23 @@ public class CarServiceImpl implements CarService {
 
     // Update an existing car
     @Override
-    public Car updateCar(Long id, Car car){
-        return carRepository.save(car);
+    public Car updateCar(Long id, Car updatedCar){
+        Car existingCar = carRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cannot update car not found with ID: " + id));
+        existingCar.setBrand(updatedCar.getBrand());
+        existingCar.setModel(updatedCar.getModel());
+        existingCar.setYear(updatedCar.getYear());
+        existingCar.setColour(updatedCar.getColour());
+        existingCar.setMileage(updatedCar.getMileage());
+        return carRepository.save(existingCar);
     }
 
     // Delete a car
     @Override
     public void deleteCar(Long id){
+        if(!carRepository.existsById(id)){
+            throw new RuntimeException("Cannot delete car not found with ID" + id);
+        }
        carRepository.deleteById(id);
     }
 
@@ -47,7 +57,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car getCarById(Long id){
         return carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Car not found by ID"));
+                .orElseThrow(() -> new RuntimeException("Car not found with ID" + id));
     }
 
     // Dynamic filtering method for getting cars by its brand, model or year
