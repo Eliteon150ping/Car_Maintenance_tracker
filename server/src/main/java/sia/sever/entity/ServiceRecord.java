@@ -74,7 +74,7 @@ public class ServiceRecord {
     }
 
     // Getters
-    public Long getId(Long id){
+    public Long getId(){
         return id;
     }
 

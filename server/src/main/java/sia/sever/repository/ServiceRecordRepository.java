@@ -15,13 +15,20 @@ public interface ServiceRecordRepository extends JpaRepository<ServiceRecord, Lo
        existsById(Long id)                                                                              */
 
     // So if you want custom methods for filtering, make them here:
+    List<ServiceRecord> getAllServiceRecords(int engineOilAndFilter, int tyreRotation,
+                                             int airFilter, int brakePads,
+                                             int wheelAlignment, int coolantFlush,
+                                             int sparkPlugs, int serpentineBelt,
+                                             int timingBelt, int battery,
+                                             int fuelFilter, int differentialOil);
+
     List<ServiceRecord> findByEngineAndPowertrain(int engineOilAndFilter, int airFilter,
                                                   int sparkPlugs, int serpentineBelt,
                                                   int timingBelt, int fuelFilter,int differentialOil);
+
     List<ServiceRecord> findBySuspension(int wheelAlignment);
     List<ServiceRecord> findByBrakingSystem(int brakePads);
     List<ServiceRecord> findByWheelsAndTyres(int tyreRotation);
     List<ServiceRecord> findByCooling(int coolantFlush);
     List<ServiceRecord> findByElectrical(int battery);
-
 }
