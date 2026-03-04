@@ -1,6 +1,8 @@
 package sia.sever.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Car")
@@ -25,6 +27,20 @@ public class Car {
 
     @Column(nullable = false)
     private int mileage;
+
+    // A Car can have multiple services over time
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceHistory> serviceHistories = new ArrayList<>();
+
+    public void addServiceHistory(ServiceHistory serviceHistory) {
+        serviceHistories.add(serviceHistory);
+        serviceHistory.setCar(this);
+    }
+
+    public void removeServiceHistory(ServiceHistory serviceHistory) {
+        serviceHistories.remove(serviceHistory);
+        serviceHistory.setCar(null);
+    }
 
     //Constructor
     public Car(){}
@@ -81,5 +97,4 @@ public class Car {
     public void setMileage(int mileage){
         this.mileage = mileage;
     }
-
 }
