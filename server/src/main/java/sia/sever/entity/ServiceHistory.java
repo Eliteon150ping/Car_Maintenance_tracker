@@ -30,7 +30,7 @@ public class ServiceHistory {
     @Column(nullable = false)
     private double cost;
 
-    @Column(nullable = false)
+    @Column(length = 500, nullable = true)
     private String description;
 
     // Multiple services belong to a car over time(Many-to-one relationship)

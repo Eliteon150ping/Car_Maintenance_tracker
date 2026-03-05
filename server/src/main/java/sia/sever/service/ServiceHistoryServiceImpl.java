@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
+import sia.sever.enums.ServiceType;
 import sia.sever.repository.ServiceHistoryRepository;
 import java.util.List;
 
@@ -22,7 +23,10 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
     // Create a service record
     @Override
-    public ServiceHistory createServiceHistory(ServiceHistory serviceHistory){
+    public ServiceHistory createServiceHistory(ServiceHistory serviceHistory, ServiceType serviceType){
+        if(serviceType == ServiceType.OTHER){
+
+        }
         return serviceHistoryRepository.save(serviceHistory);
     }
     // Find the service record by id
@@ -37,11 +41,15 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     public ServiceHistory updateServiceHistory(Long id, ServiceHistory updatedServiceHistory){
         ServiceHistory existingServiceHistory = serviceHistoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
+
+        // Check if the service mileage is NOT more than the car's mileage and NOT less than the last service
             if(updatedServiceHistory.getMileageAtService() > existingServiceHistory.getCar().getCurrentMileage()){
                 throw new RuntimeException("Service mileage cannot be higher than Current Mileage");
             } else if(updatedServiceHistory.getMileageAtService() < existingServiceHistory.getMileageAtService()){
                 throw new RuntimeException("New service mileage cannot be lower than the last latest Mileage");
             }
+            // Check if 'Other' service is selected then make use of custom notes for it
+            if(){}
             existingServiceHistory.setServiceDate(updatedServiceHistory.getServiceDate());
             existingServiceHistory.setDescription(updatedServiceHistory.getDescription());
             existingServiceHistory.setMileageAtService(updatedServiceHistory.getMileageAtService());

@@ -10,7 +10,7 @@ import java.util.List;
 public interface ServiceHistoryService {
 
     // These methods must be defined in the class that uses this interface(eg. ServiceHistoryImpl)
-    ServiceHistory createServiceHistory(ServiceHistory serviceHistory);
+    ServiceHistory createServiceHistory(ServiceHistory serviceHistory, ServiceType serviceType);
     ServiceHistory getServiceHistoryById(Long id);
     ServiceHistory updateServiceHistory(Long id, ServiceHistory serviceHistory);
     List<ServiceHistory> getServiceHistoryForACar(Car car);
