@@ -36,19 +36,6 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     public ServiceHistory updateServiceHistory(Long id, ServiceHistory updatedServiceHistory){
         ServiceHistory existingServiceHistory = serviceHistoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
-//        existingServiceHistory.setServiceDate(updatedServiceHistory.getServiceDate());
-//        existingServiceHistory.setEngineOilAndFilter(updatedServiceHistory.getEngineOilAndFilter());
-//        existingServiceHistory.setTyreRotation(updatedServiceHistory.getTyreRotation());
-//        existingServiceHistory.setAirFilter(updatedServiceHistory.getAirFilter());
-//        existingServiceHistory.setBrakePads(updatedServiceHistory.getBrakePads());
-//        existingServiceHistory.setWheelAlignment(updatedServiceHistory.getWheelAlignment());
-//        existingServiceHistory.setCoolantFlush(updatedServiceHistory.getCoolantFlush());
-//        existingServiceHistory.setSparkPlugs(updatedServiceHistory.getSparkPlugs());
-//        existingServiceHistory.setSerpentineBelt(updatedServiceHistory.getSerpentineBelt());
-//        existingServiceHistory.setTimingBelt(updatedServiceHistory.getTimingBelt());
-//        existingServiceHistory.setBattery(updatedServiceHistory.getBattery());
-//        existingServiceHistory.setFuelFilter(updatedServiceHistory.getFuelFilter());
-//        existingServiceHistory.setDifferentialOil(updatedServiceHistory.getDifferentialOil());
         return serviceHistoryRepository.save(existingServiceHistory);
     }
 

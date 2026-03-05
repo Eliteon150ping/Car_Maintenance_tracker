@@ -3,16 +3,41 @@ package sia.sever.enums;
 public enum ServiceType {
 
     // Types of service maintenance for a car will be here...
-    ENGINE_OIL_AND_FILTER,
-    TYRE_ROTATION,
-    AIR_FILTER,
-    BRAKE_PADS,
-    WHEEL_ALIGNMENT,
-    COOLANT_FLUSH,
-    SPARK_PLUGS,
-    SERPENTINE_BELT,
-    TIMING_BELT,
-    BATTERY,
-    FUEL_FILTER,
-    DIFFERENTIAL_OIL;
+
+    // Engine
+    ENGINE_OIL_AND_FILTER(ServiceCategory.ENGINE),
+    AIR_FILTER(ServiceCategory.ENGINE),
+    SPARK_PLUGS(ServiceCategory.ENGINE),
+    SERPENTINE_BELT(ServiceCategory.ENGINE),
+    TIMING_BELT(ServiceCategory.ENGINE),
+
+    // Cooling
+    COOLANT_FLUSH(ServiceCategory.COOLING),
+
+    // Electrical
+    BATTERY(ServiceCategory.ELECTRICAL),
+
+    // Drivetrain
+    DIFFERENTIAL_OIL(ServiceCategory.DRIVETRAIN),
+
+    // Wheels and Suspension
+    TYRE_ROTATION(ServiceCategory.Wheels_And_Suspension),
+    WHEEL_ALIGNMENT(ServiceCategory.Wheels_And_Suspension),
+
+    // Braking
+    BRAKE_PADS(ServiceCategory.BRAKING),
+
+    // Fuel Delivery
+    FUEL_FILTER(ServiceCategory.FUEL_DELIVERY),
+    FUEL_INJECTOR_CLEANING(ServiceCategory.FUEL_DELIVERY);
+
+
+    private ServiceCategory serviceCategory;
+    ServiceType(ServiceCategory serviceCategory) {
+        this.serviceCategory = serviceCategory;
+    }
+
+    public ServiceCategory getServiceCategory() {
+        return serviceCategory;
+    }
 }

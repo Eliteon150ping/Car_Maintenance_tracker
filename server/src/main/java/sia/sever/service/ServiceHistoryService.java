@@ -1,7 +1,9 @@
 package sia.sever.service;
 
+import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
-
+import sia.sever.enums.ServiceType;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ServiceHistoryService {
@@ -10,10 +12,7 @@ public interface ServiceHistoryService {
     ServiceHistory createServiceHistory(ServiceHistory serviceHistory);
     ServiceHistory getServiceHistoryById(Long id);
     ServiceHistory updateServiceHistory(Long id, ServiceHistory serviceHistory);
-    List<ServiceHistory> getFilteredServiceHistory(Integer engineOilAndFilter, Integer tyreRotation,
-                                                  Integer airFilter, Integer brakePads,
-                                                  Integer wheelAlignment, Integer coolantFlush,
-                                                  Integer sparkPlugs, Integer serpentineBelt,
-                                                  Integer timingBelt, Integer battery, Integer fuelFilter,
-                                                  Integer differentialOil);
+    List<ServiceHistory> getServiceHistoryForACar(Car car);
+    List<ServiceHistory> getServiceHistoryByDate(Car car, LocalDate date);
+    List<ServiceHistory> getServiceHistoryByServiceType(ServiceType serviceType);
 }

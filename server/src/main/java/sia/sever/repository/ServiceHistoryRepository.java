@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
 import sia.sever.enums.ServiceType;
-
 import java.time.LocalDate;
 import java.util.List;
 
