@@ -8,7 +8,7 @@ public enum ServiceCategory {
     DRIVETRAIN,
     Wheels_And_Suspension,
     BRAKING,
-    FUEL_DELIVERY;
-
+    FUEL_DELIVERY,
+    OTHER;
 
 }

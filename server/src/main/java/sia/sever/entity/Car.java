@@ -26,7 +26,7 @@ public class Car {
     private String colour;
 
     @Column(nullable = false)
-    private int mileage;
+    private int currentMileage;
 
     // A Car can have multiple services over time
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -49,7 +49,7 @@ public class Car {
         this.model = model;
         this.year = year;
         this.colour = colour;
-        this.mileage = mileage;
+        this.currentMileage = mileage;
     }
 
     //Getters
@@ -73,8 +73,8 @@ public class Car {
         return colour;
     }
 
-    public int getMileage(){
-        return mileage;
+    public int getCurrentMileage(){
+        return currentMileage;
     }
 
     //Setters
@@ -94,7 +94,7 @@ public class Car {
         this.colour = colour;
     }
 
-    public void setMileage(int mileage){
-        this.mileage = mileage;
+    public void setCurrentMileage(int currentMileage){
+        this.currentMileage = currentMileage;
     }
 }

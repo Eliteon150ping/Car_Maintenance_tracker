@@ -44,7 +44,7 @@ public class CarServiceImpl implements CarService {
         existingCar.setModel(updatedCar.getModel());
         existingCar.setYear(updatedCar.getYear());
         existingCar.setColour(updatedCar.getColour());
-        existingCar.setMileage(updatedCar.getMileage());
+        existingCar.setCurrentMileage(updatedCar.getCurrentMileage());
         return carRepository.save(existingCar);
     }
 

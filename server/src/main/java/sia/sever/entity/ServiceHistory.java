@@ -1,6 +1,7 @@
 package sia.sever.entity;
 
 import jakarta.persistence.*;
+import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import java.time.LocalDate;
 
@@ -23,6 +24,15 @@ public class ServiceHistory {
     private ServiceType serviceType;        // the constant in the db instead of its index value
                                             // making it easier to read in the db.
 
+    @Enumerated(EnumType.STRING)
+    private ServiceCategory serviceCategory;
+
+    @Column(nullable = false)
+    private double cost;
+
+    @Column(nullable = false)
+    private String description;
+
     // Multiple services belong to a car over time(Many-to-one relationship)
     @ManyToOne
     @JoinColumn(name = "car_id",nullable = false)
@@ -30,10 +40,14 @@ public class ServiceHistory {
 
     // Constructor
     public ServiceHistory(){}
-    public ServiceHistory(LocalDate serviceDate, int mileageAtService, ServiceType serviceType, Car car) {
+    public ServiceHistory(LocalDate serviceDate, int mileageAtService, ServiceType serviceType,
+                          double cost, String description, Car car)
+    {
         this.serviceDate = serviceDate;
         this.mileageAtService = mileageAtService;
         this.serviceType = serviceType;
+        this.cost = cost;
+        this.description = description;
         this.car = car;
     }
 
@@ -54,6 +68,14 @@ public class ServiceHistory {
         return serviceType;
     }
 
+    public double getCost(){
+        return cost;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
     public Car getCar(){
         return car;
     }
@@ -69,6 +91,14 @@ public class ServiceHistory {
 
     public void setServiceType(ServiceType serviceType){
         this.serviceType = serviceType;
+    }
+
+    public void setCost(double cost){
+        this.cost = cost;
+    }
+
+    public void setDescription(String description){
+        this.description = description;
     }
 
     public void setCar(Car car){

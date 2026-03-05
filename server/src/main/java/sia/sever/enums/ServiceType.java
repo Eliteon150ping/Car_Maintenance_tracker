@@ -19,6 +19,7 @@ public enum ServiceType {
 
     // Drivetrain
     DIFFERENTIAL_OIL(ServiceCategory.DRIVETRAIN),
+    TRANSMISSION_FLUID(ServiceCategory.DRIVETRAIN),
 
     // Wheels and Suspension
     TYRE_ROTATION(ServiceCategory.Wheels_And_Suspension),
@@ -29,10 +30,12 @@ public enum ServiceType {
 
     // Fuel Delivery
     FUEL_FILTER(ServiceCategory.FUEL_DELIVERY),
-    FUEL_INJECTOR_CLEANING(ServiceCategory.FUEL_DELIVERY);
+    FUEL_INJECTOR_CLEANING(ServiceCategory.FUEL_DELIVERY),
 
+    // Other
+    OTHER(ServiceCategory.OTHER);
 
-    private ServiceCategory serviceCategory;
+    private final ServiceCategory serviceCategory;
     ServiceType(ServiceCategory serviceCategory) {
         this.serviceCategory = serviceCategory;
     }
