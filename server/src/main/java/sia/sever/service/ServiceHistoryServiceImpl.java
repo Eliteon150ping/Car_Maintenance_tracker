@@ -28,16 +28,10 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     public ServiceHistory createServiceHistory(ServiceHistory serviceHistory){
 
         // Check if the service mileage is NOT more than the car's current mileage
-        if(serviceHistory.getMileageAtService() > serviceHistory.getCar().getCurrentMileage()){
-            throw new RuntimeException("Service mileage cannot be higher than Current Mileage");
-        }
+        validateMileage(serviceHistory);
 
         // Check if 'Other' service is selected then make use of custom notes for it
-        if(serviceHistory.getServiceType() == ServiceType.OTHER && (serviceHistory.getDescription() == null
-                || serviceHistory.getDescription().trim().isEmpty()))
-        {
-            throw new RuntimeException("Description cannot be empty when service type is OTHER");
-        }
+        validateOtherServiceDescription(serviceHistory);
         return serviceHistoryRepository.save(serviceHistory);
     }
 
@@ -61,18 +55,14 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
 
         // Check if the service mileage is NOT more than the car's current mileage and NOT less than the last service
-            if(updatedServiceHistory.getMileageAtService() > existingServiceHistory.getCar().getCurrentMileage()){
-                throw new RuntimeException("Service mileage cannot be higher than Current Mileage");
-            } else if(updatedServiceHistory.getMileageAtService() < existingServiceHistory.getMileageAtService()){
+            validateMileage(updatedServiceHistory);
+            if(updatedServiceHistory.getMileageAtService() < existingServiceHistory.getMileageAtService()){
                 throw new RuntimeException("New service mileage cannot be lower than the last latest service mileage");
             }
 
             // Check if 'Other' service is selected then make use of custom notes for it
-            if(updatedServiceHistory.getServiceType() == ServiceType.OTHER && (updatedServiceHistory.getDescription() == null
-                    || updatedServiceHistory.getDescription().trim().isEmpty()))
-            {
-                throw new RuntimeException("Description cannot be empty when service type is OTHER");
-            }
+            validateOtherServiceDescription(updatedServiceHistory);
+
             existingServiceHistory.setServiceDate(updatedServiceHistory.getServiceDate());
             existingServiceHistory.setDescription(updatedServiceHistory.getDescription());
             existingServiceHistory.setMileageAtService(updatedServiceHistory.getMileageAtService());
@@ -105,4 +95,20 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         return serviceHistoryRepository.findByCar(car);
     }
 
+    // Methods to help reduce duplicate code
+    // Check if the service mileage is NOT more than the car's current mileage
+    private void validateMileage(ServiceHistory serviceHistory){
+        if(serviceHistory.getMileageAtService() > serviceHistory.getCar().getCurrentMileage()){
+            throw new RuntimeException("Service mileage cannot be higher than Current Mileage");
+        }
+    }
+
+    // Check if 'Other' service is selected then make use of custom notes for it
+    private void validateOtherServiceDescription(ServiceHistory serviceHistory){
+        if(serviceHistory.getServiceType() == ServiceType.OTHER && (serviceHistory.getDescription() == null
+                || serviceHistory.getDescription().trim().isEmpty()))
+        {
+            throw new RuntimeException("Description cannot be empty when service type is OTHER");
+        }
+    }
 }
