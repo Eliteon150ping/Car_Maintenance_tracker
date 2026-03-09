@@ -11,10 +11,11 @@ public interface ServiceHistoryService {
 
     // These methods must be defined in the class that uses this interface(eg. ServiceHistoryImpl)
     ServiceHistory createServiceHistory(ServiceHistory serviceHistory);
+    List<ServiceHistory> getAllServiceRecords();
     ServiceHistory getServiceHistoryById(Long id);
     ServiceHistory updateServiceHistory(Long id, ServiceHistory serviceHistory);
-    List<ServiceHistory> getServiceHistoryForACar(Car car);
-    List<ServiceHistory> getServiceHistoryByDate(Car car, LocalDate date);
+    List<ServiceHistory> getServiceHistoryByCar(Car car);
+    List<ServiceHistory> getServiceHistoryByCarAndDate(Car car, LocalDate serviceDate);
     List<ServiceHistory> getServiceHistoryByServiceType(ServiceType serviceType);
     List<ServiceHistory> getServiceHistoryByCategory(ServiceCategory serviceCategory);
 }

@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
+import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import sia.sever.repository.ServiceHistoryRepository;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -37,6 +39,12 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
             throw new RuntimeException("Description cannot be empty when service type is OTHER");
         }
         return serviceHistoryRepository.save(serviceHistory);
+    }
+
+    // Get all service records
+    @Override
+    public List<ServiceHistory> getAllServiceRecords(){
+        return serviceHistoryRepository.findAll();
     }
 
     // Find the service record by id
@@ -75,7 +83,26 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
     // Filter different Service categories
     @Override
-    public List<ServiceHistory> getFilteredServiceHistory(){}
+    public List<ServiceHistory> getServiceHistoryByCategory(ServiceCategory serviceCategory){
+        return serviceHistoryRepository.findByServiceCategory(serviceCategory);
+    }
 
+    // Filter different Service types
+    @Override
+    public List<ServiceHistory> getServiceHistoryByServiceType(ServiceType serviceType){
+        return serviceHistoryRepository.findByServiceType(serviceType);
+    }
+
+    // Filter different Services by dates
+    @Override
+    public List<ServiceHistory> getServiceHistoryByCarAndDate(Car car, LocalDate serviceDate){
+        return serviceHistoryRepository.findByCarAndServiceDate(car, serviceDate);
+    }
+
+    // Filter all Service records for a car
+    @Override
+    public List<ServiceHistory> getServiceHistoryByCar(Car car){
+        return serviceHistoryRepository.findByCar(car);
+    }
 
 }

@@ -3,6 +3,7 @@ package sia.sever.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
+import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +19,8 @@ public interface ServiceHistoryRepository extends JpaRepository<ServiceHistory, 
        existsById(Long id)                                                                              */
 
     // So if you want custom methods for filtering, make them here:
-    List<ServiceHistory> findByServiceDate(LocalDate serviceDate);
+    List<ServiceHistory> findByCarAndServiceDate(Car car, LocalDate serviceDate);
     List<ServiceHistory> findByServiceType(ServiceType serviceType);
+    List<ServiceHistory> findByServiceCategory(ServiceCategory serviceCategory);
     List<ServiceHistory> findByCar(Car car);
 }
