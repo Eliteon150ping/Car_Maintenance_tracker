@@ -39,6 +39,10 @@ public class CarServiceImpl implements CarService {
         // First Check if an entity exists before continuing with updating
         Car existingCar = carRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cannot update car not found with ID: " + id));
+        // Check if the new mileage is NOT lower than the current mileage
+        if(updatedCar.getCurrentMileage() < existingCar.getCurrentMileage()){
+            throw new RuntimeException("Updated mileage cannot be less than current mileage");
+        }
         // If entity exists then update all its selected fields using the getter and setter methods
         existingCar.setBrand(updatedCar.getBrand());
         existingCar.setModel(updatedCar.getModel());
