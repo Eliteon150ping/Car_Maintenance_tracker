@@ -20,6 +20,12 @@ public class ServiceHistory {
     @Column(nullable = false)
     private int mileageAtService;
 
+    @Column(nullable = false)
+    private int nextDueMileage;
+
+    @Column(nullable = false)
+    private LocalDate nextDueDate;
+
     @Enumerated(EnumType.STRING)            // Used for enums to show the actual name of
     private ServiceType serviceType;        // the constant in the db instead of its index value
                                             // making it easier to read in the db.
@@ -40,11 +46,14 @@ public class ServiceHistory {
 
     // Constructor
     public ServiceHistory(){}
-    public ServiceHistory(LocalDate serviceDate, int mileageAtService, ServiceType serviceType,
-                          double cost, String description, Car car)
+    public ServiceHistory(LocalDate serviceDate, int mileageAtService, int nextServiceMileage,
+                          LocalDate nextServiceDate, ServiceType serviceType, double cost,
+                          String description, Car car)
     {
         this.serviceDate = serviceDate;
         this.mileageAtService = mileageAtService;
+        this.nextDueMileage = nextServiceMileage;
+        this.nextDueDate = nextServiceDate;
         this.serviceType = serviceType;
         this.cost = cost;
         this.description = description;
@@ -62,6 +71,14 @@ public class ServiceHistory {
 
     public int getMileageAtService(){
         return mileageAtService;
+    }
+
+    public int getNextDueMileage() {
+        return nextDueMileage;
+    }
+
+    public LocalDate getNextDueDate() {
+        return nextDueDate;
     }
 
     public ServiceType getServiceType(){
@@ -87,6 +104,14 @@ public class ServiceHistory {
 
     public void setMileageAtService(int mileageAtService){
         this.mileageAtService = mileageAtService;
+    }
+
+    public void setNextDueMileage(int nextDueMileage){
+        this.nextDueMileage = nextDueMileage;
+    }
+
+    public void setNextDueDate(LocalDate nextDueDate){
+        this.nextDueDate = nextDueDate;
     }
 
     public void setServiceType(ServiceType serviceType){

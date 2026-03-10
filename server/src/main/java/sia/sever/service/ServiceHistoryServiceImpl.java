@@ -8,6 +8,7 @@ import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import sia.sever.repository.ServiceHistoryRepository;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -32,6 +33,14 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
         // Check if 'Other' service is selected then make use of custom notes for it
         validateOtherServiceDescription(serviceHistory);
+
+        // Check if user did a service, give the next change interval/date
+        serviceHistory.setNextDueMileage(calculateNextServiceMileage(serviceHistory));
+        serviceHistory.setNextDueDate( calculateNextServiceDate(serviceHistory));
+        // Check if user did not do a service, give the km/date remaining
+        calculateRemainingKm(serviceHistory);
+        calculateRemainingDays(serviceHistory);
+
         return serviceHistoryRepository.save(serviceHistory);
     }
 
@@ -63,10 +72,19 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
             // Check if 'Other' service is selected then make use of custom notes for it
             validateOtherServiceDescription(updatedServiceHistory);
 
+            // Check if user did a service, give the next change interval/date
+            calculateNextServiceMileage(updatedServiceHistory);
+            calculateNextServiceDate(updatedServiceHistory);
+            // Check if user did not do a service, give the km/date remaining
+            calculateRemainingKm(updatedServiceHistory);
+            calculateRemainingDays(updatedServiceHistory);
+
             existingServiceHistory.setServiceDate(updatedServiceHistory.getServiceDate());
             existingServiceHistory.setDescription(updatedServiceHistory.getDescription());
             existingServiceHistory.setMileageAtService(updatedServiceHistory.getMileageAtService());
             existingServiceHistory.setServiceType(updatedServiceHistory.getServiceType());
+            existingServiceHistory.setNextDueMileage(updatedServiceHistory.getNextDueMileage());
+            existingServiceHistory.setNextDueDate(updatedServiceHistory.getNextDueDate());
             existingServiceHistory.setCost(updatedServiceHistory.getCost());
         return serviceHistoryRepository.save(existingServiceHistory);
     }
@@ -95,7 +113,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         return serviceHistoryRepository.findByCar(car);
     }
 
-    // Methods to help reduce duplicate code
+    // Methods to help reduce duplicate code:
+
     // Check if the service mileage is NOT more than the car's current mileage
     private void validateMileage(ServiceHistory serviceHistory){
         if(serviceHistory.getMileageAtService() > serviceHistory.getCar().getCurrentMileage()){
@@ -110,5 +129,25 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         {
             throw new RuntimeException("Description cannot be empty when service type is OTHER");
         }
+    }
+
+    // Check if user did a service, give the next change interval
+    private int calculateNextServiceMileage(ServiceHistory serviceHistory){
+        return serviceHistory.getMileageAtService() + serviceHistory.getServiceType().getIntervalKm();
+    }
+
+    // Check if user did a service, give the next change date
+    private LocalDate calculateNextServiceDate(ServiceHistory serviceHistory){
+        return serviceHistory.getServiceDate().plusMonths(serviceHistory.getServiceType().getIntervalMonths());
+    }
+
+    // Check if user did not do a service, give the km remaining
+    private int calculateRemainingKm(ServiceHistory serviceHistory){
+        return calculateNextServiceMileage(serviceHistory) - serviceHistory.getCar().getCurrentMileage();
+    }
+
+    // Check if user did not do a service, give the days remaining
+    private int calculateRemainingDays(ServiceHistory serviceHistory){
+        return (int) LocalDate.now().until(calculateNextServiceDate(serviceHistory), ChronoUnit.DAYS);
     }
 }
