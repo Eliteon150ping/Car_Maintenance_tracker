@@ -6,6 +6,7 @@ import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
+import sia.sever.repository.CarRepository;
 import sia.sever.repository.ServiceHistoryRepository;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -18,10 +19,13 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // through the repository since it acts as a bridge for deciding which methods to call from the
     // data given by the controller
     private final ServiceHistoryRepository serviceHistoryRepository;
+    private final CarRepository carRepository;
 
     @Autowired
-    public ServiceHistoryServiceImpl(ServiceHistoryRepository serviceHistoryRepository) {
+    public ServiceHistoryServiceImpl(ServiceHistoryRepository serviceHistoryRepository,
+                                     CarRepository carRepository) {
         this.serviceHistoryRepository = serviceHistoryRepository;
+        this.carRepository = carRepository;
     }
 
     // Create a service record
@@ -104,13 +108,17 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
     // Filter different Services by dates
     @Override
-    public List<ServiceHistory> getServiceHistoryByCarAndDate(Car car, LocalDate serviceDate){
+    public List<ServiceHistory> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate){
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
         return serviceHistoryRepository.findByCarAndServiceDate(car, serviceDate);
     }
 
     // Filter all Service records for a car
     @Override
-    public List<ServiceHistory> getServiceHistoryByCar(Car car){
+    public List<ServiceHistory> getServiceHistoryByCar(Long carId){
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
         return serviceHistoryRepository.findByCar(car);
     }
 

@@ -3,7 +3,6 @@ package sia.sever.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
@@ -13,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/serviceHistory")
+@RequestMapping("/api/service-history")
 public class ServiceHistoryController {
 
     private final ServiceHistoryService serviceHistoryService;
@@ -51,30 +50,30 @@ public class ServiceHistoryController {
     }
 
     // Get service history by car
-    @GetMapping
-    public ResponseEntity<ServiceHistory> getServiceHistoryByCar(Car car){
-        ServiceHistory getServiceHistoryByCar = (ServiceHistory) serviceHistoryService.getServiceHistoryByCar(car);
+    @GetMapping("/car/{carId}")
+    public ResponseEntity<List<ServiceHistory>> getServiceHistoryByCar(@PathVariable Long carId){
+        List<ServiceHistory> getServiceHistoryByCar = serviceHistoryService.getServiceHistoryByCar(carId);
         return ResponseEntity.ok(getServiceHistoryByCar);
     }
 
     // Get service history by car and date
-    @GetMapping
-    public ResponseEntity<ServiceHistory> getServiceHistoryByCarAndDate(Car car, LocalDate date){
-        ServiceHistory getServiceHistoryByCarAndDate = (ServiceHistory) serviceHistoryService.getServiceHistoryByCarAndDate(car, date);
+    @GetMapping("/car/{carId}/date/{date}")
+    public ResponseEntity<List<ServiceHistory>> getServiceHistoryByCarAndDate(@PathVariable Long carId, @PathVariable LocalDate date){
+        List<ServiceHistory> getServiceHistoryByCarAndDate = serviceHistoryService.getServiceHistoryByCarAndDate(carId, date);
         return ResponseEntity.ok(getServiceHistoryByCarAndDate);
     }
 
     // Get service history by service type
-    @GetMapping
-    public ResponseEntity<ServiceHistory> getServiceHistoryByServiceType(ServiceType serviceType){
-        ServiceHistory getServiceHistoryByServiceType = serviceType.getServiceCategory(serviceType);
+    @GetMapping("/type/{serviceType}")
+    public ResponseEntity<List<ServiceHistory>> getServiceHistoryByServiceType(@PathVariable ServiceType serviceType){
+        List<ServiceHistory> getServiceHistoryByServiceType = serviceHistoryService.getServiceHistoryByServiceType(serviceType);
         return ResponseEntity.ok(getServiceHistoryByServiceType);
     }
 
     // Get service history by category
-    @GetMapping
-    public ResponseEntity<ServiceCategory> getServiceHistoryByCategory(ServiceType serviceType){
-        ServiceCategory getServiceHistoryByCategory = serviceType.getServiceCategory();
+    @GetMapping("/category/{serviceCategory}")
+    public ResponseEntity<List<ServiceHistory>> getServiceHistoryByCategory(@PathVariable ServiceCategory serviceCategory){
+        List<ServiceHistory> getServiceHistoryByCategory = serviceHistoryService.getServiceHistoryByCategory(serviceCategory);
         return ResponseEntity.ok(getServiceHistoryByCategory);
     }
 }

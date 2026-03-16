@@ -14,8 +14,8 @@ public interface ServiceHistoryService {
     List<ServiceHistory> getAllServiceRecords();
     ServiceHistory getServiceHistoryById(Long id);
     ServiceHistory updateServiceHistory(Long id, ServiceHistory serviceHistory);
-    List<ServiceHistory> getServiceHistoryByCar(Car car);
-    List<ServiceHistory> getServiceHistoryByCarAndDate(Car car, LocalDate serviceDate);
+    List<ServiceHistory> getServiceHistoryByCar(Long carId);
+    List<ServiceHistory> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate);
     List<ServiceHistory> getServiceHistoryByServiceType(ServiceType serviceType);
     List<ServiceHistory> getServiceHistoryByCategory(ServiceCategory serviceCategory);
 }

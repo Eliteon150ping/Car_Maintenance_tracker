@@ -8,7 +8,7 @@ import sia.sever.service.CarService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/myCars") // Insert API Endpoint here...
+@RequestMapping("/api/my-cars") // Insert API Endpoint here...
 public class CarController {
 
  /*
