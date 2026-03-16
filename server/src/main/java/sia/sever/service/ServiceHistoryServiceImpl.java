@@ -37,6 +37,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         // Check if user did a service, give the next change interval/date
         serviceHistory.setNextDueMileage(calculateNextServiceMileage(serviceHistory));
         serviceHistory.setNextDueDate( calculateNextServiceDate(serviceHistory));
+
         // Check if user did not do a service, give the km/date remaining
         calculateRemainingKm(serviceHistory);
         calculateRemainingDays(serviceHistory);
