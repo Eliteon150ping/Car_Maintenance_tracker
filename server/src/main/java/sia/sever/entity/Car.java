@@ -44,12 +44,12 @@ public class Car {
 
     //Constructor
     public Car(){}
-    public Car(String brand, String model, int year, String colour, int mileage) {
+    public Car(String brand, String model, int year, String colour, int currentMileage) {
         this.brand = brand;
         this.model = model;
         this.year = year;
         this.colour = colour;
-        this.currentMileage = mileage;
+        this.currentMileage = currentMileage;
     }
 
     //Getters
@@ -98,3 +98,18 @@ public class Car {
         this.currentMileage = currentMileage;
     }
 }
+/*
+
+Json format body for a car:
+
+{
+
+"brand":  "",
+"model":  "",
+"year":   ,
+"colour": "",
+"currentMileage":
+
+}
+
+*/

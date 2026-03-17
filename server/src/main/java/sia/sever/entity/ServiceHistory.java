@@ -21,9 +21,9 @@ public class ServiceHistory {
     private int mileageAtService;
 
     @Column(nullable = false)
-    private int nextDueMileage;
+    private Integer nextDueMileage;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDate nextDueDate;
 
     @Enumerated(EnumType.STRING)            // Used for enums to show the actual name of
@@ -46,14 +46,14 @@ public class ServiceHistory {
 
     // Constructor
     public ServiceHistory(){}
-    public ServiceHistory(LocalDate serviceDate, int mileageAtService, int nextServiceMileage,
-                          LocalDate nextServiceDate, ServiceType serviceType, double cost,
+    public ServiceHistory(LocalDate serviceDate, int mileageAtService, Integer nextDueMileage,
+                          LocalDate nextDueDate, ServiceType serviceType, double cost,
                           String description, Car car)
     {
         this.serviceDate = serviceDate;
         this.mileageAtService = mileageAtService;
-        this.nextDueMileage = nextServiceMileage;
-        this.nextDueDate = nextServiceDate;
+        this.nextDueMileage = nextDueMileage;
+        this.nextDueDate = nextDueDate;
         this.serviceType = serviceType;
         this.cost = cost;
         this.description = description;
@@ -73,7 +73,7 @@ public class ServiceHistory {
         return mileageAtService;
     }
 
-    public int getNextDueMileage() {
+    public Integer getNextDueMileage() {
         return nextDueMileage;
     }
 
@@ -106,7 +106,7 @@ public class ServiceHistory {
         this.mileageAtService = mileageAtService;
     }
 
-    public void setNextDueMileage(int nextDueMileage){
+    public void setNextDueMileage(Integer nextDueMileage){
         this.nextDueMileage = nextDueMileage;
     }
 
@@ -130,3 +130,19 @@ public class ServiceHistory {
         this.car = car;
     }
 }
+
+/*
+
+Json format body for a car's service history:
+
+{
+
+"serviceType": "",
+"serviceDate": "",
+"mileageAtService":  ,
+"cost": ,
+"description": "", (Optional)
+
+}
+
+*/

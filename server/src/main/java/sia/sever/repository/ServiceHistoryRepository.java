@@ -23,4 +23,5 @@ public interface ServiceHistoryRepository extends JpaRepository<ServiceHistory, 
     List<ServiceHistory> findByServiceType(ServiceType serviceType);
     List<ServiceHistory> findByServiceCategory(ServiceCategory serviceCategory);
     List<ServiceHistory> findByCar(Car car);
+    ServiceHistory findFirstByCarOrderByMileageAtServiceDesc(Car car);
 }

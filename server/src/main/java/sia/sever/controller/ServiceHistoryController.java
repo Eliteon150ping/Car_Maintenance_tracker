@@ -7,7 +7,6 @@ import sia.sever.entity.ServiceHistory;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import sia.sever.service.ServiceHistoryService;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,8 +22,8 @@ public class ServiceHistoryController {
 
     // Create Service Record
     @PostMapping
-    public ResponseEntity<ServiceHistory> createServiceHistory(@RequestBody ServiceHistory serviceHistory){
-        ServiceHistory createdServiceRecord = serviceHistoryService.createServiceHistory(serviceHistory);
+    public ResponseEntity<ServiceHistory> createServiceHistory(@RequestBody ServiceHistory serviceHistory, @RequestParam Long carId){
+        ServiceHistory createdServiceRecord = serviceHistoryService.createServiceHistory(serviceHistory, carId);
         return new ResponseEntity<>(createdServiceRecord, HttpStatus.CREATED);
     }
 
@@ -42,12 +41,12 @@ public class ServiceHistoryController {
         return ResponseEntity.ok(getServiceRecordById);
     }
 
-    // Update service record
-    @PutMapping("/{id}")
-    public ResponseEntity<ServiceHistory> updateServiceHistory(@PathVariable Long id, @RequestBody ServiceHistory serviceHistory){
-        ServiceHistory updatedServiceRecord = serviceHistoryService.updateServiceHistory(id, serviceHistory);
-        return ResponseEntity.ok(updatedServiceRecord);
-    }
+//    // Update service record
+//    @PutMapping("/car/{carId}/update/{id}")
+//    public ResponseEntity<ServiceHistory> updateServiceHistory(@PathVariable Long id, @RequestBody ServiceHistory serviceHistory, @PathVariable Long carId){
+//        ServiceHistory updatedServiceRecord = serviceHistoryService.updateServiceHistory(id, serviceHistory, carId);
+//        return ResponseEntity.ok(updatedServiceRecord);
+//    }
 
     // Get service history by car
     @GetMapping("/car/{carId}")

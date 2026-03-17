@@ -23,24 +23,36 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
     @Autowired
     public ServiceHistoryServiceImpl(ServiceHistoryRepository serviceHistoryRepository,
-                                     CarRepository carRepository) {
+                                     CarRepository carRepository)
+    {
         this.serviceHistoryRepository = serviceHistoryRepository;
         this.carRepository = carRepository;
     }
 
     // Create a service record
     @Override
-    public ServiceHistory createServiceHistory(ServiceHistory serviceHistory){
+    public ServiceHistory createServiceHistory(ServiceHistory serviceHistory, Long carId){
 
-        // Check if the service mileage is NOT more than the car's current mileage
+        // First retrieve an existing car through its id
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
+        serviceHistory.setCar(car);
+        ServiceHistory lastLatestServiceMileage = serviceHistoryRepository.findFirstByCarOrderByMileageAtServiceDesc(car);
+
+        // Check if the service mileage is NOT more than the car's current mileage and NOT less than the last service
         validateMileage(serviceHistory);
+        if(lastLatestServiceMileage != null) {
+            if (serviceHistory.getMileageAtService() < lastLatestServiceMileage.getMileageAtService()) {
+                throw new RuntimeException("New service mileage cannot be lower than the last latest service mileage");
+            }
+        }
 
         // Check if 'Other' service is selected then make use of custom notes for it
         validateOtherServiceDescription(serviceHistory);
 
         // Check if user did a service, give the next change interval/date
         serviceHistory.setNextDueMileage(calculateNextServiceMileage(serviceHistory));
-        serviceHistory.setNextDueDate( calculateNextServiceDate(serviceHistory));
+        serviceHistory.setNextDueDate(calculateNextServiceDate(serviceHistory));
 
         // Check if user did not do a service, give the km/date remaining
         calculateRemainingKm(serviceHistory);
@@ -62,37 +74,41 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
     }
 
-    // Update the service record
-    @Override
-    public ServiceHistory updateServiceHistory(Long id, ServiceHistory updatedServiceHistory){
-        ServiceHistory existingServiceHistory = serviceHistoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
-
-        // Check if the service mileage is NOT more than the car's current mileage and NOT less than the last service
-            validateMileage(updatedServiceHistory);
-            if(updatedServiceHistory.getMileageAtService() < existingServiceHistory.getMileageAtService()){
-                throw new RuntimeException("New service mileage cannot be lower than the last latest service mileage");
-            }
-
-            // Check if 'Other' service is selected then make use of custom notes for it
-            validateOtherServiceDescription(updatedServiceHistory);
-
-            // Check if user did a service, give the next change interval/date
-            calculateNextServiceMileage(updatedServiceHistory);
-            calculateNextServiceDate(updatedServiceHistory);
-            // Check if user did not do a service, give the km/date remaining
-            calculateRemainingKm(updatedServiceHistory);
-            calculateRemainingDays(updatedServiceHistory);
-
-            existingServiceHistory.setServiceDate(updatedServiceHistory.getServiceDate());
-            existingServiceHistory.setDescription(updatedServiceHistory.getDescription());
-            existingServiceHistory.setMileageAtService(updatedServiceHistory.getMileageAtService());
-            existingServiceHistory.setServiceType(updatedServiceHistory.getServiceType());
-            existingServiceHistory.setNextDueMileage(updatedServiceHistory.getNextDueMileage());
-            existingServiceHistory.setNextDueDate(updatedServiceHistory.getNextDueDate());
-            existingServiceHistory.setCost(updatedServiceHistory.getCost());
-        return serviceHistoryRepository.save(existingServiceHistory);
-    }
+//    // Update the service record
+//    @Override
+//    public ServiceHistory updateServiceHistory(Long id, ServiceHistory updatedServiceHistory, Long carId){
+//        Car car = carRepository.findById(carId)
+//                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
+//        updatedServiceHistory.setCar(car);
+//        ServiceHistory existingServiceHistory = serviceHistoryRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
+//
+//        // Check if the service mileage is NOT more than the car's current mileage and NOT less than the last service
+//            validateMileage(updatedServiceHistory);
+//            if(updatedServiceHistory.getMileageAtService() < existingServiceHistory.getMileageAtService()){
+//                throw new RuntimeException("New service mileage cannot be lower than the last latest service mileage");
+//            }
+//
+//            // Check if 'Other' service is selected then make use of custom notes for it
+//            validateOtherServiceDescription(updatedServiceHistory);
+//
+//            // Check if user did a service, give the next change interval/date
+//            int nextMileage = calculateNextServiceMileage(updatedServiceHistory);
+//            LocalDate nextDate = calculateNextServiceDate(updatedServiceHistory);
+//
+//            // Check if user did not do a service, give the km/date remaining
+//            calculateRemainingKm(updatedServiceHistory);
+//            calculateRemainingDays(updatedServiceHistory);
+//
+//            existingServiceHistory.setServiceDate(updatedServiceHistory.getServiceDate());
+//            existingServiceHistory.setDescription(updatedServiceHistory.getDescription());
+//            existingServiceHistory.setMileageAtService(updatedServiceHistory.getMileageAtService());
+//            existingServiceHistory.setServiceType(updatedServiceHistory.getServiceType());
+//            existingServiceHistory.setNextDueMileage(nextMileage);
+//            existingServiceHistory.setNextDueDate(nextDate);
+//            existingServiceHistory.setCost(updatedServiceHistory.getCost());
+//        return serviceHistoryRepository.save(existingServiceHistory);
+//    }
 
     // Filter different Service categories
     @Override
