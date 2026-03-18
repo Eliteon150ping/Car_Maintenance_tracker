@@ -30,9 +30,6 @@ public class ServiceHistory {
     private ServiceType serviceType;        // the constant in the db instead of its index value
                                             // making it easier to read in the db.
 
-    @Enumerated(EnumType.STRING)
-    private ServiceCategory serviceCategory;
-
     @Column(nullable = false)
     private double cost;
 
@@ -98,24 +95,12 @@ public class ServiceHistory {
     }
 
     // Setters
-    public void setServiceDate(LocalDate serviceDate){
-        this.serviceDate = serviceDate;
-    }
-
-    public void setMileageAtService(int mileageAtService){
-        this.mileageAtService = mileageAtService;
-    }
-
     public void setNextDueMileage(Integer nextDueMileage){
         this.nextDueMileage = nextDueMileage;
     }
 
     public void setNextDueDate(LocalDate nextDueDate){
         this.nextDueDate = nextDueDate;
-    }
-
-    public void setServiceType(ServiceType serviceType){
-        this.serviceType = serviceType;
     }
 
     public void setCost(double cost){
@@ -141,7 +126,7 @@ Json format body for a car's service history:
 "serviceDate": "",
 "mileageAtService":  ,
 "cost": ,
-"description": "", (Optional)
+"description": "", (Optional unless its OTHER)
 
 }
 

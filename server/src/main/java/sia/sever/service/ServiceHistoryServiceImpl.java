@@ -10,6 +10,7 @@ import sia.sever.repository.CarRepository;
 import sia.sever.repository.ServiceHistoryRepository;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -74,46 +75,33 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
     }
 
-//    // Update the service record
-//    @Override
-//    public ServiceHistory updateServiceHistory(Long id, ServiceHistory updatedServiceHistory, Long carId){
-//        Car car = carRepository.findById(carId)
-//                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
-//        updatedServiceHistory.setCar(car);
-//        ServiceHistory existingServiceHistory = serviceHistoryRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
-//
-//        // Check if the service mileage is NOT more than the car's current mileage and NOT less than the last service
-//            validateMileage(updatedServiceHistory);
-//            if(updatedServiceHistory.getMileageAtService() < existingServiceHistory.getMileageAtService()){
-//                throw new RuntimeException("New service mileage cannot be lower than the last latest service mileage");
-//            }
-//
-//            // Check if 'Other' service is selected then make use of custom notes for it
-//            validateOtherServiceDescription(updatedServiceHistory);
-//
-//            // Check if user did a service, give the next change interval/date
-//            int nextMileage = calculateNextServiceMileage(updatedServiceHistory);
-//            LocalDate nextDate = calculateNextServiceDate(updatedServiceHistory);
-//
-//            // Check if user did not do a service, give the km/date remaining
-//            calculateRemainingKm(updatedServiceHistory);
-//            calculateRemainingDays(updatedServiceHistory);
-//
-//            existingServiceHistory.setServiceDate(updatedServiceHistory.getServiceDate());
-//            existingServiceHistory.setDescription(updatedServiceHistory.getDescription());
-//            existingServiceHistory.setMileageAtService(updatedServiceHistory.getMileageAtService());
-//            existingServiceHistory.setServiceType(updatedServiceHistory.getServiceType());
-//            existingServiceHistory.setNextDueMileage(nextMileage);
-//            existingServiceHistory.setNextDueDate(nextDate);
-//            existingServiceHistory.setCost(updatedServiceHistory.getCost());
-//        return serviceHistoryRepository.save(existingServiceHistory);
-//    }
+    // Update the service record
+    @Override
+    public ServiceHistory updateServiceHistory(Long id, ServiceHistory updatedServiceHistory, Long carId){
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
+        updatedServiceHistory.setCar(car);
+        ServiceHistory existingServiceHistory = serviceHistoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
+
+            // Check if 'Other' service is selected then make use of custom notes for it
+            validateOtherServiceDescription(updatedServiceHistory);
+
+            existingServiceHistory.setDescription(updatedServiceHistory.getDescription());
+            existingServiceHistory.setCost(updatedServiceHistory.getCost());
+        return serviceHistoryRepository.save(existingServiceHistory);
+    }
 
     // Filter different Service categories
     @Override
     public List<ServiceHistory> getServiceHistoryByCategory(ServiceCategory serviceCategory){
-        return serviceHistoryRepository.findByServiceCategory(serviceCategory);
+        List<ServiceType> matchingServiceTypes = new ArrayList<>();
+        for(ServiceType serviceTypes : ServiceType.values()){
+            if(serviceTypes.getServiceCategory() == serviceCategory){
+                matchingServiceTypes.add(serviceTypes);
+            }
+        }
+        return serviceHistoryRepository.findByServiceTypeIn(matchingServiceTypes);
     }
 
     // Filter different Service types

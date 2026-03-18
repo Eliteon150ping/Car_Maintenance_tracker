@@ -21,8 +21,8 @@ public class ServiceHistoryController {
     }
 
     // Create Service Record
-    @PostMapping
-    public ResponseEntity<ServiceHistory> createServiceHistory(@RequestBody ServiceHistory serviceHistory, @RequestParam Long carId){
+    @PostMapping("/car/{carId}")
+    public ResponseEntity<ServiceHistory> createServiceHistory(@RequestBody ServiceHistory serviceHistory, @PathVariable Long carId){
         ServiceHistory createdServiceRecord = serviceHistoryService.createServiceHistory(serviceHistory, carId);
         return new ResponseEntity<>(createdServiceRecord, HttpStatus.CREATED);
     }
@@ -35,18 +35,18 @@ public class ServiceHistoryController {
     }
 
     // Get service Record by ID
-    @GetMapping("/{id}")
+    @GetMapping("/recordId/{id}")
     public ResponseEntity<ServiceHistory> getServiceHistoryById(@PathVariable Long id){
         ServiceHistory getServiceRecordById = serviceHistoryService.getServiceHistoryById(id);
         return ResponseEntity.ok(getServiceRecordById);
     }
 
-//    // Update service record
-//    @PutMapping("/car/{carId}/update/{id}")
-//    public ResponseEntity<ServiceHistory> updateServiceHistory(@PathVariable Long id, @RequestBody ServiceHistory serviceHistory, @PathVariable Long carId){
-//        ServiceHistory updatedServiceRecord = serviceHistoryService.updateServiceHistory(id, serviceHistory, carId);
-//        return ResponseEntity.ok(updatedServiceRecord);
-//    }
+    // Update service record
+    @PutMapping("/car/{carId}/update/{id}")
+    public ResponseEntity<ServiceHistory> updateServiceHistory(@PathVariable Long id, @RequestBody ServiceHistory serviceHistory, @PathVariable Long carId){
+        ServiceHistory updatedServiceRecord = serviceHistoryService.updateServiceHistory(id, serviceHistory, carId);
+        return ResponseEntity.ok(updatedServiceRecord);
+    }
 
     // Get service history by car
     @GetMapping("/car/{carId}")
