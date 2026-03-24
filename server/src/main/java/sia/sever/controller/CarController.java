@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sia.sever.entity.Car;
 import sia.sever.service.CarService;
+import sia.sever.dto.car.CarResponseDTO;
 import java.util.List;
 
 @RestController
@@ -34,29 +35,29 @@ public class CarController {
 
     // Create car
     @PostMapping
-    public ResponseEntity<Car> createCar(@RequestBody Car car) {
-        Car createdCar = carService.createCar(car);
+    public ResponseEntity<CarResponseDTO> createCar(@RequestBody Car car) {
+        CarResponseDTO createdCar = carService.createCar(car);
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
     }
 
     // Get all cars
     @GetMapping
-    public ResponseEntity<List<Car>> getALlCars(){
-        List<Car> allCars = carService.getAllCars();
+    public ResponseEntity<List<CarResponseDTO>> getALlCars(){
+        List<CarResponseDTO> allCars = carService.getAllCars();
         return ResponseEntity.ok(allCars);
     }
 
     // Get car by id
     @GetMapping("/{id}")
-    public ResponseEntity<Car> getCarById(@PathVariable Long id){
-        Car getCarById = carService.getCarById(id);
+    public ResponseEntity<CarResponseDTO> getCarById(@PathVariable Long id){
+        CarResponseDTO getCarById = carService.getCarById(id);
         return ResponseEntity.ok(getCarById);
     }
 
     // Update car by id
     @PutMapping("/{id}")
-    public ResponseEntity<Car> updateCarById(@PathVariable Long id, @RequestBody Car car){
-        Car updatedCar = carService.updateCar(id, car);
+    public ResponseEntity<CarResponseDTO> updateCarById(@PathVariable Long id, @RequestBody Car car){
+        CarResponseDTO updatedCar = carService.updateCar(id, car);
         return ResponseEntity.ok(updatedCar);
     }
 
@@ -69,11 +70,11 @@ public class CarController {
 
     // Filter by brand/model/year
     @GetMapping("/filter")
-    public ResponseEntity<List<Car>> FilterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
+    public ResponseEntity<List<CarResponseDTO>> FilterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
                                                             @RequestParam(value = "model", required = false) String model,
                                                             @RequestParam(value = "year", required = false)  Integer year)
     {
-        List<Car> carsByBrandModelYear = carService.getAllCarsByBrandAndModelAndYear(brand, model, year);
+        List<CarResponseDTO> carsByBrandModelYear = carService.getAllCarsByBrandAndModelAndYear(brand, model, year);
         return new ResponseEntity<>(carsByBrandModelYear, HttpStatus.OK);
     }
 }
