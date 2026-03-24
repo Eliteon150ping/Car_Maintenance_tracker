@@ -63,16 +63,16 @@ public class CarController {
 
     // Delete car by id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Car> deleteCarById(@PathVariable Long id){
+    public ResponseEntity<Void> deleteCarById(@PathVariable Long id){
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();
     }
 
     // Filter by brand/model/year
     @GetMapping("/filter")
-    public ResponseEntity<List<CarResponseDTO>> FilterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
-                                                            @RequestParam(value = "model", required = false) String model,
-                                                            @RequestParam(value = "year", required = false)  Integer year)
+    public ResponseEntity<List<CarResponseDTO>> filterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
+                                                                       @RequestParam(value = "model", required = false) String model,
+                                                                       @RequestParam(value = "year", required = false)  Integer year)
     {
         List<CarResponseDTO> carsByBrandModelYear = carService.getAllCarsByBrandAndModelAndYear(brand, model, year);
         return new ResponseEntity<>(carsByBrandModelYear, HttpStatus.OK);

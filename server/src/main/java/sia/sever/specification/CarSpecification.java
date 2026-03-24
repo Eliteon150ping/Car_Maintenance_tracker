@@ -3,6 +3,7 @@ package sia.sever.specification;
 import org.springframework.data.jpa.domain.Specification;
 import sia.sever.entity.Car;
 
+// This is used for better filtering methods
 public class CarSpecification {
 
     public static Specification<Car> hasBrand(String brand){

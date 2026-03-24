@@ -7,7 +7,6 @@ import sia.sever.dto.car.CarResponseDTO;
 import sia.sever.entity.Car;
 import sia.sever.repository.CarRepository;
 import sia.sever.specification.CarSpecification;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +24,7 @@ public class CarServiceImpl implements CarService {
     }
 
     // Mapper for DTO and service
-    public CarResponseDTO CarResponseDTO(Car car){
+    public CarResponseDTO mapToCarResponseDTO(Car car){
         return new CarResponseDTO(car.getId(), car.getBrand(), car.getModel(), car.getYear(), car.getColour()
                                   , car.getCurrentMileage());
     }
@@ -34,7 +33,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public CarResponseDTO createCar(Car car){
         Car savedCar = carRepository.save(car);
-        return CarResponseDTO(savedCar);
+        return mapToCarResponseDTO(savedCar);
     }
 
     // Get all cars
@@ -42,7 +41,7 @@ public class CarServiceImpl implements CarService {
     public List<CarResponseDTO> getAllCars(){
         List<Car> findAllCars = carRepository.findAll();
         return findAllCars.stream()
-                          .map(this::CarResponseDTO)
+                          .map(this::mapToCarResponseDTO)
                           .collect(Collectors.toList());
     }
 
@@ -67,7 +66,7 @@ public class CarServiceImpl implements CarService {
         existingCar.setCurrentMileage(updatedCar.getCurrentMileage());
 
         Car updatedCarInfo = carRepository.save(existingCar);
-        return CarResponseDTO(updatedCarInfo);
+        return mapToCarResponseDTO(updatedCarInfo);
     }
 
     // Delete a car
@@ -85,7 +84,7 @@ public class CarServiceImpl implements CarService {
     public CarResponseDTO getCarById(Long id){
         Car findCarById = carRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Car not found with ID" + id));
-        return CarResponseDTO(findCarById);
+        return mapToCarResponseDTO(findCarById);
     }
 
     // Dynamic filtering method for getting cars by its brand, model or year
@@ -97,7 +96,7 @@ public class CarServiceImpl implements CarService {
                                                      .and(CarSpecification.hasYear(year));
 
         List<Car> filterCars = carRepository.findAll(spec);
-        return filterCars.stream().map(this::CarResponseDTO).collect(Collectors.toList());
+        return filterCars.stream().map(this::mapToCarResponseDTO).collect(Collectors.toList());
     }
 }
 
