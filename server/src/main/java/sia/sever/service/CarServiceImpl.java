@@ -3,6 +3,7 @@ package sia.sever.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import sia.sever.dto.car.CarRequestDTO;
 import sia.sever.dto.car.CarResponseDTO;
 import sia.sever.entity.Car;
 import sia.sever.repository.CarRepository;
@@ -23,16 +24,28 @@ public class CarServiceImpl implements CarService {
         this.carRepository = carRepository;
     }
 
-    // Mapper for DTO and service
+    // Mapper for DTO and service to return a car object to the frontend
     public CarResponseDTO mapToCarResponseDTO(Car car){
         return new CarResponseDTO(car.getId(), car.getBrand(), car.getModel(), car.getYear(), car.getColour()
                                   , car.getCurrentMileage());
     }
 
+    // Mapper for carRequestDTO to convert to a car object
+    public Car mapToEntity(CarRequestDTO carRequestDTO){
+        Car car = new Car();
+        car.setBrand(carRequestDTO.getBrand());
+        car.setModel(carRequestDTO.getModel());
+        car.setYear(carRequestDTO.getYear());
+        car.setColour(carRequestDTO.getColour());
+        car.setCurrentMileage(carRequestDTO.getCurrentMileage());
+        return car;
+    }
+
     // Create a car
     @Override
-    public CarResponseDTO createCar(Car car){
-        Car savedCar = carRepository.save(car);
+    public CarResponseDTO createCar(CarRequestDTO car){
+        Car convertToEntity = mapToEntity(car);
+        Car savedCar = carRepository.save(convertToEntity);
         return mapToCarResponseDTO(savedCar);
     }
 
@@ -47,23 +60,25 @@ public class CarServiceImpl implements CarService {
 
     // Update an existing car
     @Override
-    public CarResponseDTO updateCar(Long id, Car updatedCar){
+    public CarResponseDTO updateCar(Long id, CarRequestDTO updatedCar){
+
+        Car convertToEntity = mapToEntity(updatedCar);
 
         // First Check if an entity exists before continuing with updating
         Car existingCar = carRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cannot update car not found with ID: " + id));
 
         // Check if the new mileage is NOT lower than the current mileage
-        if(updatedCar.getCurrentMileage() < existingCar.getCurrentMileage()){
+        if(convertToEntity.getCurrentMileage() < existingCar.getCurrentMileage()){
             throw new RuntimeException("Updated mileage cannot be less than current mileage");
         }
 
         // If entity exists then update all its selected fields using the getter and setter methods
-        existingCar.setBrand(updatedCar.getBrand());
-        existingCar.setModel(updatedCar.getModel());
-        existingCar.setYear(updatedCar.getYear());
-        existingCar.setColour(updatedCar.getColour());
-        existingCar.setCurrentMileage(updatedCar.getCurrentMileage());
+        existingCar.setBrand(convertToEntity.getBrand());
+        existingCar.setModel(convertToEntity.getModel());
+        existingCar.setYear(convertToEntity.getYear());
+        existingCar.setColour(convertToEntity.getColour());
+        existingCar.setCurrentMileage(convertToEntity.getCurrentMileage());
 
         Car updatedCarInfo = carRepository.save(existingCar);
         return mapToCarResponseDTO(updatedCarInfo);

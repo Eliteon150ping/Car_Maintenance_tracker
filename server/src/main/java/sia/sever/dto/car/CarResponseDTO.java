@@ -5,6 +5,7 @@ package sia.sever.dto.car;
    what you want to send instead                                                                             */
 public class CarResponseDTO {
 
+    // Fields to sent to the frontend
     private Long id;
     private String brand;
     private String model;
