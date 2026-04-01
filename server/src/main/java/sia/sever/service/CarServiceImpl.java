@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import sia.sever.dto.car.CarRequestDTO;
 import sia.sever.dto.car.CarResponseDTO;
 import sia.sever.entity.Car;
+import sia.sever.exception.ResourceNotFoundException;
 import sia.sever.repository.CarRepository;
 import sia.sever.specification.CarSpecification;
 import java.util.List;
@@ -66,7 +67,7 @@ public class CarServiceImpl implements CarService {
 
         // First Check if an entity exists before continuing with updating
         Car existingCar = carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cannot update car not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot update car not found with ID: " + id));
 
         // Check if the new mileage is NOT lower than the current mileage
         if(convertToEntity.getCurrentMileage() < existingCar.getCurrentMileage()){
@@ -89,7 +90,7 @@ public class CarServiceImpl implements CarService {
     public void deleteCar(Long id){
         // First check if an entity exists before trying to delete it
         if(!carRepository.existsById(id)){
-            throw new RuntimeException("Cannot delete car not found with ID" + id);
+            throw new ResourceNotFoundException("Cannot delete car not found with ID: " + id);
         }
        carRepository.deleteById(id);
     }
@@ -98,7 +99,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public CarResponseDTO getCarById(Long id){
         Car findCarById = carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Car not found with ID" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Car not found with ID: " + id));
         return mapToCarResponseDTO(findCarById);
     }
 
