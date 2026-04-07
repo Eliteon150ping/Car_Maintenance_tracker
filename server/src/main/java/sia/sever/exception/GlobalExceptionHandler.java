@@ -31,6 +31,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(invalidInputEntered, HttpStatus.BAD_REQUEST);
     }
 
+    // Handle Invalid mileage
+    @ExceptionHandler(InvalidMileageException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidMileage(InvalidMileageException invalidMileage, HttpServletRequest request){
+        ErrorResponse invalidMileageEntered = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), invalidMileage.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(invalidMileageEntered, HttpStatus.BAD_REQUEST);
+    }
+
     // Default fallback(Handle unexpected errors)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception defaultFallback, HttpServletRequest request){

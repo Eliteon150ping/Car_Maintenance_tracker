@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import sia.sever.dto.car.CarRequestDTO;
 import sia.sever.dto.car.CarResponseDTO;
 import sia.sever.entity.Car;
+import sia.sever.exception.InvalidMileageException;
 import sia.sever.exception.ResourceNotFoundException;
 import sia.sever.repository.CarRepository;
 import sia.sever.specification.CarSpecification;
@@ -71,7 +72,7 @@ public class CarServiceImpl implements CarService {
 
         // Check if the new mileage is NOT lower than the current mileage
         if(convertToEntity.getCurrentMileage() < existingCar.getCurrentMileage()){
-            throw new RuntimeException("Updated mileage cannot be less than current mileage");
+            throw new InvalidMileageException("Updated mileage cannot be less than current mileage");
         }
 
         // If entity exists then update all its selected fields using the getter and setter methods

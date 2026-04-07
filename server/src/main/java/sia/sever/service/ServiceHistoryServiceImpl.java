@@ -2,16 +2,22 @@ package sia.sever.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sia.sever.dto.car.CarSummaryDTO;
+import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
 import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
+import sia.sever.exception.InvalidClassException;
+import sia.sever.exception.InvalidMileageException;
+import sia.sever.exception.ResourceNotFoundException;
 import sia.sever.repository.CarRepository;
 import sia.sever.repository.ServiceHistoryRepository;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ServiceHistoryServiceImpl implements ServiceHistoryService {
@@ -30,13 +36,29 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         this.carRepository = carRepository;
     }
 
+    // Mapper for DTO and service to return a service record object for a car to the frontend
+    public ServiceRecordResponseDTO mapToServiceRecordResponseDTO(ServiceHistory serviceHistory){
+
+        int remainingKm = calculateRemainingKm(serviceHistory);
+        int remainingDays = calculateRemainingDays(serviceHistory);
+
+        Car extractCarInfo = serviceHistory.getCar();
+        CarSummaryDTO car = new CarSummaryDTO(extractCarInfo.getBrand(), extractCarInfo.getModel(),
+                                              extractCarInfo.getYear(), extractCarInfo.getCurrentMileage());
+
+        return new ServiceRecordResponseDTO(serviceHistory.getId(), serviceHistory.getServiceDate(),
+                                            serviceHistory.getMileageAtService(),
+                                            serviceHistory.getNextDueMileage(), serviceHistory.getNextDueDate()
+                                            , serviceHistory.getServiceType(), serviceHistory.getCost(),
+                                            serviceHistory.getDescription(), remainingKm, remainingDays, car);
+    }
+
     // Create a service record
     @Override
-    public ServiceHistory createServiceHistory(ServiceHistory serviceHistory, Long carId){
+    public ServiceRecordResponseDTO createServiceHistory(ServiceHistory serviceHistory, Long carId){
 
         // First retrieve an existing car through its id
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
+        Car car = findCarById(carId);
         serviceHistory.setCar(car);
         ServiceHistory lastLatestServiceMileage = serviceHistoryRepository.findFirstByCarOrderByMileageAtServiceDesc(car);
 
@@ -44,7 +66,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         validateMileage(serviceHistory);
         if(lastLatestServiceMileage != null) {
             if (serviceHistory.getMileageAtService() < lastLatestServiceMileage.getMileageAtService()) {
-                throw new RuntimeException("New service mileage cannot be lower than the last latest service mileage");
+                throw new InvalidMileageException("New service mileage cannot be lower than the last latest service mileage");
             }
         }
 
@@ -55,83 +77,98 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         serviceHistory.setNextDueMileage(calculateNextServiceMileage(serviceHistory));
         serviceHistory.setNextDueDate(calculateNextServiceDate(serviceHistory));
 
-        // Check if user did not do a service, give the km/date remaining
-        calculateRemainingKm(serviceHistory);
-        calculateRemainingDays(serviceHistory);
-
-        return serviceHistoryRepository.save(serviceHistory);
+        ServiceHistory savedServiceHistory = serviceHistoryRepository.save(serviceHistory);
+        return mapToServiceRecordResponseDTO(savedServiceHistory);
     }
 
     // Get all service records
     @Override
-    public List<ServiceHistory> getAllServiceRecords(){
-        return serviceHistoryRepository.findAll();
+    public List<ServiceRecordResponseDTO> getAllServiceRecords(){
+        List<ServiceHistory> findAllRecords = serviceHistoryRepository.findAll();
+        return findAllRecords.stream()
+                             .map(this::mapToServiceRecordResponseDTO)
+                             .collect(Collectors.toList());
     }
 
     // Find the service record by id
     @Override
-    public ServiceHistory getServiceHistoryById(Long id){
-        return serviceHistoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
+    public ServiceRecordResponseDTO getServiceHistoryById(Long id){
+        ServiceHistory findById = serviceHistoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No record found with id: " + id));
+        return mapToServiceRecordResponseDTO(findById);
     }
 
     // Update the service record
     @Override
-    public ServiceHistory updateServiceHistory(Long id, ServiceHistory updatedServiceHistory, Long carId){
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
-        updatedServiceHistory.setCar(car);
+    public ServiceRecordResponseDTO updateServiceHistory(Long id, ServiceHistory updatedServiceHistory, Long carId){
+        updatedServiceHistory.setCar(findCarById(carId));
         ServiceHistory existingServiceHistory = serviceHistoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No record found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No record found with id: " + id));
 
             // Check if 'Other' service is selected then make use of custom notes for it
             validateOtherServiceDescription(updatedServiceHistory);
 
             existingServiceHistory.setDescription(updatedServiceHistory.getDescription());
             existingServiceHistory.setCost(updatedServiceHistory.getCost());
-        return serviceHistoryRepository.save(existingServiceHistory);
+
+            ServiceHistory newUpdatedServiceHistory = serviceHistoryRepository.save(existingServiceHistory);
+            return mapToServiceRecordResponseDTO(newUpdatedServiceHistory);
     }
 
     // Filter different Service categories
     @Override
-    public List<ServiceHistory> getServiceHistoryByCategory(ServiceCategory serviceCategory){
+    public List<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory){
         List<ServiceType> matchingServiceTypes = new ArrayList<>();
         for(ServiceType serviceTypes : ServiceType.values()){
             if(serviceTypes.getServiceCategory() == serviceCategory){
                 matchingServiceTypes.add(serviceTypes);
             }
         }
-        return serviceHistoryRepository.findByServiceTypeIn(matchingServiceTypes);
+        List<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByServiceTypeIn(matchingServiceTypes);
+        return filterServiceCategories.stream()
+                                      .map(this::mapToServiceRecordResponseDTO)
+                                      .collect(Collectors.toList());
     }
 
     // Filter different Service types
     @Override
-    public List<ServiceHistory> getServiceHistoryByServiceType(ServiceType serviceType){
-        return serviceHistoryRepository.findByServiceType(serviceType);
+    public List<ServiceRecordResponseDTO> getServiceHistoryByServiceType(ServiceType serviceType){
+        List<ServiceHistory> findByServiceType = serviceHistoryRepository.findByServiceType(serviceType);
+        return findByServiceType.stream()
+                                .map(this::mapToServiceRecordResponseDTO)
+                                .collect(Collectors.toList());
     }
 
     // Filter different Services by dates
     @Override
-    public List<ServiceHistory> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate){
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
-        return serviceHistoryRepository.findByCarAndServiceDate(car, serviceDate);
+    public List<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate){
+        List<ServiceHistory> findByCarAndServiceDate = serviceHistoryRepository.findByCarAndServiceDate(findCarById(carId), serviceDate);
+        return findByCarAndServiceDate.stream()
+                                      .map(this::mapToServiceRecordResponseDTO)
+                                      .collect(Collectors.toList());
     }
 
     // Filter all Service records for a car
     @Override
-    public List<ServiceHistory> getServiceHistoryByCar(Long carId){
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("No car found with id: " + carId));
-        return serviceHistoryRepository.findByCar(car);
+    public List<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId){
+        List<ServiceHistory> findByCar = serviceHistoryRepository.findByCar(findCarById(carId));
+        return findByCar.stream()
+                        .map(this::mapToServiceRecordResponseDTO)
+                        .collect(Collectors.toList());
     }
 
     // Methods to help reduce duplicate code:
 
+    // Find a car's id before proceeding with anything else
+    private Car findCarById(Long carId){
+        return carRepository.findById(carId)
+                .orElseThrow(() -> new ResourceNotFoundException("No car found with id: " + carId));
+    }
+
     // Check if the service mileage is NOT more than the car's current mileage
     private void validateMileage(ServiceHistory serviceHistory){
         if(serviceHistory.getMileageAtService() > serviceHistory.getCar().getCurrentMileage()){
-            throw new RuntimeException("Service mileage cannot be higher than Current Mileage");
+            throw new InvalidMileageException("Service mileage cannot be higher than Current Mileage");
         }
     }
 
@@ -140,7 +177,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         if(serviceHistory.getServiceType() == ServiceType.OTHER && (serviceHistory.getDescription() == null
                 || serviceHistory.getDescription().trim().isEmpty()))
         {
-            throw new RuntimeException("Description cannot be empty when service type is OTHER");
+            throw new InvalidClassException("Description cannot be empty when service type is OTHER");
         }
     }
 
@@ -156,11 +193,11 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
     // Check if user did not do a service, give the km remaining
     private int calculateRemainingKm(ServiceHistory serviceHistory){
-        return calculateNextServiceMileage(serviceHistory) - serviceHistory.getCar().getCurrentMileage();
+        return serviceHistory.getNextDueMileage() - serviceHistory.getCar().getCurrentMileage();
     }
 
     // Check if user did not do a service, give the days remaining
     private int calculateRemainingDays(ServiceHistory serviceHistory){
-        return (int) LocalDate.now().until(calculateNextServiceDate(serviceHistory), ChronoUnit.DAYS);
+        return (int) ChronoUnit.DAYS.between(LocalDate.now(), serviceHistory.getNextDueDate());
     }
 }
