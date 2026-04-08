@@ -10,6 +10,7 @@ public class CarRequestDTO {
     private int currentMileage;
 
     // Constructor
+    public CarRequestDTO(){} // Needed for deserializing Incoming JSON to convert to Java, only for request dtos
     public CarRequestDTO(String brand, String model, int year, String colour, int currentMileage){
         this.brand = brand;
         this.model = model;
