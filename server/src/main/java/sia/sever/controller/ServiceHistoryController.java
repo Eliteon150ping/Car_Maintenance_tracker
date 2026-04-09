@@ -1,6 +1,7 @@
 package sia.sever.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +77,39 @@ public class ServiceHistoryController {
     @GetMapping("/category/{serviceCategory}")
     public ResponseEntity<List<ServiceRecordResponseDTO>> getServiceHistoryByCategory(@PathVariable ServiceCategory serviceCategory){
         List<ServiceRecordResponseDTO> getServiceHistoryByCategory = serviceHistoryService.getServiceHistoryByCategory(serviceCategory);
+        return ResponseEntity.ok(getServiceHistoryByCategory);
+    }
+
+    // Pagination
+    // Get service history by car and date
+    @GetMapping("/car/{carId}/date/{date}/page")
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCarAndDatePaginated(@PathVariable Long carId, @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @RequestParam(defaultValue = "0") int page,
+                                                                                                 @RequestParam(defaultValue = "10") int size){
+        Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate = serviceHistoryService.getServiceHistoryByCarAndDate(carId, date, page, size);
+        return ResponseEntity.ok(getServiceHistoryByCarAndDate);
+    }
+
+    // Get service history by service type
+    @GetMapping("/type/{serviceType}/page")
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByServiceTypePaginated(@PathVariable ServiceType serviceType, @RequestParam(defaultValue = "0") int page,
+                                                                                         @RequestParam(defaultValue = "10") int size){
+        Page<ServiceRecordResponseDTO> getServiceHistoryByServiceType = serviceHistoryService.getServiceHistoryByServiceType(serviceType, page, size);
+        return ResponseEntity.ok(getServiceHistoryByServiceType);
+    }
+
+    // Get service history by car
+    @GetMapping("/car/{carId}/page")
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCarPaginated(@PathVariable Long carId, @RequestParam(defaultValue = "0") int page,
+                                                                                          @RequestParam(defaultValue = "10") int size){
+        Page<ServiceRecordResponseDTO> getServiceHistoryByCar = serviceHistoryService.getServiceHistoryByCar(carId, page, size);
+        return ResponseEntity.ok(getServiceHistoryByCar);
+    }
+
+    // Get service history by category
+    @GetMapping("/category/{serviceCategory}/page")
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCategoryPaginated(@PathVariable ServiceCategory serviceCategory, @RequestParam(defaultValue = "0") int page,
+                                                                                               @RequestParam(defaultValue = "10") int size){
+        Page<ServiceRecordResponseDTO> getServiceHistoryByCategory = serviceHistoryService.getServiceHistoryByCategory(serviceCategory, page, size);
         return ResponseEntity.ok(getServiceHistoryByCategory);
     }
 }

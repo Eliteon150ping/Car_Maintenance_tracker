@@ -19,6 +19,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class ServiceHistoryServiceImpl implements ServiceHistoryService {
@@ -117,9 +120,9 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public ServiceRecordResponseDTO updateServiceHistory(Long id, ServiceRecordRequestDTO updatedServiceHistory, Long carId){
 
-        getCarOrThrow(carId);
-        ServiceHistory existingServiceHistory = serviceHistoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No record found with id: " + id));
+        Car car = getCarOrThrow(carId);
+        ServiceHistory existingServiceHistory = serviceHistoryRepository.findByIdAndCar(id, car)
+                        .orElseThrow(() -> new ResourceNotFoundException("Service not found for this car"));
 
             // Check if 'Other' service is selected then make use of custom notes for it
             validateOtherServiceDescription(updatedServiceHistory);
@@ -171,6 +174,55 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         return findByCar.stream()
                         .map(this::mapToServiceRecordResponseDTO)
                         .collect(Collectors.toList());
+    }
+
+    // Pagination versions(keep original also for best of both worlds/for frontend logic)
+
+    // Filter different Services by dates
+    @Override
+    public Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate,  int page, int size){
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ServiceHistory> findByCarAndServiceDate = serviceHistoryRepository.findByCarAndServiceDate(getCarOrThrow(carId), serviceDate, pageable);
+        return findByCarAndServiceDate.map(this::mapToServiceRecordResponseDTO);
+    }
+
+    // Filter different Service types
+    @Override
+    public Page<ServiceRecordResponseDTO> getServiceHistoryByServiceType(ServiceType serviceType, int page, int size){
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ServiceHistory> findByServiceType = serviceHistoryRepository.findByServiceType(serviceType, pageable);
+        return findByServiceType.map(this::mapToServiceRecordResponseDTO);
+    }
+
+    // Filter different Service categories
+    @Override
+    public Page<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory, int page, int size){
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<ServiceType> matchingServiceTypes = new ArrayList<>();
+        for(ServiceType serviceTypes : ServiceType.values()){
+            if(serviceTypes.getServiceCategory() == serviceCategory){
+                matchingServiceTypes.add(serviceTypes);
+            }
+        }
+        Page<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByServiceTypeIn(matchingServiceTypes, pageable);
+        return filterServiceCategories.map(this::mapToServiceRecordResponseDTO);
+    }
+
+    // Filter all Service records for a car
+    @Override
+    public Page<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId, int page, int size){
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ServiceHistory> findByCar = serviceHistoryRepository.findByCar(getCarOrThrow(carId),pageable);
+        return findByCar.map(this::mapToServiceRecordResponseDTO);
+
     }
 
     // Methods to help reduce duplicate code:
