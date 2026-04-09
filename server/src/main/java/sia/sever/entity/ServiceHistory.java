@@ -95,12 +95,24 @@ public class ServiceHistory {
     }
 
     // Setters
+    public void setServiceDate(LocalDate serviceDate){
+        this.serviceDate = serviceDate;
+    }
+
+    public void setMileageAtService(int mileageAtService){
+        this.mileageAtService = mileageAtService;
+    }
+
     public void setNextDueMileage(Integer nextDueMileage){
         this.nextDueMileage = nextDueMileage;
     }
 
     public void setNextDueDate(LocalDate nextDueDate){
         this.nextDueDate = nextDueDate;
+    }
+
+    public void setServiceType(ServiceType serviceType){
+        this.serviceType = serviceType;
     }
 
     public void setCost(double cost){

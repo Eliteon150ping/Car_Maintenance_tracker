@@ -1,22 +1,30 @@
 package sia.sever.dto.serviceRecord;
 
+import jakarta.validation.constraints.*;
 import sia.sever.enums.ServiceType;
-
 import java.time.LocalDate;
 
 public class ServiceRecordRequestDTO {
 
     // Fields
+    @NotNull
+    @PastOrPresent
     private LocalDate serviceDate;
-    private int mileageAtService;
+    @NotNull
+    @Min(0)
+    private Integer mileageAtService;
+    @NotNull
     private ServiceType serviceType;
-    private double cost;
+    @NotNull
+    @Positive
+    private Double cost;
+    @Size(max = 500)
     private String description;
 
     // Constructor
     public ServiceRecordRequestDTO(){}
-    public ServiceRecordRequestDTO(LocalDate serviceDate, int mileageAtService, ServiceType serviceType,
-                                   double cost, String description)
+    public ServiceRecordRequestDTO(LocalDate serviceDate, Integer mileageAtService, ServiceType serviceType,
+                                   Double cost, String description)
     {
         this.serviceDate = serviceDate;
         this.mileageAtService = mileageAtService;
@@ -30,7 +38,7 @@ public class ServiceRecordRequestDTO {
         return serviceDate;
     }
 
-    public int getMileageAtService(){
+    public Integer getMileageAtService(){
         return mileageAtService;
     }
 
@@ -38,7 +46,7 @@ public class ServiceRecordRequestDTO {
         return serviceType;
     }
 
-    public double getCost(){
+    public Double getCost(){
         return cost;
     }
 
@@ -51,7 +59,7 @@ public class ServiceRecordRequestDTO {
         this.serviceDate = serviceDate;
     }
 
-    public void setMileageAtService(int mileageAtService){
+    public void setMileageAtService(Integer mileageAtService){
         this.mileageAtService = mileageAtService;
     }
 
@@ -59,7 +67,7 @@ public class ServiceRecordRequestDTO {
         this.serviceType = serviceType;
     }
 
-    public void setCost(double cost){
+    public void setCost(Double cost){
         this.cost = cost;
     }
 
