@@ -5,9 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
-
-import java.io.InvalidClassException;
+//import java.io.InvalidClassException;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice // Better than @ControllerAdvice for rest apis, returning json instead of for returning html

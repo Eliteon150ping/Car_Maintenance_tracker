@@ -15,14 +15,14 @@ public class ServiceRecordResponseDTO {
     private ServiceType serviceType;
     private double cost;
     private String description;
-    private int remainingKm;
-    private int remainingDays;
+    private Integer remainingKm;
+    private Integer remainingDays;
     private CarSummaryDTO car;
 
     // Constructor
     public ServiceRecordResponseDTO(Long id, LocalDate serviceDate, int mileageAtService, Integer nextDueMileage
                                     , LocalDate nextDueDate, ServiceType serviceType, double cost,
-                                      String description, int remainingKm, int remainingDays, CarSummaryDTO car)
+                                      String description, Integer remainingKm, Integer remainingDays, CarSummaryDTO car)
     {
         this.id = id;
         this.serviceDate = serviceDate;
@@ -70,11 +70,11 @@ public class ServiceRecordResponseDTO {
         return description;
     }
 
-    public int getRemainingKm(){
+    public Integer getRemainingKm(){
         return remainingKm;
     }
 
-    public int getRemainingDays(){
+    public Integer getRemainingDays(){
         return remainingDays;
     }
 

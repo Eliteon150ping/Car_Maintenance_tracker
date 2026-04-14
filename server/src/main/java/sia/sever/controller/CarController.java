@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sia.sever.dto.car.CarRequestDTO;
-import sia.sever.entity.Car;
 import sia.sever.service.CarService;
 import sia.sever.dto.car.CarResponseDTO;
 import java.util.List;
@@ -35,7 +34,7 @@ public class CarController {
     }
 
     // Create car
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<CarResponseDTO> createCar(@RequestBody CarRequestDTO car) {
         CarResponseDTO createdCar = carService.createCar(car);
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
@@ -56,14 +55,14 @@ public class CarController {
     }
 
     // Update car by id
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<CarResponseDTO> updateCarById(@PathVariable Long id, @RequestBody CarRequestDTO car){
         CarResponseDTO updatedCar = carService.updateCar(id, car);
         return ResponseEntity.ok(updatedCar);
     }
 
     // Delete car by id
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCarById(@PathVariable Long id){
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();
