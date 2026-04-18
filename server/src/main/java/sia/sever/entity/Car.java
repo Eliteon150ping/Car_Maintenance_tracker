@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Car")
+@Table(name = "car")
 public class Car {
 
     //Fields
@@ -28,6 +28,11 @@ public class Car {
     @Column(nullable = false)
     private int currentMileage;
 
+    // Many cars belong to one user
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     // A Car can have multiple services over time
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ServiceHistory> serviceHistories = new ArrayList<>();
@@ -44,12 +49,13 @@ public class Car {
 
     //Constructor
     public Car(){}
-    public Car(String brand, String model, int year, String colour, int currentMileage) {
+    public Car(String brand, String model, int year, String colour, int currentMileage, User user) {
         this.brand = brand;
         this.model = model;
         this.year = year;
         this.colour = colour;
         this.currentMileage = currentMileage;
+        this.user = user;
     }
 
     //Getters
@@ -77,6 +83,10 @@ public class Car {
         return currentMileage;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     //Setters
     public void setBrand(String brand){
         this.brand = brand;
@@ -96,6 +106,10 @@ public class Car {
 
     public void setCurrentMileage(int currentMileage){
         this.currentMileage = currentMileage;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
 /*

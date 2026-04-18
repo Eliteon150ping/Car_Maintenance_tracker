@@ -1,12 +1,11 @@
 package sia.sever.entity;
 
 import jakarta.persistence.*;
-import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "ServiceHistory")
+@Table(name = "service_History")
 public class ServiceHistory {
 
     // Fields
@@ -38,7 +37,7 @@ public class ServiceHistory {
 
     // Multiple services belong to a car over time(Many-to-one relationship)
     @ManyToOne
-    @JoinColumn(name = "car_id",nullable = false)
+    @JoinColumn(name = "car_id", nullable = false)
     private Car car;
 
     // Constructor
