@@ -1,39 +1,29 @@
 package sia.sever.dto.user;
 
-public class RegisterDTO {
+public class LoginDTO {
 
     // Fields
-    private String userName;
     private String email;
     private String password;
 
     // Constructor
-    public RegisterDTO(){}
-    public RegisterDTO(String userName, String email, String password){
+    public LoginDTO() {}
+    public LoginDTO(String email, String password) {
 
-        this.userName = userName;
         this.email = email;
         this.password = password;
     }
 
     // Getters
-    public String getUserName(){
-        return userName;
-    }
-
-    public String getEmail(){
+    public String getEmail() {
         return email;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 
     // Setters
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }

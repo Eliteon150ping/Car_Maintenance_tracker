@@ -36,6 +36,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(invalidMileageEntered, HttpStatus.BAD_REQUEST);
     }
 
+    // Handle Email already exists
+    @ExceptionHandler(EmailExistsException.class)
+    public ResponseEntity<ErrorResponse> handleEmailExists(EmailExistsException emailExists, HttpServletRequest request){
+        ErrorResponse emailAlreadyExists = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), emailExists.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(emailAlreadyExists, HttpStatus.BAD_REQUEST);
+    }
+
+    // Handle Username already exists
+    @ExceptionHandler(UsernameExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameExists(UsernameExistsException usernameExists, HttpServletRequest request){
+        ErrorResponse userNameAlreadyExists = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), usernameExists.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(userNameAlreadyExists, HttpStatus.BAD_REQUEST);
+    }
+
     // Default fallback(Handle unexpected errors)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception defaultFallback, HttpServletRequest request){
