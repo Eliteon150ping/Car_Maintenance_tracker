@@ -6,9 +6,10 @@ import sia.sever.dto.user.LoginDTO;
 import sia.sever.dto.user.RegisterDTO;
 import sia.sever.dto.user.UserResponseDTO;
 import sia.sever.entity.User;
-import sia.sever.exception.EmailExistsException;
-import sia.sever.exception.UsernameExistsException;
+import sia.sever.exception.ValidationException;
 import sia.sever.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -49,14 +50,20 @@ public class UserServiceImpl implements UserService{
         // Check if the email exists first
         User validateEmail = userRepository.findByEmail(user.getEmail());
         User validateUsername = userRepository.findByUserName(user.getUserName());
-        if((validateEmail != null) && (validateUsername != null)){
-            if(validateEmail != null){
-                throw new EmailExistsException("Email already exists");
-            } else {
-                throw new UsernameExistsException("Username already exists");
-            }
+        List<String> errorList = new ArrayList<>();
+        if((validateEmail != null && validateUsername != null)){
+            errorList.add("This username already exists");
+            errorList.add("This email already exists");
+            throw new ValidationException("Validation failed", errorList);
         }
-
+        if(validateUsername != null){
+            errorList.add("This username already exists");
+            throw new ValidationException("Validation failed", errorList);
+        }
+        if(validateEmail != null){
+            errorList.add("This email already exists");
+            throw new ValidationException("Validation failed", errorList);
+        }
         User convertToEntity = mapToEntity(user);
         User savedUser = userRepository.save(convertToEntity);
         return mapToUserResponseDTO(savedUser);

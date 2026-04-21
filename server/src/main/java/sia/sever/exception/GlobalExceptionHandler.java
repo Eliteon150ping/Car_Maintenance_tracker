@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 //import java.io.InvalidClassException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestControllerAdvice // Better than @ControllerAdvice for rest apis, returning json instead of for returning html
 public class GlobalExceptionHandler {
@@ -36,18 +37,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(invalidMileageEntered, HttpStatus.BAD_REQUEST);
     }
 
-    // Handle Email already exists
-    @ExceptionHandler(EmailExistsException.class)
-    public ResponseEntity<ErrorResponse> handleEmailExists(EmailExistsException emailExists, HttpServletRequest request){
-        ErrorResponse emailAlreadyExists = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), emailExists.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(emailAlreadyExists, HttpStatus.BAD_REQUEST);
-    }
-
-    // Handle Username already exists
-    @ExceptionHandler(UsernameExistsException.class)
-    public ResponseEntity<ErrorResponse> handleUsernameExists(UsernameExistsException usernameExists, HttpServletRequest request){
-        ErrorResponse userNameAlreadyExists = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), usernameExists.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(userNameAlreadyExists, HttpStatus.BAD_REQUEST);
+    // Handle Validation error input
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(ValidationException validationError, HttpServletRequest request){
+        List<String> errorList = validationError.getErrors();
+        ErrorResponse ValidationInputError = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), validationError.getMessage(), request.getRequestURI(), errorList);
+        return new ResponseEntity<>(ValidationInputError, HttpStatus.BAD_REQUEST);
     }
 
     // Default fallback(Handle unexpected errors)
