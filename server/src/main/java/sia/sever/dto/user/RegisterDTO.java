@@ -1,4 +1,4 @@
 package sia.sever.dto.user;
 
-public class UserRequestDTO {
+public class RequestDTO {
 }
