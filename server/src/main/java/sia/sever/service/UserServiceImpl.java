@@ -1,6 +1,7 @@
 package sia.sever.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sia.sever.dto.user.LoginDTO;
 import sia.sever.dto.user.RegisterDTO;
@@ -15,10 +16,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository){
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Mapper for DTO and service to return a User object to the frontend
@@ -31,7 +34,6 @@ public class UserServiceImpl implements UserService{
         User user = new User();
         user.setUserName(registerDTO.getUserName());
         user.setEmail(registerDTO.getEmail());
-        user.setPassword(registerDTO.getPassword());
         return user;
     }
 
@@ -47,24 +49,24 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserResponseDTO registerUser(RegisterDTO user){
 
-        // Check if the email exists first
+        // Check if the email and username exists first
         User validateEmail = userRepository.findByEmail(user.getEmail());
         User validateUsername = userRepository.findByUserName(user.getUserName());
         List<String> errorList = new ArrayList<>();
-        if((validateEmail != null && validateUsername != null)){
-            errorList.add("This username already exists");
-            errorList.add("This email already exists");
-            throw new ValidationException("Validation failed", errorList);
-        }
         if(validateUsername != null){
             errorList.add("This username already exists");
-            throw new ValidationException("Validation failed", errorList);
         }
         if(validateEmail != null){
             errorList.add("This email already exists");
+        }
+        if(!errorList.isEmpty()){
             throw new ValidationException("Validation failed", errorList);
         }
+
+        // Encode password and save the user
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
         User convertToEntity = mapToEntity(user);
+        convertToEntity.setPassword(hashedPassword);
         User savedUser = userRepository.save(convertToEntity);
         return mapToUserResponseDTO(savedUser);
     }
@@ -72,9 +74,20 @@ public class UserServiceImpl implements UserService{
     // Login
     @Override
     public UserResponseDTO loginUser(LoginDTO user){
-        User convertToEntity = mapToEntity(user);
-        User LoggedUser = userRepository.save(convertToEntity);
-        return mapToUserResponseDTO(LoggedUser);
+
+        // Find user by email
+        User validateEmail = userRepository.findByEmail(user.getEmail());
+        List<String> errorList = new ArrayList<>();
+        if(validateEmail == null){
+            errorList.add("Email not found, please register instead");
+        }else if(!passwordEncoder.matches(user.getPassword(), validateEmail.getPassword())){
+            // Compare passwords using the input one and the one stored in the db
+            errorList.add("Password is incorrect");
+        }
+        if(!errorList.isEmpty()){
+            throw new ValidationException("Login failed", errorList);
+        }
+        return mapToUserResponseDTO(validateEmail);
     }
 
     // Edit some info

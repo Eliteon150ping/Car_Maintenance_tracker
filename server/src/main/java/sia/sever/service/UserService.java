@@ -10,7 +10,7 @@ public interface UserService {
     UserResponseDTO registerUser(RegisterDTO user);
     UserResponseDTO loginUser(LoginDTO user);
     UserResponseDTO EditProfile(Long id, LoginDTO user);
-    void deleteProfile(Long id);
-    List<UserResponseDTO> getAllUsers();
-    UserResponseDTO getUserById(Long id);
+//    void deleteProfile(Long id);
+//    List<UserResponseDTO> getAllUsers();
+//    UserResponseDTO getUserById(Long id);
 }
