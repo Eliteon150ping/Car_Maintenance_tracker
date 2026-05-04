@@ -1,16 +1,17 @@
 package sia.sever.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import sia.sever.dto.user.LoginDTO;
-import sia.sever.dto.user.RegisterDTO;
-import sia.sever.dto.user.UpdateUserDTO;
-import sia.sever.dto.user.UserResponseDTO;
+import sia.sever.dto.user.*;
 import sia.sever.entity.User;
 import sia.sever.exception.ResourceNotFoundException;
 import sia.sever.exception.ValidationException;
 import sia.sever.repository.UserRepository;
+import sia.sever.security.jwt.JwtUtility;
+import sia.sever.security.userDetails.CustomUserDetails;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,11 +21,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtility jwtUtility;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtility jwtUtility) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtility = jwtUtility;
     }
 
     // NB: Only create entity mappers when you're creating new records — not when reading or updating
@@ -70,29 +73,35 @@ public class UserServiceImpl implements UserService {
 
     // Login
     @Override
-    public UserResponseDTO loginUser(LoginDTO user) {
+    public AuthResponseDTO loginUser(LoginDTO user) {
 
         // Find user by email
-        User validateEmail = userRepository.findByEmail(user.getEmail());
+        User validateUser = userRepository.findByEmail(user.getEmail());
         List<String> errorList = new ArrayList<>();
-        if (validateEmail == null) {
+        if (validateUser == null) {
             errorList.add("Email not found, please register instead");
-        } else if (!passwordEncoder.matches(user.getPassword(), validateEmail.getPassword())) {
+        } else if (!passwordEncoder.matches(user.getPassword(), validateUser.getPassword())) {
             // Compare passwords using the input one and the one stored in the db
             errorList.add("Password is incorrect");
         }
         if (!errorList.isEmpty()) {
             throw new ValidationException("Login failed", errorList);
         }
-        return mapToUserResponseDTO(validateEmail);
+
+        // This is added after jwt is implemented
+        String token = jwtUtility.generateToken(
+                validateUser.getId(),
+                validateUser.getEmail()
+        );
+
+        return new AuthResponseDTO(token, mapToUserResponseDTO(validateUser));
     }
 
     // Edit profile info
     @Override
-    public UserResponseDTO editProfile(Long id, UpdateUserDTO user) {
+    public UserResponseDTO editProfile(UpdateUserDTO user) {
 
-        User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        User existingUser = getCurrentUser();
 
         if(user.getUserName() != null && !user.getUserName().isBlank()){
             existingUser.setUserName(user.getUserName());
@@ -107,11 +116,9 @@ public class UserServiceImpl implements UserService {
 
     // Delete a user by id
     @Override
-    public void deleteProfile(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Cannot delete user not found with id: " + id);
-        }
-        userRepository.deleteById(id);
+    public void deleteProfile() {
+        User existingUser = getCurrentUser();
+        userRepository.deleteById(existingUser.getId());
     }
 
     // Get all users
@@ -125,13 +132,19 @@ public class UserServiceImpl implements UserService {
 
     // Get a user by id
     @Override
-    public UserResponseDTO getUserById(Long id){
-        return mapToUserResponseDTO(findUserById(id));
+    public UserResponseDTO getUserById(){
+        User existingUser = getCurrentUser();
+        return mapToUserResponseDTO(existingUser);
     }
 
-    // Find user by id
-    private User findUserById(Long id){
-       return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+    // Get current user(helps prevent some users from accessing other user's info)
+    private User getCurrentUser(){
+
+        if(SecurityContextHolder.getContext().getAuthentication() == null || !(SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal() instanceof CustomUserDetails userDetails)) {
+            throw new AccessDeniedException("Unauthorized");
+        }
+        return userRepository.findById(userDetails.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with Id: " + userDetails.getUserId()));
     }
 }
