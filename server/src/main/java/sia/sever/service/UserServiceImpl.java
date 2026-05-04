@@ -27,6 +27,8 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // NB: Only create entity mappers when you're creating new records — not when reading or updating
+
     // Mapper for DTO and service to return a User object to the frontend
     public UserResponseDTO mapToUserResponseDTO(User user) {
         return new UserResponseDTO(user.getId(), user.getUserName(), user.getEmail());
@@ -85,7 +87,7 @@ public class UserServiceImpl implements UserService {
         return mapToUserResponseDTO(validateEmail);
     }
 
-    // Edit some info
+    // Edit profile info
     @Override
     public UserResponseDTO editProfile(Long id, UpdateUserDTO user) {
 

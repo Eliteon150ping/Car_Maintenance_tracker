@@ -45,6 +45,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ValidationInputError, HttpStatus.BAD_REQUEST);
     }
 
+    // Handle JWT token Expired
+    @ExceptionHandler(JwtExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleJwtTokenExpired(JwtExpiredException jwtExpiredException, HttpServletRequest request){
+        ErrorResponse jwtTokenExpired = new ErrorResponse(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), jwtExpiredException.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(jwtTokenExpired, HttpStatus.UNAUTHORIZED);
+    }
+
+    // Handle JWT token invalid
+    @ExceptionHandler(JwtInvalidException.class)
+    public ResponseEntity<ErrorResponse> handleJwtTokenInvalid(JwtInvalidException jwtInvalidException, HttpServletRequest request){
+        ErrorResponse jwtTokenInvalid = new ErrorResponse(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), jwtInvalidException.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(jwtTokenInvalid, HttpStatus.UNAUTHORIZED);
+    }
+
     // Default fallback(Handle unexpected errors)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception defaultFallback, HttpServletRequest request){

@@ -1,4 +1,4 @@
-package sia.sever.securityConfig;
+package sia.sever.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
