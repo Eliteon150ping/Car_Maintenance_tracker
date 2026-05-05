@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
 
     // Get a user by id
     @Override
-    public UserResponseDTO getUserById(){
+    public UserResponseDTO getCurrentUserLogged(){
         User existingUser = getCurrentUser();
         return mapToUserResponseDTO(existingUser);
     }

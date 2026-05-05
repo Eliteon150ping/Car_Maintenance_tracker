@@ -11,5 +11,5 @@ public interface UserService {
     UserResponseDTO editProfile(UpdateUserDTO user);
     void deleteProfile();
     List<UserResponseDTO> getAllUsers();
-    UserResponseDTO getUserById();
+    UserResponseDTO getCurrentUserLogged();
 }
