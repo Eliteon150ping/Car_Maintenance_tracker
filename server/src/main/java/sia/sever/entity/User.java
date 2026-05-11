@@ -79,3 +79,21 @@ public class User {
         this.password = password;
     }
 }
+
+/*
+   JSON formats:
+
+1) Register
+{
+"userName": "",
+"email": "",
+"password": ""
+}
+
+2) Login
+{
+"email": "",
+"password": ""
+}
+
+*/

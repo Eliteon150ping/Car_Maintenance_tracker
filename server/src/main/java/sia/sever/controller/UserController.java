@@ -1,5 +1,6 @@
 package sia.sever.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,14 +23,14 @@ public class UserController {
 
     // Register User
     @PostMapping("/auth/register")
-    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody RegisterDTO user) {
+    public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody RegisterDTO user) {
         UserResponseDTO registeredUser = userService.registerUser(user);
         return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
 
     // Login User
     @PostMapping("/auth/login")
-    public ResponseEntity<AuthResponseDTO> loginUser(@RequestBody LoginDTO user) {
+    public ResponseEntity<AuthResponseDTO> loginUser(@Valid @RequestBody LoginDTO user) {
         AuthResponseDTO loggedInUser = userService.loginUser(user);
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
     }

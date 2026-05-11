@@ -2,13 +2,24 @@ package sia.sever.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import sia.sever.dto.car.CarRequestDTO;
 import sia.sever.dto.car.CarResponseDTO;
+import sia.sever.dto.user.LoginDTO;
 import sia.sever.entity.Car;
+import sia.sever.entity.User;
+import sia.sever.exception.InvalidClassException;
 import sia.sever.exception.InvalidMileageException;
 import sia.sever.exception.ResourceNotFoundException;
+import sia.sever.exception.ValidationException;
 import sia.sever.repository.CarRepository;
+import sia.sever.repository.UserRepository;
+import sia.sever.security.jwt.JwtUtility;
 import sia.sever.specification.CarSpecification;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,10 +31,12 @@ public class CarServiceImpl implements CarService {
     // through the repository since it acts as a bridge for deciding which methods to call from the
     // data given by the controller
     private final CarRepository carRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public CarServiceImpl(CarRepository carRepository){
+    public CarServiceImpl(CarRepository carRepository, UserRepository userRepository){
         this.carRepository = carRepository;
+        this.userRepository = userRepository;
     }
 
     // Mapper for DTO and service to return a car object to the frontend
@@ -47,8 +60,19 @@ public class CarServiceImpl implements CarService {
     @Override
     public CarResponseDTO createCar(CarRequestDTO car){
         Car convertToEntity = mapToEntity(car);
-        Car savedCar = carRepository.save(convertToEntity);
-        return mapToCarResponseDTO(savedCar);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken))
+        {
+            String email = authentication.getName();
+            User user = userRepository.findByEmail(email);
+            if(user == null){
+                throw new ResourceNotFoundException("User not found");
+            }
+            convertToEntity.setUser(user);
+            Car savedCar = carRepository.save(convertToEntity);
+            return mapToCarResponseDTO(savedCar);
+        }
+        throw new InvalidClassException("User not authorized");
     }
 
     // Get all cars
