@@ -3,7 +3,9 @@ package sia.sever.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import sia.sever.entity.Car;
+import sia.sever.entity.User;
 import java.util.List;
+import java.util.Optional;
 
 public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificationExecutor {
 
@@ -16,13 +18,6 @@ public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificatio
        existsById(Long id)                                                                              */
 
    // So if you want custom methods for filtering, make them here or use Specification methods instead:
-
-//    List<Car> findByBrandContainingIgnoreCase(String brand);
-//    List<Car> findByModelContainingIgnoreCase(String model);
-//    List<Car> findByYear(int year);
-//    List<Car> findByBrandContainingIgnoreCaseAndModelContainingIgnoreCase(String brand, String model);
-//    List<Car> findByBrandContainingIgnoreCaseAndYear(String brand, int year);
-//    List<Car> findByModelContainingIgnoreCaseAndYear(String model, int year);
-//    List<Car> findByBrandContainingIgnoreCaseAndModelContainingIgnoreCaseAndYear(String brand, String model, int year);
-
+    List<Car> findAllByUser(User user);
+    Optional<Car> findByIdAndUser(Long id, User user);
 }

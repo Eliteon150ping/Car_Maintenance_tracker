@@ -1,17 +1,22 @@
 package sia.sever.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import sia.sever.dto.car.CarSummaryDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordRequestDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
 import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
+import sia.sever.entity.User;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import sia.sever.exception.InvalidClassException;
 import sia.sever.exception.InvalidMileageException;
 import sia.sever.exception.ResourceNotFoundException;
+import sia.sever.exception.UnauthorizedException;
 import sia.sever.repository.CarRepository;
 import sia.sever.repository.ServiceHistoryRepository;
 import java.time.LocalDate;
@@ -22,6 +27,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import sia.sever.repository.UserRepository;
 
 @Service
 public class ServiceHistoryServiceImpl implements ServiceHistoryService {
@@ -31,17 +37,19 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // data given by the controller
     private final ServiceHistoryRepository serviceHistoryRepository;
     private final CarRepository carRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public ServiceHistoryServiceImpl(ServiceHistoryRepository serviceHistoryRepository,
-                                     CarRepository carRepository)
+                                     CarRepository carRepository, UserRepository userRepository)
     {
         this.serviceHistoryRepository = serviceHistoryRepository;
         this.carRepository = carRepository;
+        this.userRepository = userRepository;
     }
 
     // Mapper for DTO and service to return a service record object for a car to the frontend
-    public ServiceRecordResponseDTO mapToServiceRecordResponseDTO(ServiceHistory serviceHistory){
+    private ServiceRecordResponseDTO mapToServiceRecordResponseDTO(ServiceHistory serviceHistory){
 
         Integer remainingKm = null;
         Integer remainingDays = null;
@@ -65,7 +73,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     }
 
     // Mapper to convert ServiceRecordRequestDTO into an entity
-    public ServiceHistory mapToEntity(ServiceRecordRequestDTO serviceRecordRequestDTO){
+    private ServiceHistory mapToEntity(ServiceRecordRequestDTO serviceRecordRequestDTO){
         ServiceHistory serviceRecord = new ServiceHistory();
         serviceRecord.setServiceDate(serviceRecordRequestDTO.getServiceDate());
         serviceRecord.setMileageAtService(serviceRecordRequestDTO.getMileageAtService());
@@ -83,7 +91,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         ServiceHistory convertToEntity = mapToEntity(serviceHistory);
 
         // First retrieve an existing car through its id
-        Car car = getCarOrThrow(carId);
+        User user = getAuthenticatedUser();
+        Car car = getUserCar(carId, user);
         convertToEntity.setCar(car);
         ServiceHistory lastLatestServiceMileage = serviceHistoryRepository.findFirstByCarOrderByMileageAtServiceDesc(car);
 
@@ -109,7 +118,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Get all service records
     @Override
     public List<ServiceRecordResponseDTO> getAllServiceRecords(){
-        List<ServiceHistory> findAllRecords = serviceHistoryRepository.findAll();
+        User user = getAuthenticatedUser();
+        List<ServiceHistory> findAllRecords = serviceHistoryRepository.findAllByCarUser(user);
         return findAllRecords.stream()
                              .map(this::mapToServiceRecordResponseDTO)
                              .collect(Collectors.toList());
@@ -118,7 +128,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Find the service record by id
     @Override
     public ServiceRecordResponseDTO getServiceHistoryById(Long id){
-        ServiceHistory findById = serviceHistoryRepository.findById(id)
+        User user = getAuthenticatedUser();
+        ServiceHistory findById = serviceHistoryRepository.findByIdAndCarUser(id,user)
                 .orElseThrow(() -> new ResourceNotFoundException("No record found with id: " + id));
         return mapToServiceRecordResponseDTO(findById);
     }
@@ -127,7 +138,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public ServiceRecordResponseDTO updateServiceHistory(Long id, ServiceRecordRequestDTO updatedServiceHistory, Long carId){
 
-        Car car = getCarOrThrow(carId);
+        User user = getAuthenticatedUser();
+        Car car = getUserCar(carId, user);
         ServiceHistory existingServiceHistory = serviceHistoryRepository.findByIdAndCar(id, car)
                         .orElseThrow(() -> new ResourceNotFoundException("Service not found for this car"));
 
@@ -144,13 +156,14 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Filter different Service categories
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory){
+        User user = getAuthenticatedUser();
         List<ServiceType> matchingServiceTypes = new ArrayList<>();
         for(ServiceType serviceTypes : ServiceType.values()){
             if(serviceTypes.getServiceCategory() == serviceCategory){
                 matchingServiceTypes.add(serviceTypes);
             }
         }
-        List<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByServiceTypeIn(matchingServiceTypes);
+        List<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarUserAndServiceTypeIn(user,matchingServiceTypes);
         return filterServiceCategories.stream()
                                       .map(this::mapToServiceRecordResponseDTO)
                                       .collect(Collectors.toList());
@@ -159,7 +172,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Filter different Service types
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByServiceType(ServiceType serviceType){
-        List<ServiceHistory> findByServiceType = serviceHistoryRepository.findByServiceType(serviceType);
+        User user = getAuthenticatedUser();
+        List<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarUserAndServiceType(user,serviceType);
         return findByServiceType.stream()
                                 .map(this::mapToServiceRecordResponseDTO)
                                 .collect(Collectors.toList());
@@ -168,13 +182,14 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Filter different Service categories for a car
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory){
+        User user = getAuthenticatedUser();
         List<ServiceType> matchingServiceTypes = new ArrayList<>();
         for(ServiceType serviceTypes : ServiceType.values()){
             if(serviceTypes.getServiceCategory() == serviceCategory){
                 matchingServiceTypes.add(serviceTypes);
             }
         }
-        List<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeIn(getCarOrThrow(carId), matchingServiceTypes);
+        List<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeIn(getUserCar(carId, user), matchingServiceTypes);
         return filterServiceCategories.stream()
                 .map(this::mapToServiceRecordResponseDTO)
                 .collect(Collectors.toList());
@@ -183,7 +198,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Filter different Service types for a car
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType){
-        List<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarAndServiceType(getCarOrThrow(carId), serviceType);
+        User user = getAuthenticatedUser();
+        List<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarAndServiceType(getUserCar(carId, user), serviceType);
         return findByServiceType.stream()
                 .map(this::mapToServiceRecordResponseDTO)
                 .collect(Collectors.toList());
@@ -192,7 +208,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Filter different Services by dates
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate){
-        List<ServiceHistory> findByCarAndServiceDate = serviceHistoryRepository.findByCarAndServiceDate(getCarOrThrow(carId), serviceDate);
+        User user = getAuthenticatedUser();
+        List<ServiceHistory> findByCarAndServiceDate = serviceHistoryRepository.findByCarAndServiceDate(getUserCar(carId, user), serviceDate);
         return findByCarAndServiceDate.stream()
                                       .map(this::mapToServiceRecordResponseDTO)
                                       .collect(Collectors.toList());
@@ -201,7 +218,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Filter all Service records for a car
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId){
-        List<ServiceHistory> findByCar = serviceHistoryRepository.findByCar(getCarOrThrow(carId));
+        User user = getAuthenticatedUser();
+        List<ServiceHistory> findByCar = serviceHistoryRepository.findByCar(getUserCar(carId, user));
         return findByCar.stream()
                         .map(this::mapToServiceRecordResponseDTO)
                         .collect(Collectors.toList());
@@ -214,27 +232,27 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Filter different Services by dates
     @Override
     public Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate,  int page, int size){
-
+        User user = getAuthenticatedUser();
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<ServiceHistory> findByCarAndServiceDate = serviceHistoryRepository.findByCarAndServiceDate(getCarOrThrow(carId), serviceDate, pageable);
+        Page<ServiceHistory> findByCarAndServiceDate = serviceHistoryRepository.findByCarAndServiceDate(getUserCar(carId, user), serviceDate, pageable);
         return findByCarAndServiceDate.map(this::mapToServiceRecordResponseDTO);
     }
 
     // Filter different Service types
     @Override
     public Page<ServiceRecordResponseDTO> getServiceHistoryByServiceType(ServiceType serviceType, int page, int size){
-
+        User user = getAuthenticatedUser();
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<ServiceHistory> findByServiceType = serviceHistoryRepository.findByServiceType(serviceType, pageable);
+        Page<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarUserAndServiceType(user,serviceType, pageable);
         return findByServiceType.map(this::mapToServiceRecordResponseDTO);
     }
 
     // Filter different Service categories
     @Override
     public Page<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory, int page, int size){
-
+        User user = getAuthenticatedUser();
         Pageable pageable = PageRequest.of(page, size);
 
         List<ServiceType> matchingServiceTypes = new ArrayList<>();
@@ -243,17 +261,17 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 matchingServiceTypes.add(serviceTypes);
             }
         }
-        Page<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByServiceTypeIn(matchingServiceTypes, pageable);
+        Page<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarUserAndServiceTypeIn(user,matchingServiceTypes, pageable);
         return filterServiceCategories.map(this::mapToServiceRecordResponseDTO);
     }
 
     // Filter all Service records for a car
     @Override
     public Page<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId, int page, int size){
-
+        User user = getAuthenticatedUser();
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<ServiceHistory> findByCar = serviceHistoryRepository.findByCar(getCarOrThrow(carId),pageable);
+        Page<ServiceHistory> findByCar = serviceHistoryRepository.findByCar(getUserCar(carId, user),pageable);
         return findByCar.map(this::mapToServiceRecordResponseDTO);
 
     }
@@ -261,7 +279,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Filter different Service categories for a car
     @Override
     public Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory, int page, int size){
-
+        User user = getAuthenticatedUser();
         Pageable pageable = PageRequest.of(page, size);
 
         List<ServiceType> matchingServiceTypes = new ArrayList<>();
@@ -270,27 +288,27 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 matchingServiceTypes.add(serviceTypes);
             }
         }
-        Page<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeIn(getCarOrThrow(carId), matchingServiceTypes, pageable);
+        Page<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeIn(getUserCar(carId,user), matchingServiceTypes, pageable);
         return filterServiceCategories.map(this::mapToServiceRecordResponseDTO);
     }
 
     // Filter different Service types for a car
     @Override
     public Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType, int page, int size){
-
+        User user = getAuthenticatedUser();
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarAndServiceType(getCarOrThrow(carId), serviceType, pageable);
+        Page<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarAndServiceType(getUserCar(carId, user), serviceType, pageable);
         return findByServiceType.map(this::mapToServiceRecordResponseDTO);
     }
 
     // Methods to help reduce duplicate code:
 
     // Find a car's id before proceeding with anything else
-    private Car getCarOrThrow(Long carId){
-        return carRepository.findById(carId)
-                .orElseThrow(() -> new ResourceNotFoundException("No car found with id: " + carId));
-    }
+//    private Car getCarOrThrow(Long carId){
+//        return carRepository.findById(carId)
+//                .orElseThrow(() -> new ResourceNotFoundException("No car found with id: " + carId));
+//    }
 
     // Check if the service mileage is NOT more than the car's current mileage
     private void validateMileage(ServiceHistory serviceHistory){
@@ -326,5 +344,26 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Check if user did not do a service, give the days remaining
     private int calculateRemainingDays(ServiceHistory serviceHistory){
         return (int) ChronoUnit.DAYS.between(LocalDate.now(), serviceHistory.getNextDueDate());
+    }
+
+    // Get authenticated user helper method
+    private User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() ||
+                authentication instanceof AnonymousAuthenticationToken) {
+            throw new UnauthorizedException("User not authorized");
+        }
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found");
+        }
+        return user;
+    }
+
+    // Get user's car helper method
+    private Car getUserCar(Long id, User user) {
+        return carRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new ResourceNotFoundException("Car not found with ID: " + id));
     }
 }

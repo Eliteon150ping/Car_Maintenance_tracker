@@ -59,6 +59,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(jwtTokenInvalid, HttpStatus.UNAUTHORIZED);
     }
 
+    // Handle Unauthorized User
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedUser(UnauthorizedException unauthorizedException, HttpServletRequest request){
+        ErrorResponse unauthorizedUser = new ErrorResponse(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), unauthorizedException.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(unauthorizedUser, HttpStatus.UNAUTHORIZED);
+    }
+
     // Default fallback(Handle unexpected errors)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception defaultFallback, HttpServletRequest request){
