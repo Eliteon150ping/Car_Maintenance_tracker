@@ -16,7 +16,6 @@ import sia.sever.exception.UnauthorizedException;
 import sia.sever.repository.CarRepository;
 import sia.sever.repository.UserRepository;
 import sia.sever.specification.CarSpecification;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

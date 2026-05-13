@@ -2,7 +2,6 @@ package sia.sever.service;
 
 import sia.sever.dto.car.CarRequestDTO;
 import sia.sever.dto.car.CarResponseDTO;
-import sia.sever.entity.Car;
 import java.util.List;
 
 public interface CarService {

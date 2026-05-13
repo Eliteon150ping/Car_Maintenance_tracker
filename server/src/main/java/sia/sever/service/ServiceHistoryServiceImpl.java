@@ -157,14 +157,10 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory){
         User user = getAuthenticatedUser();
-        List<ServiceType> matchingServiceTypes = new ArrayList<>();
-        for(ServiceType serviceTypes : ServiceType.values()){
-            if(serviceTypes.getServiceCategory() == serviceCategory){
-                matchingServiceTypes.add(serviceTypes);
-            }
-        }
-        List<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarUserAndServiceTypeIn(user,matchingServiceTypes);
-        return filterServiceCategories.stream()
+        List<ServiceType> filterServiceCategories = filterServiceTypesByCategory(serviceCategory);
+
+        List<ServiceHistory> filteredServiceCategories = serviceHistoryRepository.findByCarUserAndServiceTypeIn(user, filterServiceCategories);
+        return filteredServiceCategories.stream()
                                       .map(this::mapToServiceRecordResponseDTO)
                                       .collect(Collectors.toList());
     }
@@ -183,14 +179,10 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory){
         User user = getAuthenticatedUser();
-        List<ServiceType> matchingServiceTypes = new ArrayList<>();
-        for(ServiceType serviceTypes : ServiceType.values()){
-            if(serviceTypes.getServiceCategory() == serviceCategory){
-                matchingServiceTypes.add(serviceTypes);
-            }
-        }
-        List<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeIn(getUserCar(carId, user), matchingServiceTypes);
-        return filterServiceCategories.stream()
+        List<ServiceType> filterServiceCategories = filterServiceTypesByCategory(serviceCategory);
+
+        List<ServiceHistory> filteredServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeIn(getUserCar(carId, user), filterServiceCategories);
+        return filteredServiceCategories.stream()
                 .map(this::mapToServiceRecordResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -253,16 +245,11 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public Page<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory, int page, int size){
         User user = getAuthenticatedUser();
+        List<ServiceType> filterServiceCategories = filterServiceTypesByCategory(serviceCategory);
         Pageable pageable = PageRequest.of(page, size);
 
-        List<ServiceType> matchingServiceTypes = new ArrayList<>();
-        for(ServiceType serviceTypes : ServiceType.values()){
-            if(serviceTypes.getServiceCategory() == serviceCategory){
-                matchingServiceTypes.add(serviceTypes);
-            }
-        }
-        Page<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarUserAndServiceTypeIn(user,matchingServiceTypes, pageable);
-        return filterServiceCategories.map(this::mapToServiceRecordResponseDTO);
+        Page<ServiceHistory> filteredServiceCategories = serviceHistoryRepository.findByCarUserAndServiceTypeIn(user, filterServiceCategories, pageable);
+        return filteredServiceCategories.map(this::mapToServiceRecordResponseDTO);
     }
 
     // Filter all Service records for a car
@@ -280,16 +267,11 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory, int page, int size){
         User user = getAuthenticatedUser();
+        List<ServiceType> filterServiceCategories = filterServiceTypesByCategory(serviceCategory);
         Pageable pageable = PageRequest.of(page, size);
 
-        List<ServiceType> matchingServiceTypes = new ArrayList<>();
-        for(ServiceType serviceTypes : ServiceType.values()){
-            if(serviceTypes.getServiceCategory() == serviceCategory){
-                matchingServiceTypes.add(serviceTypes);
-            }
-        }
-        Page<ServiceHistory> filterServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeIn(getUserCar(carId,user), matchingServiceTypes, pageable);
-        return filterServiceCategories.map(this::mapToServiceRecordResponseDTO);
+        Page<ServiceHistory> filteredServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeIn(getUserCar(carId,user), filterServiceCategories, pageable);
+        return filteredServiceCategories.map(this::mapToServiceRecordResponseDTO);
     }
 
     // Filter different Service types for a car
@@ -303,12 +285,6 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     }
 
     // Methods to help reduce duplicate code:
-
-    // Find a car's id before proceeding with anything else
-//    private Car getCarOrThrow(Long carId){
-//        return carRepository.findById(carId)
-//                .orElseThrow(() -> new ResourceNotFoundException("No car found with id: " + carId));
-//    }
 
     // Check if the service mileage is NOT more than the car's current mileage
     private void validateMileage(ServiceHistory serviceHistory){
@@ -365,5 +341,16 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     private Car getUserCar(Long id, User user) {
         return carRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ResourceNotFoundException("Car not found with ID: " + id));
+    }
+
+    // Filter service types into service categories
+    private List<ServiceType> filterServiceTypesByCategory(ServiceCategory serviceCategory){
+        List<ServiceType> matchingServiceTypes = new ArrayList<>();
+        for(ServiceType serviceTypes : ServiceType.values()){
+            if(serviceTypes.getServiceCategory() == serviceCategory){
+                matchingServiceTypes.add(serviceTypes);
+            }
+        }
+        return matchingServiceTypes;
     }
 }

@@ -1,7 +1,6 @@
 package sia.sever.service;
 
 import sia.sever.dto.user.*;
-
 import java.util.List;
 
 public interface UserService {
