@@ -25,14 +25,14 @@ public class ServiceHistoryController {
     }
 
     // Create Service Record
-    @PostMapping("/cars/{carId}/services")
-    public ResponseEntity<ServiceRecordResponseDTO> createServiceHistory(@Valid @RequestBody ServiceRecordRequestDTO serviceHistory, @PathVariable Long carId){
+    @PostMapping("/car/{carId}")
+    public ResponseEntity<ServiceRecordResponseDTO> createServiceRecord(@Valid @RequestBody ServiceRecordRequestDTO serviceHistory, @PathVariable Long carId){
         ServiceRecordResponseDTO createdServiceRecord = serviceHistoryService.createServiceHistory(serviceHistory, carId);
         return new ResponseEntity<>(createdServiceRecord, HttpStatus.CREATED);
     }
 
     // Get all service records
-    @GetMapping("/cars/services")
+    @GetMapping
     public ResponseEntity<List<ServiceRecordResponseDTO>> getAllServiceRecords(){
         List<ServiceRecordResponseDTO> allServiceRecords = serviceHistoryService.getAllServiceRecords();
         return ResponseEntity.ok(allServiceRecords);
@@ -46,8 +46,8 @@ public class ServiceHistoryController {
     }
 
     // Update service record
-    @PutMapping("/cars/{carId}/services/{id}")
-    public ResponseEntity<ServiceRecordResponseDTO> updateServiceHistory(@PathVariable Long id, @Valid @RequestBody ServiceRecordRequestDTO serviceHistory, @PathVariable Long carId){
+    @PutMapping("/car/{carId}/service/{id}")
+    public ResponseEntity<ServiceRecordResponseDTO> updateServiceRecord(@PathVariable Long id, @Valid @RequestBody ServiceRecordRequestDTO serviceHistory, @PathVariable Long carId){
         ServiceRecordResponseDTO updatedServiceRecord = serviceHistoryService.updateServiceHistory(id, serviceHistory, carId);
         return ResponseEntity.ok(updatedServiceRecord);
     }
@@ -68,29 +68,33 @@ public class ServiceHistoryController {
 
     // Get service history by service type
     @GetMapping("/type/{serviceType}")
-    public ResponseEntity<List<ServiceRecordResponseDTO>> getServiceHistoryByServiceType(@PathVariable ServiceType serviceType){
-        List<ServiceRecordResponseDTO> getServiceHistoryByServiceType = serviceHistoryService.getServiceHistoryByServiceType(serviceType);
+    public ResponseEntity<List<ServiceRecordResponseDTO>> getServiceHistoryByServiceType(@PathVariable String serviceType){
+        ServiceType type = ServiceType.valueOf(serviceType.toUpperCase());
+        List<ServiceRecordResponseDTO> getServiceHistoryByServiceType = serviceHistoryService.getServiceHistoryByServiceType(type);
         return ResponseEntity.ok(getServiceHistoryByServiceType);
     }
 
     // Get service history by category
     @GetMapping("/category/{serviceCategory}")
-    public ResponseEntity<List<ServiceRecordResponseDTO>> getServiceHistoryByCategory(@PathVariable ServiceCategory serviceCategory){
-        List<ServiceRecordResponseDTO> getServiceHistoryByCategory = serviceHistoryService.getServiceHistoryByCategory(serviceCategory);
+    public ResponseEntity<List<ServiceRecordResponseDTO>> getServiceHistoryByCategory(@PathVariable String serviceCategory){
+        ServiceCategory categoryType = ServiceCategory.valueOf(serviceCategory.toUpperCase());
+        List<ServiceRecordResponseDTO> getServiceHistoryByCategory = serviceHistoryService.getServiceHistoryByCategory(categoryType);
         return ResponseEntity.ok(getServiceHistoryByCategory);
     }
 
     // Get service history by service type for a car
     @GetMapping("/car/{carId}/type/{serviceType}")
-    public ResponseEntity<List<ServiceRecordResponseDTO>> getServiceHistoryByCarAndServiceType(@PathVariable Long carId ,@PathVariable ServiceType serviceType){
-        List<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType = serviceHistoryService.getServiceHistoryByCarAndServiceType(carId ,serviceType);
+    public ResponseEntity<List<ServiceRecordResponseDTO>> getServiceHistoryByCarAndServiceType(@PathVariable Long carId ,@PathVariable String serviceType){
+        ServiceType type = ServiceType.valueOf(serviceType.toUpperCase());
+        List<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType = serviceHistoryService.getServiceHistoryByCarAndServiceType(carId ,type);
         return ResponseEntity.ok(getServiceHistoryByCarAndServiceType);
     }
 
     // Get service history by category for a car
     @GetMapping("/car/{carId}/category/{serviceCategory}")
-    public ResponseEntity<List<ServiceRecordResponseDTO>> getServiceHistoryByCarAndCategory(@PathVariable Long carId , @PathVariable ServiceCategory serviceCategory){
-        List<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory = serviceHistoryService.getServiceHistoryByCarAndCategory(carId ,serviceCategory);
+    public ResponseEntity<List<ServiceRecordResponseDTO>> getServiceHistoryByCarAndCategory(@PathVariable Long carId , @PathVariable String serviceCategory){
+        ServiceCategory categoryType = ServiceCategory.valueOf(serviceCategory.toUpperCase());
+        List<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory = serviceHistoryService.getServiceHistoryByCarAndCategory(carId ,categoryType);
         return ResponseEntity.ok(getServiceHistoryByCarAndCategory);
     }
 
@@ -107,39 +111,43 @@ public class ServiceHistoryController {
 
     // Get service history by service type
     @GetMapping("/type/{serviceType}/page")
-    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByServiceTypePaginated(@PathVariable ServiceType serviceType, @RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByServiceTypePaginated(@PathVariable String serviceType, @RequestParam(defaultValue = "0") int page,
                                                                                          @RequestParam(defaultValue = "10") int size){
-        Page<ServiceRecordResponseDTO> getServiceHistoryByServiceType = serviceHistoryService.getServiceHistoryByServiceType(serviceType, page, size);
+        ServiceType type = ServiceType.valueOf(serviceType.toUpperCase());
+        Page<ServiceRecordResponseDTO> getServiceHistoryByServiceType = serviceHistoryService.getServiceHistoryByServiceType(type, page, size);
         return ResponseEntity.ok(getServiceHistoryByServiceType);
     }
 
     // Get service history by car
     @GetMapping("/car/{carId}/page")
     public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCarPaginated(@PathVariable Long carId, @RequestParam(defaultValue = "0") int page,
-                                                                                          @RequestParam(defaultValue = "5") int size){
+                                                                                          @RequestParam(defaultValue = "10") int size){
         Page<ServiceRecordResponseDTO> getServiceHistoryByCar = serviceHistoryService.getServiceHistoryByCar(carId, page, size);
         return ResponseEntity.ok(getServiceHistoryByCar);
     }
 
     // Get service history by category
     @GetMapping("/category/{serviceCategory}/page")
-    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCategoryPaginated(@PathVariable ServiceCategory serviceCategory, @RequestParam(defaultValue = "0") int page,
-                                                                                               @RequestParam(defaultValue = "5") int size){
-        Page<ServiceRecordResponseDTO> getServiceHistoryByCategory = serviceHistoryService.getServiceHistoryByCategory(serviceCategory, page, size);
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCategoryPaginated(@PathVariable String serviceCategory, @RequestParam(defaultValue = "0") int page,
+                                                                                               @RequestParam(defaultValue = "10") int size){
+        ServiceCategory categoryType = ServiceCategory.valueOf(serviceCategory.toUpperCase());
+        Page<ServiceRecordResponseDTO> getServiceHistoryByCategory = serviceHistoryService.getServiceHistoryByCategory(categoryType, page, size);
         return ResponseEntity.ok(getServiceHistoryByCategory);
     }
 
     // Get service history by service type for a car
     @GetMapping("/car/{carId}/type/{serviceType}/page")
-    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCarAndServiceTypePaginated(@PathVariable Long carId ,@PathVariable ServiceType serviceType, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size){
-        Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType = serviceHistoryService.getServiceHistoryByCarAndServiceType(carId ,serviceType, page, size);
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCarAndServiceTypePaginated(@PathVariable Long carId ,@PathVariable String serviceType, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        ServiceType type = ServiceType.valueOf(serviceType.toUpperCase());
+        Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType = serviceHistoryService.getServiceHistoryByCarAndServiceType(carId ,type, page, size);
         return ResponseEntity.ok(getServiceHistoryByCarAndServiceType);
     }
 
     // Get service history by category for a car
     @GetMapping("/car/{carId}/category/{serviceCategory}/page")
-    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCarAndCategoryPaginated(@PathVariable Long carId , @PathVariable ServiceCategory serviceCategory,  @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size){
-        Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory = serviceHistoryService.getServiceHistoryByCarAndCategory(carId ,serviceCategory,  page, size);
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getServiceHistoryByCarAndCategoryPaginated(@PathVariable Long carId , @PathVariable String serviceCategory,  @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        ServiceCategory categoryType = ServiceCategory.valueOf(serviceCategory.toUpperCase());
+        Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory = serviceHistoryService.getServiceHistoryByCarAndCategory(carId ,categoryType,  page, size);
         return ResponseEntity.ok(getServiceHistoryByCarAndCategory);
     }
 }

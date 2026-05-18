@@ -12,6 +12,7 @@ import sia.sever.exception.ValidationException;
 import sia.sever.repository.UserRepository;
 import sia.sever.security.jwt.JwtUtility;
 import sia.sever.security.userDetails.CustomUserDetails;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,14 +103,26 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO editProfile(UpdateUserDTO user) {
 
         User existingUser = getCurrentUser();
+        List<String> errorList = new ArrayList<>();
 
-        if(user.getUserName() != null && !user.getUserName().isBlank()){
-            existingUser.setUserName(user.getUserName());
+        if (user.getUserName() != null && !user.getUserName().isBlank()) {
+
+            User validateUserName = userRepository.findByUserName(user.getUserName());
+
+            if(validateUserName != null && !validateUserName.getId().equals(existingUser.getId())){
+                errorList.add("User name already exists");
+            }else{
+                existingUser.setUserName(user.getUserName());
+            }
         }
-        if(user.getPassword() != null && !user.getPassword().isBlank()){
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
             String hashedPassword = passwordEncoder.encode(user.getPassword());
             existingUser.setPassword(hashedPassword);
         }
+        if(!errorList.isEmpty()){
+            throw new ValidationException("Update failed", errorList);
+        }
+
         User updatedUser = userRepository.save(existingUser);
         return mapToUserResponseDTO(updatedUser);
     }
@@ -132,15 +145,15 @@ public class UserServiceImpl implements UserService {
 
     // Get a user by id
     @Override
-    public UserResponseDTO getCurrentUserLogged(){
+    public UserResponseDTO getCurrentUserLogged() {
         User existingUser = getCurrentUser();
         return mapToUserResponseDTO(existingUser);
     }
 
     // Get current user(helps prevent some users from accessing other user's info)
-    private User getCurrentUser(){
+    private User getCurrentUser() {
 
-        if(SecurityContextHolder.getContext().getAuthentication() == null || !(SecurityContextHolder.getContext().getAuthentication()
+        if (SecurityContextHolder.getContext().getAuthentication() == null || !(SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal() instanceof CustomUserDetails userDetails)) {
             throw new AccessDeniedException("Unauthorized");
         }

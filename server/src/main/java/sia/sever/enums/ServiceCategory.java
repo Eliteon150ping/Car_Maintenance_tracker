@@ -2,13 +2,25 @@ package sia.sever.enums;
 
 public enum ServiceCategory {
 
-    ENGINE,
-    COOLING,
-    ELECTRICAL,
-    DRIVETRAIN,
-    Wheels_And_Suspension,
-    BRAKING,
-    FUEL_DELIVERY,
-    OTHER;
+    ENGINE("Engine"),
+    COOLING("Cooling"),
+    ELECTRICAL("Electrical"),
+    DRIVETRAIN("Drivetrain"),
+    Wheels_And_Suspension("Wheels and Suspension"),
+    BRAKING("Braking"),
+    FUEL_DELIVERY("Fuel Delivery"),
+    OTHER("Other");
 
+    // Fields
+    private final String displayName;
+
+    // Constructor
+    ServiceCategory(String displayName) {
+        this.displayName = displayName;
+    }
+
+    // Getters
+    public String getDisplayName(){
+        return displayName;
+    }
 }

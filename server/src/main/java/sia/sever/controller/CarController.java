@@ -1,5 +1,6 @@
 package sia.sever.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,15 +35,15 @@ public class CarController {
     }
 
     // Create car
-    @PostMapping("/create")
-    public ResponseEntity<CarResponseDTO> createCar(@RequestBody CarRequestDTO car) {
+    @PostMapping
+    public ResponseEntity<CarResponseDTO> createCar(@Valid @RequestBody CarRequestDTO car) {
         CarResponseDTO createdCar = carService.createCar(car);
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
     }
 
     // Get all cars
     @GetMapping
-    public ResponseEntity<List<CarResponseDTO>> getALlCars(){
+    public ResponseEntity<List<CarResponseDTO>> getAllCars(){
         List<CarResponseDTO> allCars = carService.getAllCars();
         return ResponseEntity.ok(allCars);
     }
@@ -55,14 +56,14 @@ public class CarController {
     }
 
     // Update car by id
-    @PutMapping("/update/{id}")
-    public ResponseEntity<CarResponseDTO> updateCarById(@PathVariable Long id, @RequestBody CarRequestDTO car){
+    @PutMapping("/{id}")
+    public ResponseEntity<CarResponseDTO> updateCarById(@PathVariable Long id, @Valid @RequestBody CarRequestDTO car){
         CarResponseDTO updatedCar = carService.updateCar(id, car);
         return ResponseEntity.ok(updatedCar);
     }
 
     // Delete car by id
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCarById(@PathVariable Long id){
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();

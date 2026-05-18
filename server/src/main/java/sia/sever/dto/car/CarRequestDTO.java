@@ -1,12 +1,20 @@
 package sia.sever.dto.car;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class CarRequestDTO {
 
     // Fields to send to the backend
+    @NotBlank(message = "Brand is required")
     private String brand;
+    @NotBlank(message = "Model is required")
     private String model;
+    @NotNull
     private int year;
+    @NotBlank(message = "Colour is required")
     private String colour;
+    @NotNull
     private int currentMileage;
 
     // Constructor

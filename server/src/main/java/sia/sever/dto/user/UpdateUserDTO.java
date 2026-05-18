@@ -1,13 +1,16 @@
 package sia.sever.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class UpdateUserDTO {
 
     // Fields
     @NotBlank(message = "Username is required")
+    @Size(min = 3, message = "Username must be at least 3 characters long")
     private String userName;
     @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
     // Constructor
