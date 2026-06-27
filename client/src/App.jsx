@@ -1,8 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"; // Imported liabaries that is standard for making SPA's
+import { BrowserRouter, Routes, Route } from "react-router-dom"; // React Router components used for client-side routing
+                                                                 // in a Single Page Application (SPA).
 import DashboardPage from "./pages/DashboardPage"; // This is how to import and connect page file here to be rendered
 import LoginPage from "./pages/LoginPage";
 import ServiceRecordsPage from "./pages/ServiceRecordsPage";
 import VehiclesPage from "./pages/VehiclesPage";
+import MainLayout from "./layouts/MainLayout";
 
 // Root component responsible for application routing
 function App() {
@@ -10,10 +12,31 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/service-records" element={<ServiceRecordsPage />} />
-        <Route path="/vehicles" element={<VehiclesPage />} />
+
+        <Route path="/" element={
+          <MainLayout>
+            <DashboardPage />
+          </MainLayout>
+        } />
+
+        <Route path="/login" element={
+          <MainLayout>
+            <LoginPage />
+          </MainLayout>
+        } />
+
+        <Route path="/service-records" element={
+          <MainLayout>
+            <ServiceRecordsPage />
+          </MainLayout>
+        } />
+
+        <Route path="/vehicles" element={
+          <MainLayout>
+            <VehiclesPage />
+          </MainLayout>
+        } />
+
       </Routes>
     </BrowserRouter>
   );
@@ -25,16 +48,21 @@ export default App;
 
 React Router works similarly to Spring Boot request mappings.
 
-Spring:
-@GetMapping("/vehicles")
-
 React:
 <Route path="/vehicles" element={<VehiclesPage />} />
 
-Difference:
-Spring routes return data.
-React routes return UI.
+What is it?
+- A library that maps URLs to React components.
 
+Why does it exist?
+- To allow navigation without reloading the page.
+
+When do I use it?
+- Whenever an application has multiple pages/screens.
+
+Spring comparison
+- Similar to @GetMapping or @RequestMapping,
+  except it returns UI instead of JSON.
 
 
 

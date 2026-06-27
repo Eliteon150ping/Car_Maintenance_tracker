@@ -25,3 +25,18 @@ function Navbar(){
 }
 
 export default Navbar;
+/*
+
+What is it?
+- A reusable piece of UI.
+
+Why does it exist?
+- To avoid duplicating UI.
+
+When do I use it?
+- Whenever the same UI appears in multiple places.
+
+Java comparison
+- Similar to creating a reusable class instead of copying code.
+
+*/
