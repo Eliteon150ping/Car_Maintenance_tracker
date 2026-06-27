@@ -1,4 +1,4 @@
-function VechiclesPage(){
+function VehiclesPage(){
 
     return(
         <div>
@@ -8,4 +8,4 @@ function VechiclesPage(){
     );
 }
 
-export default VechiclesPage;
+export default VehiclesPage;

@@ -15,6 +15,7 @@ export default DashboardPage;
 /*
 
 'Pages' folder contains components that are called and rendered when the user navigates to a certain route
+(They are basically what you call a Full page)
 Eg. /dashboard -> DashboardPage
 
 NB: Always create pages first then connect routes and test navigation so avoid import errors

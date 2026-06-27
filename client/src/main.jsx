@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'; // This gives React the ability t
 import './index.css'; // Loads global styling
 import App from './App.jsx'; // Imports your root component
 
-{/*Find the HTML element called root and put the App component inside it, usually called 'index.html'*/}
+// Find the HTML element called root and put the App component inside it, usually called 'index.html'
 createRoot(document.getElementById('root')).render( 
   <StrictMode>      
     <App />
@@ -14,7 +14,7 @@ createRoot(document.getElementById('root')).render(
 
 To create a react app for the frontend, type:
 
-1) npm create my-react-app(older way) 
+1) npx create my-react-app my-app(older way) 
                OR
    npm create vite@latest .(the '.' is for the app to be created in the current folder, vite is a more modern quicker 
                             way to load and start a react app)
