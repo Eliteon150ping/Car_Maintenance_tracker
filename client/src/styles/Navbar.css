@@ -1,0 +1,44 @@
+/* 
+component-based styling is each major COMPONENT gets its own stylesheet instead of all css for anything in the 
+index.css which will get messy to work with if there's over a 1000 lines of code.
+eg. The Navbar.js/jsx component will have a Navbar.css in the styles folder.                                */
+
+h2{
+    background-color: blue;
+}
+
+nav {
+    background-color: #f5f5f5;
+    padding: 15px;
+    display: flex;
+}
+
+ul{
+    display: flex; /* Lays the children in a horizontal position */
+    gap: 25px;
+    list-style: none; /* Setting list style to none will remove a list staters like bullet points, dashes etc. */
+    justify-content: center; /* controls the horizontal positioning of the child elements */
+}
+
+/*
+===========================================
+Padding
+===========================================
+
+What is it?
+- Space inside an element, between its content
+  and its border.
+
+Why does it exist?
+- To stop content from touching the edges of an element,
+  making the UI easier to read.
+
+When should I use it?
+- Whenever content inside an element feels cramped.
+
+Java comparison
+- Similar to giving an object extra room to store
+  information. It doesn't add new content; it simply
+  provides more internal space.
+
+*/
