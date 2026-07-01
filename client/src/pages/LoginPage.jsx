@@ -1,9 +1,13 @@
+import PageHeader from "../components/PageHeader";
+
 function LoginPage(){
 
     return(
         <div>
-            <h1>Login Page</h1>
-            <p>Please enter your details to continue</p>
+            <PageHeader 
+            title="Login"
+            description="Please enter your details to continue"
+            />
         </div>
     );
 }

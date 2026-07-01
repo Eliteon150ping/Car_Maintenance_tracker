@@ -1,11 +1,15 @@
+import PageHeader from "../components/PageHeader";
+
 // Component Names always start with Capital letters to distinguish from HTML elements
 // Component Names should match the file name for better readability
 function DashboardPage(){
 
     return(
         <div>
-            <h1>Dashboard</h1>
-            <p>Welcome to the Car Maintenance Tracker App</p>
+            <PageHeader 
+            title="Dashboard"
+            description="Welcome to the Car Maintenance Tracker App"
+            />
         </div>
     );
 }

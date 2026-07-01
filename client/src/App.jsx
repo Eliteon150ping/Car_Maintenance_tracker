@@ -67,3 +67,21 @@ Spring comparison
 
 
 */
+
+/* 
+   Spring Boot comparison:
+   ===============+=================================================================================================
+   React	        |                 Spring Boot Equivalent
+   ===============+================================================================================================
+   pages	        |                 Controllers (entry point for a route/view)
+   ---------------+------------------------------------------------------------------------------------------------
+   components	    |                 Reusable classes/services (building blocks used in multiple places)
+   ---------------+------------------------------------------------------------------------------------------------
+   layouts	      |                 Common page template (no direct Spring equivalent, but similar to shared view templates)
+   ---------------+------------------------------------------------------------------------------------------------
+   context	      |                 Singleton/shared application state (like a service managing logged-in user information)
+   ---------------+------------------------------------------------------------------------------------------------
+   utils	        |                 Utility/helper classes (DateUtils, ValidationUtils, etc.)
+   ---------------+------------------------------------------------------------------------------------------------
+   api	          |                 Your service layer that talks to the backend via HTTP                         */
+

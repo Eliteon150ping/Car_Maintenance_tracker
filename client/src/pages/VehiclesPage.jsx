@@ -1,9 +1,13 @@
+import PageHeader from "../components/PageHeader";
+
 function VehiclesPage(){
 
     return(
         <div>
-            <h1>My Garage</h1>
-            <p>Have your entire vehicle catalogue</p>
+            <PageHeader 
+            title="My Garage"
+            description="Have your entire vehicle catalogue"
+            />
         </div>
     );
 }

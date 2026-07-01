@@ -1,9 +1,13 @@
+import PageHeader from "../components/PageHeader";
+
 function ServiceRecordsPage(){
 
     return(
         <div>
-            <h1>Service Records</h1>
-            <p>Keep track of all your vehicle's service history</p>
+            <PageHeader 
+            title="Service Records"
+            description="Keep track of all your vehicle's service history"
+            />
         </div>
     );
 }
