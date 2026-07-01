@@ -6,7 +6,7 @@ function VehiclesPage(){
         <div>
             <PageHeader 
             title="My Garage"
-            description="Have your entire vehicle catalogue"
+            description="View your entire vehicle catalogue here"
             />
         </div>
     );
