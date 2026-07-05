@@ -1,4 +1,5 @@
 import PageHeader from "../components/PageHeader";
+import SummaryCard from "../components/SummaryCard";
 
 // Component Names always start with Capital letters to distinguish from HTML elements
 // Component Names should match the file name for better readability
@@ -10,6 +11,27 @@ function DashboardPage(){
             title="Dashboard"
             description="Welcome to the Car Maintenance Tracker App"
             />
+
+            <SummaryCard 
+            title="Vehicles"
+            value={2}
+            />
+
+            <SummaryCard 
+            title="Services done"
+            value={10}
+            />
+
+            <SummaryCard 
+            title="Upcoming"
+            value={2}
+            />
+
+            <SummaryCard 
+            title="Overdue"
+            value={3}
+            />
+
         </div>
     );
 }

@@ -1,15 +1,15 @@
 import PageHeader from "../components/PageHeader";
 
-function ServiceRecordsPage(){
+function VehicleDetailsPage(){
 
     return(
         <div>
             <PageHeader 
-            title="Service Records"
+            title="Vehicle Details"
             description="Keep track of all your vehicle's service history"
             />
         </div>
     );
 }
 
-export default ServiceRecordsPage;
+export default VehicleDetailsPage;
