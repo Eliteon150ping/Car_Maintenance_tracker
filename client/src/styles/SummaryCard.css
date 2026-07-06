@@ -1,0 +1,48 @@
+.summary-card{
+    background-color: orange;
+    padding: 20px;
+    border-radius: 10px;        /* How rounded the corners are */
+    border: 1px solid white;   /* border thickness, border style, border colour */
+    text-align: center;
+
+    transition: all 0.25s ease;
+}
+
+.summary-card:hover{ /* Hover means apply these styles only while the mouse is over the element */
+
+    transform: translateY(-6px); /* Moves the card up by 6 pixels.
+                                    Negative values move upward.
+                                    Positive values move downward.
+                                    This creates the "pop out" effect.                                          */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.124);
+    cursor: pointer;
+}
+
+/* 
+
+What is it? 
+text-align: center;
+-Controls the horizontal alignment of text inside an element.
+
+Why does it exist?
+-To control where text appears without manually adding spaces or margins.
+
+When do I use it?
+Whenever you want text aligned:
+-Left
+-Center
+-Right 
+/////////////////////////////////////
+What is it?
+transition: all 0.25s ease;
+Makes CSS property changes animate smoothly.
+
+Why does it exist?
+
+Without it, hover effects happen instantly and feel abrupt.
+
+When do I use it?
+
+Whenever an element changes on hover, focus, or click.
+
+*/

@@ -1,0 +1,15 @@
+.summary-grid{      /* The dot(.) tells the browser to look through your HTML file and select only the elements that
+                       have a matching class="..." attribute.
+
+                       Without the dot, the browser would look for a raw HTML tag named <summary-grid>, which does 
+                       not exist in standard HTML.
+
+                       The text immediately following the dot is the custom name given to that class(summary-grid in
+                       this case).                                                                               */
+
+    display: grid;  /* Place contents in a grid position */
+    grid-template-columns: repeat(2, 250px); /* Create 2 columns, each exactly 250 pixels wide                   */
+    gap: 20px;
+    justify-content: center;
+
+}

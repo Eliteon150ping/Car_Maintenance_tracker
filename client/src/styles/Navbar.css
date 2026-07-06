@@ -4,11 +4,11 @@ index.css which will get messy to work with if there's over a 1000 lines of code
 eg. The Navbar.js/jsx component will have a Navbar.css in the styles folder.                                */
 
 h2{
-    background-color: blue;
+    color: aliceblue;
 }
 
 nav {
-    background-color: #f5f5f5;
+    background-color: orange;
     padding: 15px;
     display: flex;
     justify-content: space-between;

@@ -10,14 +10,16 @@ function VehiclesPage() {
                 description="View your entire vehicle catalogue here"
             />
 
-            <VehicleCard 
+            <VehicleCard
+            id={1}
             brand="Toyota"
-            model="Corolla RXI"
+            model="Corolla RXi"
             year={2001}
             mileage={240000}
             />
 
-            <VehicleCard 
+            <VehicleCard
+            id={2}
             brand="Toyota"
             model="Corolla"
             year={2004}

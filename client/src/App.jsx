@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"; // React Router
                                                                  // in a Single Page Application (SPA).
 import DashboardPage from "./pages/DashboardPage"; // This is how to import and connect page file here to be rendered
 import LoginPage from "./pages/LoginPage";
-import ServiceRecordsPage from "./pages/VehicleDetailsPage";
+import VehicleDetailsPage from "./pages/VehicleDetailsPage";
 import VehiclesPage from "./pages/VehiclesPage";
 import MainLayout from "./layouts/MainLayout";
 
@@ -30,6 +30,15 @@ function App() {
             <VehiclesPage />
           </MainLayout>
         } />
+
+        <Route
+        path="/vehicles/:id"
+        element={
+          <MainLayout>
+            <VehicleDetailsPage />
+          </MainLayout>
+        }
+        />
 
       </Routes>
     </BrowserRouter>
