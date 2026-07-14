@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/my-cars") // Insert API Endpoint here...
+@CrossOrigin(origins = "http://localhost:5173") // A quick fix used to connect to the frontend on different port numbers
 public class CarController {
 
  /*

@@ -12,6 +12,8 @@ function VehicleDetailsPage(){
             title="Vehicle Details"
             description="View your vehicle's service history and information"
             />
+
+            <p>Vehicle ID: {id}</p>
         </div>
     );
 }
