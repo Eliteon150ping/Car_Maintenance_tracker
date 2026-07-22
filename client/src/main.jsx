@@ -2,11 +2,14 @@ import { StrictMode } from 'react';   // Used for development(It helps find pote
 import { createRoot } from 'react-dom/client'; // This gives React the ability to render your application into the browser.
 import './index.css'; // Loads global styling
 import App from './App.jsx'; // Imports your root component
+import { AuthProvider } from './context/AuthContext.jsx';
 
 // Find the HTML element called root and put the App component inside it, usually called 'index.html'
 createRoot(document.getElementById('root')).render( 
-  <StrictMode>      
-    <App />
+  <StrictMode>   
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </StrictMode>,
 )
 

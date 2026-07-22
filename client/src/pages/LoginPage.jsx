@@ -1,15 +1,22 @@
 import PageHeader from "../components/PageHeader";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 function LoginPage() {
 
     const [email, setEmail] = useState("");        // these hooks will store the email and password when needed for
     const [password, setPassword] = useState("");  // submitting the form
+    const {login} = useAuth();                     // Use the login function that AuthContext is sharing
 
-    function handleSubmit(event) {                 // React calls this function when the form is submitted.
+    async function handleSubmit(event) {                 // React calls this function when the form is submitted.
         event.preventDefault();
-        console.log(email);
-        console.log(password);
+        try{
+            await login(email,password);
+            console.log(await login(email,password));
+        }catch(error){
+            console.error("Error caught: " + error.message);
+        }
+        
     }
 
     return (
