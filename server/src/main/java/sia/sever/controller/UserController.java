@@ -56,7 +56,7 @@ public class UserController {
         return ResponseEntity.ok(allUsers);
     }
 
-    // Get current User
+    // Get current User's JWT checked if already logged in on the frontend when refreshing(F5)
     @GetMapping("/profile")
     public ResponseEntity<UserResponseDTO> getCurrentUser(){
         UserResponseDTO getCurrentUser = userService.getCurrentUserLogged();

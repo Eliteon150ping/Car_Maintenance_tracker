@@ -32,6 +32,26 @@ export async function login(email, password) {
     return loginData;
 }
 
+export async function getCurrentUser(){
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:8080/api/users/profile", {
+
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if(!response.ok){
+        throw new Error(`HTTP ${response.status}`)
+    }
+
+    const currentUser = await response.json();
+    return currentUser;
+}
+
 /* 
 
 How the flow of data gets sent through the frontend and backend:

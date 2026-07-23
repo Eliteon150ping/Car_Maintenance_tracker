@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { login as loginApi } from "../api/authApi";
+import { getCurrentUser as currentUserApi } from "../api/authApi";
 
 // This acts as the central hub of who's logged in so the rest of the components or pages knows to check in
 // here to see who's currently logged in and if its valid
@@ -16,17 +17,33 @@ export function AuthProvider({ children }) {     // this will be exported to be 
     const [user, setUser] = useState(null);   // set the user state to null cause they need to verify themselves
                                               // in order to proceed
 
-    async function login(email, password){
+    async function login(email, password) {
         const loginData = await loginApi(email, password);
-        console.log(loginData);
-        setUser(loginData);
+        setUser(loginData.userResponseDTO);
+        localStorage.setItem("token", loginData.token); // Store the JWT token once the user logs in
     }
-    
+
     const value = {
         user,
         login                                  // Here we STORE the function instead of just calling it and 
                                                // potentaily calling it at the wrong time
     };
+
+    // Function to handle existing JWT's in the local Storage
+    useEffect(() => {
+        async function getCurrentUser() {
+
+            try {
+                const currentUser = await currentUserApi();
+                setUser(currentUser);
+            } catch (error) {
+                localStorage.removeItem("token");
+                setUser(null);
+            }
+        }
+
+        getCurrentUser();
+    }, [])
 
     return (
         <AuthContext.Provider value={value}>
@@ -35,6 +52,6 @@ export function AuthProvider({ children }) {     // this will be exported to be 
     );
 }
 
-export function useAuth(){
+export function useAuth() {
     return useContext(AuthContext);
 }
