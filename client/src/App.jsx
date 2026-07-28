@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import VehicleDetailsPage from "./pages/VehicleDetailsPage";
 import VehiclesPage from "./pages/VehiclesPage";
 import MainLayout from "./layouts/MainLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Root component responsible for application routing
 function App() {
@@ -14,29 +15,35 @@ function App() {
       <Routes>
 
         <Route path="/" element={
-          <MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
             <DashboardPage />
           </MainLayout>
+          </ProtectedRoute>
         } />
 
         <Route path="/login" element={
-          <MainLayout>
+            <MainLayout>
             <LoginPage />
           </MainLayout>
         } />
         
         <Route path="/vehicles" element={
-          <MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
             <VehiclesPage />
           </MainLayout>
+          </ProtectedRoute>
         } />
 
         <Route
         path="/vehicles/:id"
         element={
-          <MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
             <VehicleDetailsPage />
           </MainLayout>
+          </ProtectedRoute>
         }
         />
 

@@ -14,6 +14,9 @@ const AuthContext = createContext(null);      // If someone tries to use this co
 export function AuthProvider({ children }) {     // this will be exported to be used for the </app> which is the
                                                  // entire app to know that users must be logged in first
 
+    const [loading, setLoading] = useState(true); // Indicates whether the application is still checking the user's 
+                                                  // authentication state.
+
     const [user, setUser] = useState(null);   // set the user state to null cause they need to verify themselves
                                               // in order to proceed
 
@@ -25,6 +28,7 @@ export function AuthProvider({ children }) {     // this will be exported to be 
 
     const value = {
         user,
+        loading,
         login                                  // Here we STORE the function instead of just calling it and 
                                                // potentaily calling it at the wrong time
     };
@@ -39,6 +43,8 @@ export function AuthProvider({ children }) {     // this will be exported to be 
             } catch (error) {
                 localStorage.removeItem("token");
                 setUser(null);
+            } finally{
+                setLoading(false);
             }
         }
 
