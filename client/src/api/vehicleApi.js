@@ -1,7 +1,15 @@
 export async function getAllVehicles() { // Async functions performs work that takes time to prevent JS from blocking
     
-    const response = await fetch("http://localhost:8080/api/my-cars"); // Await means Pause this function until the 
-                                                                    // backend replies with the JSON response body.
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:8080/api/my-cars", { // Await means Pause this function until the 
+                                                                        // backend replies with the JSON response body.
+
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }); 
 
     if(!response.ok){
         throw new Error(`HTTP ${response.status}`)

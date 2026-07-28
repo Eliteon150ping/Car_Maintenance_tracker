@@ -15,7 +15,9 @@ export function AuthProvider({ children }) {     // this will be exported to be 
                                                  // entire app to know that users must be logged in first
 
     const [loading, setLoading] = useState(true); // Indicates whether the application is still checking the user's 
-                                                  // authentication state.
+                                                  // authentication state. Loading prevents the application from 
+                                                  // rendering the wrong page(like the login page again after logging 
+                                                  // in) while it's still checking whether the stored JWT is valid.
 
     const [user, setUser] = useState(null);   // set the user state to null cause they need to verify themselves
                                               // in order to proceed

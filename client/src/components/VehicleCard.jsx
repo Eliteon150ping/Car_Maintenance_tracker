@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 
-function VehicleCard({ id, brand, model, year, mileage }) {
+function VehicleCard({ id, brand, model, year, currentMileage }) {
 
     return (
         <Link to={`/vehicles/${id}`}>
             <div className="vehicle-card">
                 <h3>{year} {brand} {model}</h3>
-                <p>Mileage: {mileage} km</p>
+                <p>Mileage: {currentMileage} km</p>
             </div>
         </Link>
     );
