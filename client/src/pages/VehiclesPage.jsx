@@ -39,6 +39,7 @@ function VehiclesPage() {
                 brand={vehicle.brand}
                 model={vehicle.model}
                 year={vehicle.year}
+                colour={vehicle.colour}
                 currentMileage={vehicle.currentMileage}
                 />
             ))}
