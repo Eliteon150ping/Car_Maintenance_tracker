@@ -10,7 +10,7 @@ function LoginPage() {
     const {login} = useAuth();                     // Use the login function that AuthContext is sharing
     const navigate = useNavigate();
 
-    async function handleSubmit(event) {                 // React calls this function when the form is submitted.
+    async function handleSubmit(event) {           // React calls this function when the form is submitted.
         event.preventDefault();
         try{
             await login(email,password);

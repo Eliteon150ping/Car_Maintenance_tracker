@@ -211,7 +211,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId){
         User user = getAuthenticatedUser();
-        List<ServiceHistory> findByCar = serviceHistoryRepository.findByCar(getUserCar(carId, user));
+        List<ServiceHistory> findByCar = serviceHistoryRepository.findByCarOrderByServiceDateDesc(getUserCar(carId, user));
         return findByCar.stream()
                         .map(this::mapToServiceRecordResponseDTO)
                         .collect(Collectors.toList());

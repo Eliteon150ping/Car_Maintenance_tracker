@@ -1,3 +1,4 @@
+// Login user
 export async function login(email, password) {
 
     const user = { email, password };
@@ -32,6 +33,7 @@ export async function login(email, password) {
     return loginData;
 }
 
+// Get the current user
 export async function getCurrentUser(){
 
     const token = localStorage.getItem("token");

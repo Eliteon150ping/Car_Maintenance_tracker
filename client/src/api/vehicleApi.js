@@ -1,3 +1,4 @@
+// Get all cars tied to a specific user
 export async function getAllVehicles() { // Async functions performs work that takes time to prevent JS from blocking
     
     const token = localStorage.getItem("token");

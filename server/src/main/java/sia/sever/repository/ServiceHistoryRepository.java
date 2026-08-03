@@ -27,7 +27,7 @@ public interface ServiceHistoryRepository extends JpaRepository<ServiceHistory, 
     List<ServiceHistory> findByCarAndServiceDate(Car car, LocalDate serviceDate);
     List<ServiceHistory> findByCarUserAndServiceType(User user, ServiceType serviceType);
     List<ServiceHistory> findByCarUserAndServiceTypeIn(User user, List<ServiceType> filteredServiceTypes);
-    List<ServiceHistory> findByCar(Car car);
+    List<ServiceHistory> findByCarOrderByServiceDateDesc(Car car);
     List<ServiceHistory> findAllByCarUser(User user);
     List<ServiceHistory> findByCarAndServiceType(Car car, ServiceType serviceType);
     List<ServiceHistory> findByCarAndServiceTypeIn(Car car, List<ServiceType> serviceType);

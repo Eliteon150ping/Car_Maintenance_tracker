@@ -1,5 +1,5 @@
 function VehicleDetailsCard({ id, serviceDate, mileageAtService, nextDueMileage, nextDueDate, serviceType, cost,
-    description, remainingKM, remainingDays, car }) {
+    description, remainingKM, remainingDays, car , onEdit}) {
 
     return (
 
@@ -13,6 +13,7 @@ function VehicleDetailsCard({ id, serviceDate, mileageAtService, nextDueMileage,
             <p>Next due date: {nextDueDate}</p>
             <p>Remaining KM: {remainingKM} km</p>
             <p>Remaining days:{remainingDays}</p>
+            <button type="edit" onClick={onEdit}>Edit</button>
         </div>
 
     );
