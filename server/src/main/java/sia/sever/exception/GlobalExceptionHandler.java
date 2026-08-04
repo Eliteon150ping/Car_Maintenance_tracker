@@ -38,12 +38,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(invalidMileageEntered, HttpStatus.BAD_REQUEST);
     }
 
+    // Handle Invalid date
+    @ExceptionHandler(InvalidDateException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidDate(InvalidDateException invalidDate, HttpServletRequest request){
+        ErrorResponse invalidDateEntered = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), invalidDate.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(invalidDateEntered, HttpStatus.BAD_REQUEST);
+    }
+
     // Handle Validation error input
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(ValidationException validationError, HttpServletRequest request){
         List<String> errorList = validationError.getErrors();
-        ErrorResponse ValidationInputError = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), validationError.getMessage(), request.getRequestURI(), errorList);
-        return new ResponseEntity<>(ValidationInputError, HttpStatus.BAD_REQUEST);
+        ErrorResponse validationInputError = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), validationError.getMessage(), request.getRequestURI(), errorList);
+        return new ResponseEntity<>(validationInputError, HttpStatus.BAD_REQUEST);
     }
 
     // Handle JWT token Expired
@@ -73,6 +80,14 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse( LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), "Invalid enum value: " + ex.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    // Handle Method Arguments not valid
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request){
+//        List<String> errorList = ex.getErrors();
+//        ErrorResponse exInputError = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getMessage(), request.getRequestURI(), errorList);
+//        return new ResponseEntity<>(ex, HttpStatus.BAD_REQUEST);
+//    }
 
     // Default fallback(Handle unexpected errors)
     @ExceptionHandler(Exception.class)

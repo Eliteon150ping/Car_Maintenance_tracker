@@ -59,6 +59,9 @@ function VehicleDetailsPage() {
             {showServiceForm ? <ServiceRecordForm
                 // All the props here are passed into serviceRecord form
 
+                vehicleMileage={vehicle.currentMileage}
+                latestServiceMileage={serviceRecords[0]?.mileageAtService}
+                latestServiceDate={serviceRecords[0]?.serviceDate}
                 // If editingServiceRecord is null, the form is being used to add a new record.
                 // If it contains a service record object, the form switches to edit mode.
                 serviceRecord={editingServiceRecord}
@@ -100,7 +103,7 @@ function VehicleDetailsPage() {
                     serviceType={serviceRecord.serviceType}
                     cost={serviceRecord.cost}
                     description={serviceRecord.description}
-                    remainingKM={serviceRecord.remainingKM}
+                    remainingKm={serviceRecord.remainingKm}
                     remainingDays={serviceRecord.remainingDays}
 
                     // Store the selected service record in state and open the form.

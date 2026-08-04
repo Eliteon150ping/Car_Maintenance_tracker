@@ -6,7 +6,7 @@ function VehicleCard({ id, brand, model, year, currentMileage }) {
         <Link to={`/vehicles/${id}`}>
             <div className="vehicle-card">
                 <h3>{year} {brand} {model}</h3>
-                <p>Mileage: {currentMileage} km</p>
+                <p>Mileage: {currentMileage.toLocaleString()} km</p>
             </div>
         </Link>
     );

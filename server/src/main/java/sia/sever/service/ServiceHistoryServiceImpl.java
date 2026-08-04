@@ -13,10 +13,7 @@ import sia.sever.entity.ServiceHistory;
 import sia.sever.entity.User;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
-import sia.sever.exception.InvalidClassException;
-import sia.sever.exception.InvalidMileageException;
-import sia.sever.exception.ResourceNotFoundException;
-import sia.sever.exception.UnauthorizedException;
+import sia.sever.exception.*;
 import sia.sever.repository.CarRepository;
 import sia.sever.repository.ServiceHistoryRepository;
 import java.time.LocalDate;
@@ -80,6 +77,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         serviceRecord.setServiceType(serviceRecordRequestDTO.getServiceType());
         serviceRecord.setCost(serviceRecordRequestDTO.getCost());
         serviceRecord.setDescription(serviceRecordRequestDTO.getDescription());
+        serviceRecord.setServiceDate(serviceRecordRequestDTO.getServiceDate());
         return serviceRecord;
     }
 
@@ -95,14 +93,25 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         Car car = getUserCar(carId, user);
         convertToEntity.setCar(car);
         ServiceHistory lastLatestServiceMileage = serviceHistoryRepository.findFirstByCarOrderByMileageAtServiceDesc(car);
+        ServiceHistory lastLatestServiceDate = serviceHistoryRepository.findFirstByCarOrderByServiceDateDesc(car);
 
         // Check if the service mileage is NOT more than the car's current mileage and NOT less than the last service
         validateMileage(convertToEntity);
         if(lastLatestServiceMileage != null) {
-            if (convertToEntity.getMileageAtService() < lastLatestServiceMileage.getMileageAtService()) {
+            if ((convertToEntity.getMileageAtService() < lastLatestServiceMileage.getMileageAtService())) {
                 throw new InvalidMileageException("New service mileage cannot be lower than the last latest service mileage");
             }
         }
+        // Check if the service date is NOT before the service's last service date
+        if(lastLatestServiceDate != null){
+            if(convertToEntity.getServiceDate().isBefore(lastLatestServiceDate.getServiceDate())){
+                throw new InvalidDateException("New service date cannot be before the " + lastLatestServiceDate.getServiceDate());
+            }
+        }
+        // Check if the service date is NOT after the present day
+//        if(convertToEntity.getServiceDate().isAfter(LocalDate.now())){
+//            throw new InvalidDateException("Service date cannot be in the future");
+//        }
 
         // Check if 'Other' service is selected then make use of custom notes for it
         validateOtherServiceDescription(serviceHistory);
