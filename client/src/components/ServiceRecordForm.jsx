@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { addServiceRecord, editServiceRecord, getServiceTypes } from "../api/vehicleDetailsApi";
 
 // Props come from VehicleDetailsPage
-function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicleMileage, latestServiceMileage , latestServiceDate}) {
+function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicleMileage, latestServiceMileage, latestServiceDate }) {
 
     const [serviceDate, setServiceDate] = useState("");
     const [mileageAtService, setMileageAtService] = useState("");
@@ -51,50 +51,85 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
     async function handleSubmit(event) {
         event.preventDefault();
 
-        const vaildationErrors = [];
-    
-        if (!serviceType) {
-            vaildationErrors.push("Please Select a Service type");
-        }
-        if (serviceType == "OTHER" && description.trim() == "") {
-            vaildationErrors.push("Service description is required for service type: OTHER");
-        }
-        if (Number(cost) <= 0) {
-            vaildationErrors.push("Cost cannot be negative or 0");
-        }
-        if (!serviceDate) {
-            vaildationErrors.push("Please select a date for the service");
-        }
-        if (Number(mileageAtService) <= 0) {
-            vaildationErrors.push("Mileage at service cannot be less than 0");
-        }
-        if (!mileageAtService) {
-            vaildationErrors.push("Mileage at service cannot be empty");
-        }
-        if(Number(mileageAtService) < Number(latestServiceMileage)){
-            vaildationErrors.push("Mileage cannot be lower than the last latest service mileage");
-        }
-        if(new Date(serviceDate) < new Date(latestServiceDate)){
-            vaildationErrors.push("Service date cannot be before the latest service date");
-        }
-        if(new Date(serviceDate) > new Date()){
-            vaildationErrors.push("Service date cannot be after the present day");
-        }
-        if (Number(mileageAtService) > vehicleMileage) {
-            vaildationErrors.push("New service mileage cannot be higher than the vehicle's current mileage");
+        const validationErrors = [];
+
+        function validateCost() {
+            if (!cost) {
+                validationErrors.push("Cost cannot be empty");
+
+            } else if (Number(cost) <= 0) {
+                validationErrors.push("Cost cannot be negative or 0");
+
+            }
         }
 
-        if(vaildationErrors.length > 0){
-            setErrors(vaildationErrors);
+        function validateDescription() {
+            if (serviceType == "OTHER" && description.trim() == "") {
+                validationErrors.push("Service description is required for service type: OTHER");
+            }
+        }
+
+        function validateServiceType() {
+            if (!serviceType) {
+                validationErrors.push("Please Select a Service type");
+            }
+        }
+
+        function validateServiceDate() {
+
+            if (!serviceDate) {
+                validationErrors.push("Please select a date for the service");
+
+            } else if (new Date(serviceDate) < new Date(latestServiceDate)) {
+                validationErrors.push("Service date cannot be before the latest service date");
+
+            } else if (new Date(serviceDate) > new Date()) {
+                validationErrors.push("Service date cannot be after the present day");
+
+            }
+        }
+
+        function validateServiceMileage() {
+
+            if (!mileageAtService) {
+                validationErrors.push("Mileage at service cannot be empty");
+
+            } else if (Number(mileageAtService) <= 0) {
+                validationErrors.push("Mileage at service cannot be less than 0");
+
+            } else if (Number(mileageAtService) < Number(latestServiceMileage)) {
+                validationErrors.push("Mileage cannot be lower than the last latest service mileage");
+
+            } else if (Number(mileageAtService) > vehicleMileage) {
+                validationErrors.push("New service mileage cannot be higher than the vehicle's current mileage. Please update the vehicle's mileage first");
+            }
+        }
+
+        if (serviceRecord != null) {
+
+            validateCost();
+            validateDescription();
+
+        } else {
+
+            validateServiceType();
+            validateDescription();
+            validateCost();
+            validateServiceDate();
+            validateServiceMileage();
+        }
+
+        if (validationErrors.length > 0) {
+            setErrors(validationErrors);
             return;
         }
 
         setErrors([]);
         try {
-            if (serviceRecord == null) {
-                await addServiceRecord(carId, formData);
-            } else {
+            if (serviceRecord != null) {
                 await editServiceRecord(carId, id, formData);
+            } else {
+                await addServiceRecord(carId, formData);
             }
             onSave();
         } catch (error) {

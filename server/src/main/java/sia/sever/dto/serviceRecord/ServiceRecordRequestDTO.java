@@ -8,7 +8,7 @@ public class ServiceRecordRequestDTO {
 
     // Fields
     @NotNull
-    @PastOrPresent
+    @PastOrPresent(message = "Service date cannot be in the future.")
     private LocalDate serviceDate;
     @NotNull
     @Min(0)
