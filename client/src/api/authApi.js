@@ -1,3 +1,24 @@
+// Register new user
+export async function register(userName, email, password) {
+
+    const user = { userName, email, password };
+    const jsonString = JSON.stringify(user);
+
+    const response = await fetch("http://localhost:8080/api/users/auth/register", {
+
+        method: "POST",
+        body: jsonString,
+        headers: { "Content-Type": "application/json" }
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+    }
+
+    const registerData = await response.json();
+    return registerData;
+}
+
 // Login user
 export async function login(email, password) {
 
@@ -22,7 +43,7 @@ export async function login(email, password) {
         method: "POST",   // Tells what type of method to use the data for: post, get, delete etc.
         body: jsonString, // The JSON representation of the object being sent to the backend.
         headers: { "Content-Type": "application/json" }     // This tells what format data type is to be deserialized 
-                                                            // to the backend: json, xml, hmtl etc.
+        // to the backend: json, xml, hmtl etc.
     });
 
     if (!response.ok) {
@@ -34,7 +55,7 @@ export async function login(email, password) {
 }
 
 // Get the current user
-export async function getCurrentUser(){
+export async function getCurrentUser() {
 
     const token = localStorage.getItem("token");
 
@@ -46,12 +67,36 @@ export async function getCurrentUser(){
         }
     });
 
-    if(!response.ok){
+    if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
     }
 
     const currentUser = await response.json();
     return currentUser;
+}
+
+// Update user details
+export async function updateUserDetails(profile) {
+
+    const token = localStorage.getItem("token");
+    const jsonUpdateProfile = JSON.stringify(profile);
+
+    const response = await fetch("http://localhost:8080/api/users/profile", {
+
+        method: "PUT",
+        body: jsonUpdateProfile,
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+    }
+
+    const updatedUserDetails = await response.json();
+    return updatedUserDetails;
 }
 
 /* 

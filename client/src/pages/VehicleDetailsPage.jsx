@@ -55,7 +55,7 @@ function VehicleDetailsPage() {
                 />
             )}
 
-            
+
             {showServiceForm ? <ServiceRecordForm
                 // All the props here are passed into serviceRecord form
 
@@ -73,7 +73,7 @@ function VehicleDetailsPage() {
                 // Cancel clears the current editing record and hides the form.
                 onCancel={() => {
                     setEditingServiceRecord(null),
-                    setShowServiceForm(false)
+                        setShowServiceForm(false)
                 }}
 
                 // After saving:
@@ -85,11 +85,11 @@ function VehicleDetailsPage() {
                     setEditingServiceRecord(null);
                     setShowServiceForm(false);
 
-                // Show the Add button when the form is hidden.
-                // Clicking it clears any editing record and opens a blank form.
+                    // Show the Add button when the form is hidden.
+                    // Clicking it clears any editing record and opens a blank form.
                 }} /> : <button onClick={() => {
                     setEditingServiceRecord(null),
-                    setShowServiceForm(true)
+                        setShowServiceForm(true)
                 }}>Add service record</button>}
 
             {serviceRecords.map(serviceRecord => (

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { login as loginApi } from "../api/authApi";
 import { getCurrentUser as currentUserApi } from "../api/authApi";
+import {register as registerApi} from "../api/authApi"
 
 // This acts as the central hub of who's logged in so the rest of the components or pages knows to check in
 // here to see who's currently logged in and if its valid
@@ -28,11 +29,16 @@ export function AuthProvider({ children }) {     // this will be exported to be 
         localStorage.setItem("token", loginData.token); // Store the JWT token once the user logs in
     }
 
+    async function register(userName, email, password) {
+        await registerApi(userName, email, password);
+        await login(email, password);
+    }
+
     const value = {
         user,
         loading,
-        login                                  // Here we STORE the function instead of just calling it and 
-                                               // potentaily calling it at the wrong time
+        login,                                  // Here we STORE the function instead of just calling it and 
+        register                                // potentaily calling it at the wrong time
     };
 
     // Function to handle existing JWT's in the local Storage

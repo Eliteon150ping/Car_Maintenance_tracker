@@ -108,10 +108,6 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 throw new InvalidDateException("New service date cannot be before the " + lastLatestServiceDate.getServiceDate());
             }
         }
-        // Check if the service date is NOT after the present day
-//        if(convertToEntity.getServiceDate().isAfter(LocalDate.now())){
-//            throw new InvalidDateException("Service date cannot be in the future");
-//        }
 
         // Check if 'Other' service is selected then make use of custom notes for it
         validateOtherServiceDescription(serviceHistory);

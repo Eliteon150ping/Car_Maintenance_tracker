@@ -6,6 +6,8 @@ import VehicleDetailsPage from "./pages/VehicleDetailsPage";
 import VehiclesPage from "./pages/VehiclesPage";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RegisterPage from "./pages/RegisterPage";
+import Profile from "./pages/Profile";
 
 // Root component responsible for application routing
 function App() {
@@ -27,6 +29,20 @@ function App() {
             <LoginPage />
           </MainLayout>
         } />
+
+        <Route path="/register" element={
+          <MainLayout>
+            <RegisterPage />
+          </MainLayout>
+        }/>
+
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <MainLayout>
+            <Profile />
+          </MainLayout>
+          </ProtectedRoute>
+        }/>
         
         <Route path="/vehicles" element={
           <ProtectedRoute>
