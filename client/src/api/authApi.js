@@ -46,11 +46,16 @@ export async function login(email, password) {
         // to the backend: json, xml, hmtl etc.
     });
 
+    const loginData = await response.json();
+
     if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
+        const error = new Error(loginData.message || "Unable to login in");
+
+        error.errors = loginData.errors || [];
+
+        throw error;
     }
 
-    const loginData = await response.json();
     return loginData;
 }
 
@@ -91,11 +96,16 @@ export async function updateUserDetails(profile) {
         }
     });
 
+    const updatedUserDetails = await response.json();
+
     if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
+        const error = new Error(updatedUserDetails.message || "Unable to update profile");
+
+        error.errors = updatedUserDetails.errors || [];
+
+        throw error;
     }
 
-    const updatedUserDetails = await response.json();
     return updatedUserDetails;
 }
 

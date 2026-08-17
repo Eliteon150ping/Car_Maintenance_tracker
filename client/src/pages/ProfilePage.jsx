@@ -4,7 +4,7 @@ import UserDetailsCard from "../components/UserDetailsCard";
 import { getCurrentUser } from "../api/authApi";
 import UpdateProfileForm from "../components/UpdateProfileForm";
 
-function Profile() {
+function ProfilePage() {
 
     const [profile, setProfile] = useState(null);
     const [showEditingForm, setShowEditingForm] = useState(false);
@@ -58,4 +58,4 @@ function Profile() {
     );
 }
 
-export default Profile;
+export default ProfilePage;

@@ -10,7 +10,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
 
     const formData = {
         userName,
-        password
+        password: password.trim() == "" ? null : password
     };
 
     useEffect(() => {
@@ -30,9 +30,20 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
         function validateNewUserName() {
             if (userName.trim() == "") {
                 validationErrors.push("Username cannot be empty");
+
+            }else if(userName !== "" && userName.length < 3){
+                validationErrors.push("Username must be atleast 3 characters long");
             }
         }
         validateNewUserName();
+
+        function validatePassword(){
+            if(password !== "" && password.length < 8){
+                validationErrors.push("Password must be atleast 8 characters long");
+            }
+        }
+        validatePassword();
+        
 
         if (validationErrors.length > 0) {
             setErrors(validationErrors);
@@ -46,7 +57,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
 
         } catch (error) {
             console.error("Error caught " + error.message);
-            setErrors(["Unable to update profile"]);
+            setErrors([error.errors?.length ? error.errors : [error.message]]);
         }
     }
 
@@ -55,6 +66,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
         <form onSubmit={handleSubmit}>
             <label>Username
                 <input type="username"
+                    placeholder="Enter a new username"
                     value={userName}
                     onChange={(event) => setUserName(event.target.value)} />
             </label>
@@ -66,7 +78,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
             </label>
             <label>Password
                 <input type="password"
-                    placeholder="Enter a new password"
+                    placeholder="(Optional) Enter a new password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)} />
             </label>

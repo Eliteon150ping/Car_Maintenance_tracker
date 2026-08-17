@@ -7,7 +7,7 @@ import VehiclesPage from "./pages/VehiclesPage";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterPage from "./pages/RegisterPage";
-import Profile from "./pages/Profile";
+import ProfilePage from "./pages/ProfilePage";
 
 // Root component responsible for application routing
 function App() {
@@ -39,7 +39,7 @@ function App() {
         <Route path="/profile" element={
           <ProtectedRoute>
             <MainLayout>
-            <Profile />
+            <ProfilePage />
           </MainLayout>
           </ProtectedRoute>
         }/>

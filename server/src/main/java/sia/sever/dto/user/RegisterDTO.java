@@ -9,6 +9,7 @@ public class RegisterDTO {
 
     // Fields
     @NotBlank(message = "Username is required")
+    @Size(min = 3, message = "Username must be at least 3 characters long")
     private String userName;
     @NotBlank(message = "Email is required")
     @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",
