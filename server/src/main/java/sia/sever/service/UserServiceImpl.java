@@ -55,10 +55,10 @@ public class UserServiceImpl implements UserService {
         User validateUsername = userRepository.findByUserName(user.getUserName());
         List<String> errorList = new ArrayList<>();
         if (validateUsername != null) {
-            errorList.add("This username already exists");
+            errorList.add(" This username already exists, please try a different one ");
         }
         if (validateEmail != null) {
-            errorList.add("This email already exists");
+            errorList.add(" This email already exists, please try a different one ");
         }
         if (!errorList.isEmpty()) {
             throw new ValidationException("Validation failed", errorList);

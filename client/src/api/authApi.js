@@ -11,11 +11,16 @@ export async function register(userName, email, password) {
         headers: { "Content-Type": "application/json" }
     });
 
+    const registerData = await response.json();
+
     if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
+        const error = new Error(registerData.message || "Unable to register, please try again later");
+
+        error.errors = registerData.errors || [];
+
+        throw error;
     }
 
-    const registerData = await response.json();
     return registerData;
 }
 
@@ -49,7 +54,7 @@ export async function login(email, password) {
     const loginData = await response.json();
 
     if (!response.ok) {
-        const error = new Error(loginData.message || "Unable to login in");
+        const error = new Error(loginData.message || "Unable to login in, please try again later");
 
         error.errors = loginData.errors || [];
 
@@ -99,7 +104,7 @@ export async function updateUserDetails(profile) {
     const updatedUserDetails = await response.json();
 
     if (!response.ok) {
-        const error = new Error(updatedUserDetails.message || "Unable to update profile");
+        const error = new Error(updatedUserDetails.message || "Unable to update profile, please try again later");
 
         error.errors = updatedUserDetails.errors || [];
 

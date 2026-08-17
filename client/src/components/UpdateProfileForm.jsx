@@ -57,7 +57,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
 
         } catch (error) {
             console.error("Error caught " + error.message);
-            setErrors([error.errors?.length ? error.errors : [error.message]]);
+            setErrors(error.errors?.length ? error.errors : [error.message]);
         }
     }
 
