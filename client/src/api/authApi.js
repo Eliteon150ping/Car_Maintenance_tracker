@@ -114,6 +114,24 @@ export async function updateUserDetails(profile) {
     return updatedUserDetails;
 }
 
+// Delete User's account
+export async function deleteAccount(){
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:8080/api/users/profile", {
+
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if(!response.ok){
+        throw new Error(`HTTP ${response.status}`);
+    }
+}
+
 /* 
 
 How the flow of data gets sent through the frontend and backend:

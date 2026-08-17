@@ -34,11 +34,17 @@ export function AuthProvider({ children }) {     // this will be exported to be 
         await login(email, password);
     }
 
+    function logout(){
+        localStorage.removeItem("token");
+        setUser(null);
+    }
+
     const value = {
         user,
         loading,
         login,                                  // Here we STORE the function instead of just calling it and 
-        register                                // potentaily calling it at the wrong time
+        register,                               // potentaily calling it at the wrong time
+        logout
     };
 
     // Function to handle existing JWT's in the local Storage

@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import UserDetailsCard from "../components/UserDetailsCard";
-import { getCurrentUser } from "../api/authApi";
+import { deleteAccount, getCurrentUser } from "../api/authApi";
 import UpdateProfileForm from "../components/UpdateProfileForm";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 function ProfilePage() {
 
     const [profile, setProfile] = useState(null);
     const [showEditingForm, setShowEditingForm] = useState(false);
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+    const [errors, setErrors] = useState([]);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     useEffect(() => {
 
@@ -18,6 +25,20 @@ function ProfilePage() {
     async function loadProfile() {
         const data = await getCurrentUser();
         setProfile(data);
+    }
+
+    async function handleDeleteAccount() {
+
+        setErrors([]);
+        try {
+            await deleteAccount();
+            logout();
+            navigate("/login");
+
+        } catch (error) {
+            console.error(`Error caught: ${error.message}`);
+            setErrors(["Unable to delete account, please try again later"]);
+        }
     }
 
     return (
@@ -54,6 +75,29 @@ function ProfilePage() {
                 }}
             />
                 : <button onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>}
+
+            <button onClick={() => {
+                logout();
+                navigate("/login")
+            }}>Logout</button>
+            {errors.length > 0 && (
+                <ul style={{ color: "red" }}>
+                    {errors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                    ))}
+                </ul>
+            )}
+            <button onClick={() => setShowDeleteConfirmation(true)}>Delete Account</button>
+            {showDeleteConfirmation && (
+                <ConfirmationModal
+                    title="Delete Account"
+                    message="Are you sure you want to delete your account? This will erase all associated data with your account and it cannot be undone."
+                    confirmText="Delete Account"
+                    cancelText="Cancel"
+                    onConfirm={handleDeleteAccount}
+                    onCancel={() => setShowDeleteConfirmation(false)} X
+                />
+            )}
         </>
     );
 }

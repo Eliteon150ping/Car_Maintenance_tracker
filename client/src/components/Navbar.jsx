@@ -1,29 +1,29 @@
 // Components are reusable pieces of UI that can be shared across multiple pages to avoid duplicating code
 import { Link } from "react-router-dom";
 import "../styles/Navbar.css"
+import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
+
+    const { user } = useAuth();
 
     return (
         <nav>
             <h2>Car Maintenance Tracker</h2>
-            <ul>
-                <li>
+            {user ? (
+                <ul>
                     <Link to="/">Dashboard</Link>
-                </li>
-                <li>
                     <Link to="/vehicles">My Garage</Link>
-                </li>
-                <li>
-                    <Link to="/login">Login</Link>
-                </li>
-                <li>
-                    <Link to="/register">Register</Link>
-                </li>
-                <li>
                     <Link to="/profile">Profile</Link>
-                </li>
-            </ul>
+
+                </ul>
+            ) : (
+                <ul>
+                    <Link to="/login">Login</Link>
+                    <Link to="/register">Register</Link>
+                </ul>
+            )}
+
         </nav>
     );
 }
