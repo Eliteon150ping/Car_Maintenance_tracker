@@ -2,6 +2,7 @@ import PageHeader from "../components/PageHeader";
 import VehicleCard from "../components/VehicleCard";
 import { useState, useEffect } from "react";
 import { getAllVehicles } from "../api/vehicleApi.js";
+import CarForm from "../components/CarForm.jsx";
 
 function VehiclesPage() {
 
@@ -9,6 +10,8 @@ function VehiclesPage() {
                                                    // coming through the VehicleApi.js can change while the app is
                                                    // runing, in this case we're expecting an array of vehicle
                                                    // objects to come in
+    
+    const [showCarFrom, setShowCarForm] = useState(false);
     
     useEffect(() => {                              
 
@@ -31,6 +34,13 @@ function VehiclesPage() {
                 title="My Garage"
                 description="View your entire vehicle catalogue here"
             />
+
+            {showCarFrom ? <CarForm 
+            
+            
+            /> : <button onClick={() => {
+                setShowCarForm(true);
+            }}>Add Car</button>}
 
             {vehicles.map(vehicle =>(
                 <VehicleCard

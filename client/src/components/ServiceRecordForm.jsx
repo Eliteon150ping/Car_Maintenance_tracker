@@ -151,23 +151,30 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                 ))}
             </select>
             <label>Description
-                <input type="text" name="description"
+                <input type="text"
+                    name="description"
                     value={description}
                     onChange={(event) => setDescription(event.target.value)} />
             </label>
-            <label>Service Date<input type="date" name="service-date"
-                value={serviceDate}
-                disabled={serviceRecord != null}
-                onChange={(event) => setServiceDate(event.target.value)} />
+            <label>Service Date
+                <input type="date"
+                    name="service-date"
+                    value={serviceDate}
+                    disabled={serviceRecord != null}
+                    onChange={(event) => setServiceDate(event.target.value)} />
             </label>
-            <label>Mileage At Service<input type="number" name="mileage-at-service"
-                value={mileageAtService}
-                disabled={serviceRecord != null}
-                onChange={(event) => setMileageAtService(event.target.value)} />
+            <label>Mileage At Service
+                <input type="number"
+                    name="mileage-at-service"
+                    value={mileageAtService}
+                    disabled={serviceRecord != null}
+                    onChange={(event) => setMileageAtService(event.target.value)} />
             </label>
-            <label>Cost<input type="number" name="cost"
-                value={cost}
-                onChange={(event) => setCost(event.target.value)} />
+            <label>Cost
+                <input type="number"
+                    name="cost"
+                    value={cost}
+                    onChange={(event) => setCost(event.target.value)} />
             </label>
             {errors.length > 0 && (
                 <ul style={{ color: "red" }}>
