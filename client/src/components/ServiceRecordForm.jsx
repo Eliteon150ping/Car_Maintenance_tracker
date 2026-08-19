@@ -141,21 +141,27 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
     return (
 
         <form onSubmit={handleSubmit}>
+
             <h2 style={{ color: 'black' }}>{serviceRecord ? "Edit Service Record" : "Add Service Record"}</h2>
+
             <select value={serviceType}
                 disabled={serviceRecord != null}
                 onChange={(event) => setServiceType(event.target.value)} >
+
                 <option value="">Select Service</option>
                 {serviceTypes.map(type => (
                     <option key={type.value} value={type.value}>{type.displayName}</option>
                 ))}
+                
             </select>
+
             <label>Description
                 <input type="text"
                     name="description"
                     value={description}
                     onChange={(event) => setDescription(event.target.value)} />
             </label>
+
             <label>Service Date
                 <input type="date"
                     name="service-date"
@@ -163,6 +169,7 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                     disabled={serviceRecord != null}
                     onChange={(event) => setServiceDate(event.target.value)} />
             </label>
+
             <label>Mileage At Service
                 <input type="number"
                     name="mileage-at-service"
@@ -170,12 +177,14 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                     disabled={serviceRecord != null}
                     onChange={(event) => setMileageAtService(event.target.value)} />
             </label>
+
             <label>Cost
                 <input type="number"
                     name="cost"
                     value={cost}
                     onChange={(event) => setCost(event.target.value)} />
             </label>
+
             {errors.length > 0 && (
                 <ul style={{ color: "red" }}>
                     {errors.map((error, index) => (
@@ -183,6 +192,7 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                     ))}
                 </ul>
             )}
+
             <button type="submit" >{serviceRecord ? "Save changes" : "Add"}</button>
             <button type="button" onClick={onCancel}>Cancel</button>
         </form>

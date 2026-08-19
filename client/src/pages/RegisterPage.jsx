@@ -67,24 +67,28 @@ function RegisterPage() {
             />
 
             <form onSubmit={handleSubmit}>
+
                 <label>Username
                     <input type="username"
                         placeholder="eg. John Doe"
                         value={userName}
                         onChange={(event) => setUserName(event.target.value)} />
                 </label>
+
                 <label>Email
                     <input type="email"
                         placeholder="eg. JohnDoe@gmail.com"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)} />
                 </label>
+
                 <label>Password
                     <input type="password"
                         placeholder="eg. JohnDoe123456"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)} />
                 </label>
+
                 {errors.length > 0 && (
                     <ul style={{ color: "red" }}>
                         {errors.map((error, index) => (
@@ -92,6 +96,7 @@ function RegisterPage() {
                         ))}
                     </ul>
                 )}
+
                 <button type="submit">Register</button>
             </form>
         </div>

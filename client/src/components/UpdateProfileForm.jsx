@@ -31,19 +31,19 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
             if (userName.trim() == "") {
                 validationErrors.push("Username cannot be empty");
 
-            }else if(userName !== "" && userName.length < 3){
+            } else if (userName !== "" && userName.length < 3) {
                 validationErrors.push("Username must be atleast 3 characters long");
             }
         }
         validateNewUserName();
 
-        function validatePassword(){
-            if(password !== "" && password.length < 8){
+        function validatePassword() {
+            if (password !== "" && password.length < 8) {
                 validationErrors.push("Password must be atleast 8 characters long");
             }
         }
         validatePassword();
-        
+
 
         if (validationErrors.length > 0) {
             setErrors(validationErrors);
@@ -64,24 +64,28 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
     return (
 
         <form onSubmit={handleSubmit}>
+
             <label>Username
-                <input type="username"
+                <input type="text"
                     placeholder="Enter a new username"
                     value={userName}
                     onChange={(event) => setUserName(event.target.value)} />
             </label>
+
             <label>Email
                 <input type="email"
                     value={email}
                     disabled={true}
                     onChange={(event) => setEmail(event.target.value)} />
             </label>
+
             <label>Password
                 <input type="password"
                     placeholder="(Optional) Enter a new password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)} />
             </label>
+
             {errors.length > 0 && (
                 <ul style={{ color: "red" }}>
                     {errors.map((error, index) => (
@@ -89,6 +93,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
                     ))}
                 </ul>
             )}
+
             <button type="submit">Save changes</button>
             <button type="button" onClick={onCancel}>Cancel</button>
         </form>

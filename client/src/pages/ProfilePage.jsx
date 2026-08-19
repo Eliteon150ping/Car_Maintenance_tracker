@@ -70,11 +70,9 @@ function ProfilePage() {
                 }}
 
                 onCancel={() => {
-                    loadProfile();
                     setShowEditingForm(false);
                 }}
-            />
-                : <button onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>}
+            /> : <button onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>}
 
             <button onClick={() => {
                 logout();
@@ -87,6 +85,7 @@ function ProfilePage() {
                     ))}
                 </ul>
             )}
+
             <button onClick={() => setShowDeleteConfirmation(true)}>Delete Account</button>
             {showDeleteConfirmation && (
                 <ConfirmationModal

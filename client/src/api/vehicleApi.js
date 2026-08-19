@@ -21,6 +21,56 @@ export async function getAllVehicles() { // Async functions performs work that t
     return vehicles;
 }
 
+// Add a new car
+export async function addCar(carData) {
+    
+    const token = localStorage.getItem("token");
+    const jsonCarData = JSON.stringify(carData);
+
+    const response = await fetch("http://localhost:8080/api/my-cars", {
+
+        method: "POST",
+        body: jsonCarData,
+        headers:{
+            Authorization: `Bearer ${token}`,
+            "Content-Type" : "application/json"
+        }
+    });
+
+    if(!response.ok){
+        throw new Error(`HTTP ${response.status}`)
+    }
+
+    const createdCar = await response.json();
+    return createdCar;
+}
+
+// Edit a car
+export async function editCar(id, carData){
+
+    const token = localStorage.getItem("token");
+    const jsonCarData = JSON.stringify(carData);
+
+    const response = await fetch(`http://localhost:8080/api/my-cars/${id}`, {
+
+        method: "PUT",
+        body: jsonCarData,
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type" : "application/json"
+        }
+    });
+
+    if(!response.ok){
+        throw new Error(`HTTP ${response.status}`)
+    }
+
+    const updatedCar = await response.json();
+    return updatedCar;
+}
+
+// Delete a car
+
 /*
 This frontend API function does:
 

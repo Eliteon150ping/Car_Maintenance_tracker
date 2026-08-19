@@ -7,6 +7,7 @@ function VehicleCard({ id, brand, model, year, currentMileage }) {
             <div className="vehicle-card">
                 <h3>{year} {brand} {model}</h3>
                 <p>Mileage: {currentMileage.toLocaleString()} km</p>
+                <button type="edit">Edit</button>
             </div>
         </Link>
     );
