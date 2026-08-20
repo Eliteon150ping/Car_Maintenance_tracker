@@ -1,15 +1,17 @@
 import { Link } from "react-router-dom";
 
-function VehicleCard({ id, brand, model, year, currentMileage }) {
+function VehicleCard({ id, brand, model, year, currentMileage, onEdit }) {
 
     return (
-        <Link to={`/vehicles/${id}`}>
-            <div className="vehicle-card">
-                <h3>{year} {brand} {model}</h3>
-                <p>Mileage: {currentMileage.toLocaleString()} km</p>
-                <button type="edit">Edit</button>
-            </div>
-        </Link>
+        <div>
+            <Link to={`/vehicles/${id}`}>
+                <div className="vehicle-card">
+                    <h3>{year} {brand} {model}</h3>
+                    <p>Mileage: {currentMileage.toLocaleString()} km</p>
+                </div>
+            </Link>
+            <button type="edit" onClick={onEdit}>Edit</button>
+        </div>
     );
 }
 

@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { addCar } from "../api/vehicleApi";
+import { useEffect, useState } from "react";
+import { addCar, editCar } from "../api/vehicleApi";
 
-function CarForm({onCancel, onSave}) {
+function CarForm({ onCancel, onSave, editingCarForm, carId, onEdit }) {
 
     const [brand, setBrand] = useState("");
     const [model, setModel] = useState("");
@@ -17,11 +17,33 @@ function CarForm({onCancel, onSave}) {
         currentMileage
     };
 
+    useEffect(() => {
+
+        if (editingCarForm != null) {
+            setBrand(editingCarForm.brand);
+            setModel(editingCarForm.model);
+            setYear(editingCarForm.year);
+            setColour(editingCarForm.colour);
+            setCurrentMileage(editingCarForm.currentMileage);
+        } else {
+            setBrand("");
+            setModel("");
+            setYear("");
+            setColour("");
+            setCurrentMileage("");
+        }
+
+    }, [editingCarForm])
+
     async function handleSubmit(event) {
         event.preventDefault();
 
         try {
-            await addCar(formData);
+            if (editingCarForm != null) {
+                await editCar(carId, formData);
+            } else {
+                await addCar(formData);
+            }
             onSave();
         } catch (error) {
             console.error("Error caught: " + error.message);

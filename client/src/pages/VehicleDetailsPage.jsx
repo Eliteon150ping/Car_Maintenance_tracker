@@ -52,6 +52,11 @@ function VehicleDetailsPage() {
                     year={vehicle.year}
                     colour={vehicle.colour}
                     currentMileage={vehicle.currentMileage}
+
+                    // onEdit={() => {
+                    //     setEditingCarForm(editingCarForm);
+                    //     setShowCarForm(true);
+                    // }}
                 />
             )}
 

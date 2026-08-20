@@ -3,6 +3,7 @@ import VehicleCard from "../components/VehicleCard";
 import { useState, useEffect } from "react";
 import { getAllVehicles } from "../api/vehicleApi.js";
 import CarForm from "../components/CarForm.jsx";
+import { useParams } from "react-router-dom";
 
 function VehiclesPage() {
 
@@ -11,6 +12,7 @@ function VehiclesPage() {
     // runing, in this case we're expecting an array of vehicle
     // objects to come in
 
+    const {id} = useParams();
     const [showCarForm, setShowCarForm] = useState(false);
     const [editingCarForm, setEditingCarForm] = useState(false);
 
@@ -51,6 +53,9 @@ function VehiclesPage() {
 
             {showCarForm ? <CarForm
 
+               editingCarForm={editingCarForm}
+               carId={id}
+
                 onSave={() => {
                     loadVehicles();
                     setShowCarForm(false);
@@ -73,6 +78,11 @@ function VehiclesPage() {
                     year={vehicle.year}
                     colour={vehicle.colour}
                     currentMileage={vehicle.currentMileage}
+
+                    onEdit={() => {
+                        setEditingCarForm(editingCarForm);
+                        setShowCarForm(true);
+                    }}
                 />
             ))}
 
