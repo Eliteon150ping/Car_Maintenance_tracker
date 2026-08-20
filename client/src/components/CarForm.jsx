@@ -100,7 +100,7 @@ function CarForm({ onCancel, onSave, editingCarForm, carId, onEdit }) {
                     onChange={(event) => setCurrentMileage(event.target.value)} />
             </label>
 
-            <button type="submit" >Add Car</button>
+            <button type="submit" >{editingCarForm ? "Save changes" : "Add car"}</button>
             <button type="button" onClick={onCancel}>Cancel</button>
         </form>
     );

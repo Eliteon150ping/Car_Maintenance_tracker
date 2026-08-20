@@ -14,7 +14,7 @@ function VehiclesPage() {
 
     const {id} = useParams();
     const [showCarForm, setShowCarForm] = useState(false);
-    const [editingCarForm, setEditingCarForm] = useState(false);
+    const [editingCarForm, setEditingCarForm] = useState(null);
 
     useEffect(() => {
 
@@ -66,6 +66,7 @@ function VehiclesPage() {
                 }}
 
             /> : <button onClick={() => {
+                setEditingCarForm(null);
                 setShowCarForm(true);
             }}>Add Car</button>}
 
@@ -80,7 +81,7 @@ function VehiclesPage() {
                     currentMileage={vehicle.currentMileage}
 
                     onEdit={() => {
-                        setEditingCarForm(editingCarForm);
+                        setEditingCarForm(vehicle);
                         setShowCarForm(true);
                     }}
                 />
