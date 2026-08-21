@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function VehicleCard({ id, brand, model, year, currentMileage, onEdit }) {
+function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete }) {
 
     return (
         <div>
@@ -11,6 +11,7 @@ function VehicleCard({ id, brand, model, year, currentMileage, onEdit }) {
                 </div>
             </Link>
             <button type="edit" onClick={onEdit}>Edit</button>
+            <button onClick={onDelete}>Delete</button>
         </div>
     );
 }

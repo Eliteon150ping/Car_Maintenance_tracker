@@ -18,6 +18,6 @@ public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificatio
        existsById(Long id)                                                                              */
 
    // So if you want custom methods for filtering, make them here or use Specification methods instead:
-    List<Car> findAllByUser(User user);
+    List<Car> findAllByUserOrderByIdAsc(User user);
     Optional<Car> findByIdAndUser(Long id, User user);
 }

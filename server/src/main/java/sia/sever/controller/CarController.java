@@ -4,7 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sia.sever.dto.car.CarRequestDTO;
+import sia.sever.dto.car.CreateCarDTO;
+import sia.sever.dto.car.UpdateCarDTO;
 import sia.sever.service.CarService;
 import sia.sever.dto.car.CarResponseDTO;
 import java.util.List;
@@ -37,7 +38,7 @@ public class CarController {
 
     // Create car
     @PostMapping
-    public ResponseEntity<CarResponseDTO> createCar(@Valid @RequestBody CarRequestDTO car) {
+    public ResponseEntity<CarResponseDTO> createCar(@Valid @RequestBody CreateCarDTO car) {
         CarResponseDTO createdCar = carService.createCar(car);
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
     }
@@ -58,7 +59,7 @@ public class CarController {
 
     // Update car by id
     @PutMapping("/{id}")
-    public ResponseEntity<CarResponseDTO> updateCarById(@PathVariable Long id, @Valid @RequestBody CarRequestDTO car){
+    public ResponseEntity<CarResponseDTO> updateCarById(@PathVariable Long id, @Valid @RequestBody UpdateCarDTO car){
         CarResponseDTO updatedCar = carService.updateCar(id, car);
         return ResponseEntity.ok(updatedCar);
     }

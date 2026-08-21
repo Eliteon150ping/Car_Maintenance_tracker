@@ -94,7 +94,7 @@ function ProfilePage() {
                     confirmText="Delete Account"
                     cancelText="Cancel"
                     onConfirm={handleDeleteAccount}
-                    onCancel={() => setShowDeleteConfirmation(false)} X
+                    onCancel={() => setShowDeleteConfirmation(false)}
                 />
             )}
         </>

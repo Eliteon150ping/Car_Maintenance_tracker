@@ -6,8 +6,9 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import sia.sever.dto.car.CarRequestDTO;
+import sia.sever.dto.car.CreateCarDTO;
 import sia.sever.dto.car.CarResponseDTO;
+import sia.sever.dto.car.UpdateCarDTO;
 import sia.sever.entity.Car;
 import sia.sever.entity.User;
 import sia.sever.exception.InvalidMileageException;
@@ -41,19 +42,30 @@ public class CarServiceImpl implements CarService {
     }
 
     // Mapper for carRequestDTO to convert to a car object
-    private Car mapToEntity(CarRequestDTO carRequestDTO) {
+    private Car mapToEntity(CreateCarDTO createCarDTO) {
         Car car = new Car();
-        car.setBrand(carRequestDTO.getBrand());
-        car.setModel(carRequestDTO.getModel());
-        car.setYear(carRequestDTO.getYear());
-        car.setColour(carRequestDTO.getColour());
-        car.setCurrentMileage(carRequestDTO.getCurrentMileage());
+        car.setBrand(createCarDTO.getBrand());
+        car.setModel(createCarDTO.getModel());
+        car.setYear(createCarDTO.getYear());
+        car.setColour(createCarDTO.getColour());
+        car.setCurrentMileage(createCarDTO.getCurrentMileage());
         return car;
+    }
+
+    // Mapper to apply update DTO changes to an existing managed entity
+    private void updateEntityFromDTO(UpdateCarDTO updateCarDTO, Car existingCar){
+
+        if(updateCarDTO.getColour() != null){
+            existingCar.setColour(updateCarDTO.getColour());
+        }
+        if(updateCarDTO.getCurrentMileage() != null){
+            existingCar.setCurrentMileage(updateCarDTO.getCurrentMileage());
+        }
     }
 
     // Create a car
     @Override
-    public CarResponseDTO createCar(CarRequestDTO car) {
+    public CarResponseDTO createCar(CreateCarDTO car) {
         Car convertToEntity = mapToEntity(car);
         User user = getAuthenticatedUser();
         convertToEntity.setUser(user);
@@ -65,7 +77,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public List<CarResponseDTO> getAllCars() {
         User user = getAuthenticatedUser();
-        List<Car> findAllCars = carRepository.findAllByUser(user);
+        List<Car> findAllCars = carRepository.findAllByUserOrderByIdAsc(user);
         return findAllCars.stream()
                 .map(this::mapToCarResponseDTO)
                 .collect(Collectors.toList());
@@ -73,25 +85,20 @@ public class CarServiceImpl implements CarService {
 
     // Update an existing car
     @Override
-    public CarResponseDTO updateCar(Long id, CarRequestDTO updatedCar) {
+    public CarResponseDTO updateCar(Long id, UpdateCarDTO updatedCar) {
 
-        Car convertToEntity = mapToEntity(updatedCar);
         User user = getAuthenticatedUser();
 
         // First Check if an entity exists before continuing with updating
         Car existingCar = getUserCar(id, user);
 
         // Check if the new mileage is NOT lower than the current mileage
-        if (convertToEntity.getCurrentMileage() < existingCar.getCurrentMileage()) {
+        if (updatedCar.getCurrentMileage() != null && updatedCar.getCurrentMileage()
+                < existingCar.getCurrentMileage()) {
             throw new InvalidMileageException("Updated mileage cannot be less than current mileage");
         }
 
-        // If entity exists then update all its selected fields using the getter and setter methods
-        existingCar.setBrand(convertToEntity.getBrand());
-        existingCar.setModel(convertToEntity.getModel());
-        existingCar.setYear(convertToEntity.getYear());
-        existingCar.setColour(convertToEntity.getColour());
-        existingCar.setCurrentMileage(convertToEntity.getCurrentMileage());
+        updateEntityFromDTO(updatedCar, existingCar);
 
         Car updatedCarInfo = carRepository.save(existingCar);
         return mapToCarResponseDTO(updatedCarInfo);

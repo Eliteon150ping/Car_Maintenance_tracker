@@ -1,4 +1,4 @@
-function VehicleInformationCard({ id, brand, model, year, colour, currentMileage, onEdit }) {
+function VehicleInformationCard({ brand, model, year, colour, currentMileage, onEdit }) {
 
     return (
             <div className="vehicle-information">

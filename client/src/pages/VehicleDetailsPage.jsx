@@ -1,33 +1,47 @@
 import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import VehicleDetailsCard from "../components/VehicleDetailsCard";
 import { getServiceRecordsByCarId, getCarById } from "../api/vehicleDetailsApi";
 import VehicleInformationCard from "../components/VehicleInformationCard";
 import ServiceRecordForm from "../components/ServiceRecordForm";
+import CarForm from "../components/CarForm";
+import { useLocation } from "react-router-dom";
 
-function VehicleDetailsPage() {
+function VehicleDetailsPage({ }) {
 
     // {id} returns a object through destructuring
     const { id } = useParams(); // Reads the dynamic values from the current URL and returns them to your component.
+    const location = useLocation();
+    const navigate = useNavigate();
     const [vehicle, setVehicle] = useState(null);
     const [serviceRecords, setServiceRecords] = useState([]);
     const [showServiceForm, setShowServiceForm] = useState(false);
     const [editingServiceRecord, setEditingServiceRecord] = useState(null);
+    const [showCarForm, setShowCarForm] = useState(location.state?.editing === true);
 
     useEffect(() => {
-
-        async function loadCar() {
-
-            const data = await getCarById(id);
-            setVehicle(data);
-
-        }
 
         loadCar();
         loadServiceRecords();
 
     }, [id])
+
+    async function loadCar() {
+
+        const data = await getCarById(id);
+        setVehicle(data);
+
+        if (location.state?.editing === true) {
+            setShowCarForm(true);
+
+            navigate(location.pathname, {  // Opens the edit form when arriving from the Garage,
+                replace: true, state: null // then clears the navigation state so the edit form
+                                           // does not reopen after refreshing the page.            
+            });
+        }
+
+    }
 
     async function loadServiceRecords() {
 
@@ -42,8 +56,8 @@ function VehicleDetailsPage() {
                 description="View your vehicle's service history and information"
             />
 
-            {vehicle && (        // DO NOT USE .map() if you're expecting a singular object and not an array of
-                // values
+            {/* DO NOT USE .map() if you're expecting a singular object and not an array of values */}
+            {vehicle && (
                 <VehicleInformationCard
                     key={vehicle.id}
                     id={vehicle.id}
@@ -53,13 +67,31 @@ function VehicleDetailsPage() {
                     colour={vehicle.colour}
                     currentMileage={vehicle.currentMileage}
 
-                    // onEdit={() => {
-                    //     setEditingCarForm(editingCarForm);
-                    //     setShowCarForm(true);
-                    // }}
+                    onEdit={() => {
+                        setShowCarForm(true);
+                    }}
+
                 />
             )}
 
+            {showCarForm && vehicle && (
+                <CarForm
+
+                    editingCarForm={vehicle}
+                    carId={id}
+
+                    onSave={() => {
+                        loadCar();
+                        loadServiceRecords();
+                        setShowCarForm(false);
+                    }}
+
+                    onCancel={() => {
+                        setShowCarForm(false);
+                    }}
+
+                />
+            )}
 
             {showServiceForm ? <ServiceRecordForm
                 // All the props here are passed into serviceRecord form

@@ -3,7 +3,8 @@ import VehicleCard from "../components/VehicleCard";
 import { useState, useEffect } from "react";
 import { getAllVehicles } from "../api/vehicleApi.js";
 import CarForm from "../components/CarForm.jsx";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { deleteCar } from "../api/vehicleApi.js";
 
 function VehiclesPage() {
 
@@ -12,9 +13,10 @@ function VehiclesPage() {
     // runing, in this case we're expecting an array of vehicle
     // objects to come in
 
-    const {id} = useParams();
     const [showCarForm, setShowCarForm] = useState(false);
     const [editingCarForm, setEditingCarForm] = useState(null);
+    const [errors, setErrors] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -24,7 +26,7 @@ function VehiclesPage() {
         // loadVehicles() is called here so the garage is populated
         // with the user's vehicles when they first open the page.
 
-        loadVehicles();                            // Call the async function 
+        loadVehicles();                          // Call the async function 
 
     }, [])                                         // [] is to run this effect after the component's initial render, 
                                                    //    and don't rerun it when state/props change. 
@@ -44,6 +46,16 @@ function VehiclesPage() {
 
     }
 
+    async function handleDeleteCar(id){
+        try{
+            await deleteCar(id);
+            await loadVehicles();
+        }catch(error){
+            console.error("Error caught: " + error.message);
+            setErrors(["Unable to delete car, please try again later"]);
+        }
+    }
+
     return (
         <div>
             <PageHeader
@@ -54,7 +66,7 @@ function VehiclesPage() {
             {showCarForm ? <CarForm
 
                editingCarForm={editingCarForm}
-               carId={id}
+               carId={editingCarForm?.id}
 
                 onSave={() => {
                     loadVehicles();
@@ -62,6 +74,7 @@ function VehiclesPage() {
                 }}
 
                 onCancel={() => {
+                    setEditingCarForm(null);
                     setShowCarForm(false);
                 }}
 
@@ -79,13 +92,25 @@ function VehiclesPage() {
                     year={vehicle.year}
                     colour={vehicle.colour}
                     currentMileage={vehicle.currentMileage}
-
                     onEdit={() => {
-                        setEditingCarForm(vehicle);
-                        setShowCarForm(true);
+                        navigate(`/vehicles/${vehicle.id}`, {
+                            state: {editing: true}
+                        }); 
+                    }}
+
+                    onDelete={() => {
+                        handleDeleteCar(vehicle.id)
                     }}
                 />
             ))}
+
+            {errors.length > 0 && (
+                <ul style={{ color: "red" }}>
+                    {errors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                    ))}
+                </ul>
+            )}
 
         </div>
     );

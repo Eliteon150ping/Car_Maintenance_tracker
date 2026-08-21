@@ -3,7 +3,7 @@ package sia.sever.dto.car;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class CarRequestDTO {
+public class CreateCarDTO {
 
     // Fields to send to the backend
     @NotBlank(message = "Brand is required")
@@ -18,8 +18,8 @@ public class CarRequestDTO {
     private int currentMileage;
 
     // Constructor
-    public CarRequestDTO(){} // Needed for deserializing Incoming JSON to convert to Java, only for request dtos
-    public CarRequestDTO(String brand, String model, int year, String colour, int currentMileage){
+    public CreateCarDTO(){} // Needed for deserializing Incoming JSON to convert to Java, only for request dtos
+    public CreateCarDTO(String brand, String model, int year, String colour, int currentMileage){
         this.brand = brand;
         this.model = model;
         this.year = year;

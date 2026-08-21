@@ -61,15 +61,37 @@ export async function editCar(id, carData){
         }
     });
 
+    const updatedCar = await response.json();
+
     if(!response.ok){
-        throw new Error(`HTTP ${response.status}`)
+       const error = new Error(updatedCar.message || "Unable to save car details, please try again later");
+
+       error.errors = updatedCar.errors || [];
+
+       throw error;
     }
 
-    const updatedCar = await response.json();
     return updatedCar;
 }
 
 // Delete a car
+export async function deleteCar(id) {
+    
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`http://localhost:8080/api/my-cars/${id}`, {
+
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type" : "application/json"
+        }
+    });
+
+    if(!response.ok){
+        throw new Error(`HTTP ${response.status}`);
+    }
+}
 
 /*
 This frontend API function does:
