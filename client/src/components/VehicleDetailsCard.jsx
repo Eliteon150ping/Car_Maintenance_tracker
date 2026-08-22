@@ -1,11 +1,18 @@
 import { formatRemainingKM, formatRemainingDays, formatDate, formatServiceType } from "../utils/serviceFormatter"
 
-function VehicleDetailsCard({ id, serviceDate, mileageAtService, nextDueMileage, nextDueDate, serviceType, cost,
-    description, remainingKm, remainingDays, car, onEdit }) {
+function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nextDueDate, serviceType, cost,
+    description, remainingKm, remainingDays, onEdit, showExtraDetails, brand, model, year}) {
+
 
     return (
 
         <div className="vehicle-details-card">
+
+            {showExtraDetails && (
+                <div>
+                    <h2 style={{color: "black"}}>{year} {brand} {model}</h2>
+                </div>
+            )}
             <h3>Service Date: {formatDate(serviceDate)} </h3>
             <p>Mileage At Service: {mileageAtService.toLocaleString()} km</p>
             <p>Service type: {formatServiceType(serviceType)}</p>
@@ -21,7 +28,6 @@ function VehicleDetailsCard({ id, serviceDate, mileageAtService, nextDueMileage,
             <p>{formatRemainingDays(remainingDays)}</p>
             <button type="edit" onClick={onEdit}>Edit</button>
         </div>
-
     );
 }
 

@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import ConfirmationModal from "./ConfirmationModal";
 
 function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete }) {
+
+    const [showConfirmationCard, setShowConfirmationCard] = useState(false);
 
     return (
         <div>
@@ -11,7 +15,18 @@ function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete 
                 </div>
             </Link>
             <button type="edit" onClick={onEdit}>Edit</button>
-            <button onClick={onDelete}>Delete</button>
+            <button onClick={() => setShowConfirmationCard(true)}>Delete</button>
+
+            {showConfirmationCard && (
+                <ConfirmationModal
+                    title="Delete Car"
+                    message="Sold your car? You can delete it from your garage"
+                    confirmText="Delete Car"
+                    cancelText="Cancel"
+                    onConfirm={onDelete}
+                    onCancel={() => setShowConfirmationCard(false)}
+                />
+            )}
         </div>
     );
 }

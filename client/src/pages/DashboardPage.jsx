@@ -1,10 +1,35 @@
 import PageHeader from "../components/PageHeader";
 import SummaryCard from "../components/SummaryCard";
-import "../styles/DashboardPage.css"
+import "../styles/DashboardPage.css";
+import { getAllVehicles } from "../api/vehicleApi";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAllServiceRecords } from "../api/vehicleDetailsApi";
 
 // Component Names always start with Capital letters to distinguish from HTML elements
 // Component Names should match the file name for better readability
 function DashboardPage() {
+
+    const [vehicleCount, setVehicleCount] = useState(0);
+    const [serviceRecordCount, setServiceRecordCount] = useState(0);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+
+        loadVehicleCount();
+        loadServiceRecordsCount();
+
+    }, []);
+
+    async function loadVehicleCount() {
+        const vehicles = await getAllVehicles();
+        setVehicleCount(vehicles.length);
+    }
+
+    async function loadServiceRecordsCount() {
+        const serviceRecords = await getAllServiceRecords();
+        setServiceRecordCount(serviceRecords.length);
+    }
 
     return (
         <div>
@@ -17,12 +42,14 @@ function DashboardPage() {
 
                 <SummaryCard
                     title="Vehicles"
-                    value={2}
+                    value={vehicleCount}
+                    onClick={() => navigate("/vehicles")}
                 />
 
                 <SummaryCard
                     title="Services done"
-                    value={10}
+                    value={serviceRecordCount}
+                    onClick={() => navigate("/service-history")}
                 />
 
                 <SummaryCard

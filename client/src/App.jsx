@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // React Router components used for client-side routing
-                                                                 // in a Single Page Application (SPA).
+// in a Single Page Application (SPA).
 import DashboardPage from "./pages/DashboardPage"; // This is how to import and connect page file here to be rendered
 import LoginPage from "./pages/LoginPage";
 import VehicleDetailsPage from "./pages/VehicleDetailsPage";
@@ -8,6 +8,7 @@ import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterPage from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
+import ServiceHistoryPage from "./pages/ServiceHistoryPage";
 
 // Root component responsible for application routing
 function App() {
@@ -19,13 +20,13 @@ function App() {
         <Route path="/" element={
           <ProtectedRoute>
             <MainLayout>
-            <DashboardPage />
-          </MainLayout>
+              <DashboardPage />
+            </MainLayout>
           </ProtectedRoute>
         } />
 
         <Route path="/login" element={
-            <MainLayout>
+          <MainLayout>
             <LoginPage />
           </MainLayout>
         } />
@@ -34,33 +35,44 @@ function App() {
           <MainLayout>
             <RegisterPage />
           </MainLayout>
-        }/>
+        } />
 
         <Route path="/profile" element={
           <ProtectedRoute>
             <MainLayout>
-            <ProfilePage />
-          </MainLayout>
+              <ProfilePage />
+            </MainLayout>
           </ProtectedRoute>
-        }/>
-        
+        } />
+
         <Route path="/vehicles" element={
           <ProtectedRoute>
             <MainLayout>
-            <VehiclesPage />
-          </MainLayout>
+              <VehiclesPage />
+            </MainLayout>
           </ProtectedRoute>
         } />
 
         <Route
-        path="/vehicles/:id"
-        element={
-          <ProtectedRoute>
-            <MainLayout>
-            <VehicleDetailsPage />
-          </MainLayout>
-          </ProtectedRoute>
-        }
+          path="/vehicles/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <VehicleDetailsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/service-history"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ServiceHistoryPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
         />
 
       </Routes>

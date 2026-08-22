@@ -93,6 +93,27 @@ export async function editServiceRecord(carId, id, serviceRecord){
     return updatedServiceRecord;
 }
 
+// Get All service records for every car
+export async function getAllServiceRecords() {
+    
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:8080/api/service-records", {
+
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if(!response.ok){
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    const gotAllServiceRecords = await response.json();
+    return gotAllServiceRecords;
+}
+
 // Get Enum service type list
 export async function getServiceTypes(){
 

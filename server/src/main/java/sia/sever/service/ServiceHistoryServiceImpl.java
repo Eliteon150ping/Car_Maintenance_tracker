@@ -60,7 +60,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         }
 
         Car extractCarInfo = serviceHistory.getCar();
-        CarSummaryDTO car = new CarSummaryDTO(extractCarInfo.getBrand(), extractCarInfo.getModel(),
+        CarSummaryDTO car = new CarSummaryDTO(extractCarInfo.getId(), extractCarInfo.getBrand(), extractCarInfo.getModel(),
                 extractCarInfo.getYear(), extractCarInfo.getCurrentMileage());
 
         return new ServiceRecordResponseDTO(serviceHistory.getId(), serviceHistory.getServiceDate(),
@@ -125,7 +125,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public List<ServiceRecordResponseDTO> getAllServiceRecords() {
         User user = getAuthenticatedUser();
-        List<ServiceHistory> findAllRecords = serviceHistoryRepository.findAllByCarUser(user);
+        List<ServiceHistory> findAllRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDesc(user);
         return findAllRecords.stream()
                 .map(this::mapToServiceRecordResponseDTO)
                 .collect(Collectors.toList());

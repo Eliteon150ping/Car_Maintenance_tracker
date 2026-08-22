@@ -19,6 +19,7 @@ function VehicleDetailsPage({ }) {
     const [showServiceForm, setShowServiceForm] = useState(false);
     const [editingServiceRecord, setEditingServiceRecord] = useState(null);
     const [showCarForm, setShowCarForm] = useState(location.state?.editing === true);
+    const editingServiceRecordId = location.state?.editingServiceRecordId;
 
     useEffect(() => {
 
@@ -46,7 +47,26 @@ function VehicleDetailsPage({ }) {
     async function loadServiceRecords() {
 
         const data = await getServiceRecordsByCarId(id);
-        setServiceRecords(data)
+        setServiceRecords(data);
+
+        if(editingServiceRecordId){
+
+            const recordToEdit = data.find(   // .find() loops through the array and returns the first object
+                                              // for which the condition evaluates to true. If it can't find
+                                              // anything that satisfies the condition, it returns undefined
+                                              // instead of false.
+                serviceRecord => serviceRecord.id === editingServiceRecordId
+            );
+
+            if(recordToEdit){
+                setEditingServiceRecord(recordToEdit);
+                setShowServiceForm(true);
+            }
+
+            navigate(location.pathname, {
+                replace: true, state: null
+            });
+        }
     }
 
     return (
@@ -66,11 +86,10 @@ function VehicleDetailsPage({ }) {
                     year={vehicle.year}
                     colour={vehicle.colour}
                     currentMileage={vehicle.currentMileage}
-
+                    
                     onEdit={() => {
                         setShowCarForm(true);
                     }}
-
                 />
             )}
 

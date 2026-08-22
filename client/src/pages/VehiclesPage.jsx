@@ -5,6 +5,7 @@ import { getAllVehicles } from "../api/vehicleApi.js";
 import CarForm from "../components/CarForm.jsx";
 import { useNavigate } from "react-router-dom";
 import { deleteCar } from "../api/vehicleApi.js";
+import ConfirmationModal from "../components/ConfirmationModal.jsx";
 
 function VehiclesPage() {
 
@@ -26,7 +27,7 @@ function VehiclesPage() {
         // loadVehicles() is called here so the garage is populated
         // with the user's vehicles when they first open the page.
 
-        loadVehicles();                          // Call the async function 
+        loadVehicles();                            // Call the async function 
 
     }, [])                                         // [] is to run this effect after the component's initial render, 
                                                    //    and don't rerun it when state/props change. 
