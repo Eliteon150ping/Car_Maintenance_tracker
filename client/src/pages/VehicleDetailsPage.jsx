@@ -8,7 +8,7 @@ import ServiceRecordForm from "../components/ServiceRecordForm";
 import CarForm from "../components/CarForm";
 import { useLocation } from "react-router-dom";
 
-function VehicleDetailsPage({ }) {
+function VehicleDetailsPage() {
 
     // {id} returns a object through destructuring
     const { id } = useParams(); // Reads the dynamic values from the current URL and returns them to your component.
@@ -118,6 +118,7 @@ function VehicleDetailsPage({ }) {
                 vehicleMileage={vehicle.currentMileage}
                 latestServiceMileage={serviceRecords[0]?.mileageAtService}
                 latestServiceDate={serviceRecords[0]?.serviceDate}
+                vehicleYear={vehicle.year}
                 // If editingServiceRecord is null, the form is being used to add a new record.
                 // If it contains a service record object, the form switches to edit mode.
                 serviceRecord={editingServiceRecord}

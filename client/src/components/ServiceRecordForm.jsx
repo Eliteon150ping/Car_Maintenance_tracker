@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { addServiceRecord, editServiceRecord, getServiceTypes } from "../api/vehicleDetailsApi";
+import { formatDate} from "../utils/serviceFormatter";
 
 // Props come from VehicleDetailsPage
-function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicleMileage, latestServiceMileage, latestServiceDate }) {
+function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicleMileage, latestServiceMileage, 
+                             latestServiceDate, vehicleYear }) {
 
     const [serviceDate, setServiceDate] = useState("");
     const [mileageAtService, setMileageAtService] = useState("");
@@ -80,11 +82,14 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
             if (!serviceDate) {
                 validationErrors.push("Please select a date for the service");
 
+            } else if (new Date(serviceDate).getFullYear() < vehicleYear){
+                validationErrors.push("Service date cannot be before the car's year model: " + vehicleYear);
+
             } else if (new Date(serviceDate) < new Date(latestServiceDate)) {
-                validationErrors.push("Service date cannot be before the latest service date");
+                validationErrors.push("Service date cannot be before the latest service date: " + formatDate(latestServiceDate));
 
             } else if (new Date(serviceDate) > new Date()) {
-                validationErrors.push("Service date cannot be after the present day");
+                validationErrors.push("Service date cannot be after the present day: " + formatDate(new Date()));
 
             }
         }
@@ -98,10 +103,10 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                 validationErrors.push("Mileage at service cannot be less than 0");
 
             } else if (Number(mileageAtService) < Number(latestServiceMileage)) {
-                validationErrors.push("Mileage cannot be lower than the last latest service mileage");
+                validationErrors.push(`Mileage cannot be lower than the last latest service mileage: ${latestServiceMileage.toLocaleString()} km`);
 
             } else if (Number(mileageAtService) > vehicleMileage) {
-                validationErrors.push("New service mileage cannot be higher than the vehicle's current mileage. Please update the vehicle's mileage first");
+                validationErrors.push(`New service mileage cannot be higher than the vehicle's current mileage: ${vehicleMileage.toLocaleString()} km. Please update the vehicle's mileage first`);
             }
         }
 
@@ -152,7 +157,7 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                 {serviceTypes.map(type => (
                     <option key={type.value} value={type.value}>{type.displayName}</option>
                 ))}
-                
+
             </select>
 
             <label>Description

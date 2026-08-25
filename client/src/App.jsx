@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterPage from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import ServiceHistoryPage from "./pages/ServiceHistoryPage";
+import UpcomingServicesPage from "./pages/UpcomingServicesPage";
 
 // Root component responsible for application routing
 function App() {
@@ -73,6 +74,17 @@ function App() {
               </MainLayout>
             </ProtectedRoute>
           }
+        />
+
+        <Route 
+        path="/upcoming-services"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <UpcomingServicesPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
         />
 
       </Routes>

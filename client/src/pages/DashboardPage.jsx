@@ -4,7 +4,7 @@ import "../styles/DashboardPage.css";
 import { getAllVehicles } from "../api/vehicleApi";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllServiceRecords } from "../api/vehicleDetailsApi";
+import { getAllServiceRecords, getUpcomingRecords } from "../api/vehicleDetailsApi";
 
 // Component Names always start with Capital letters to distinguish from HTML elements
 // Component Names should match the file name for better readability
@@ -12,6 +12,7 @@ function DashboardPage() {
 
     const [vehicleCount, setVehicleCount] = useState(0);
     const [serviceRecordCount, setServiceRecordCount] = useState(0);
+    const [upcomingCount, setUpcomingCount] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,7 +29,9 @@ function DashboardPage() {
 
     async function loadServiceRecordsCount() {
         const serviceRecords = await getAllServiceRecords();
+        const upcomingServices = await getUpcomingRecords();
         setServiceRecordCount(serviceRecords.length);
+        setUpcomingCount(upcomingServices.length);
     }
 
     return (
@@ -54,7 +57,8 @@ function DashboardPage() {
 
                 <SummaryCard
                     title="Upcoming"
-                    value={2}
+                    value={upcomingCount}
+                    onClick={() => navigate("/upcoming-services")}
                 />
 
                 <SummaryCard

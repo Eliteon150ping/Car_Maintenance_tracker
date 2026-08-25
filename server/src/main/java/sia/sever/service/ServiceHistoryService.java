@@ -3,6 +3,7 @@ package sia.sever.service;
 import org.springframework.data.domain.Page;
 import sia.sever.dto.serviceRecord.ServiceRecordRequestDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
+import sia.sever.entity.ServiceHistory;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public interface ServiceHistoryService {
     List<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory);
     List<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType);
     List<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory);
+    List<ServiceRecordResponseDTO> getUpcomingServiceRecords();
 
     // Pagination methods(optional but helps the frontend load data quicker)
     Page<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId, int page, int size);

@@ -1,7 +1,7 @@
 import { formatRemainingKM, formatRemainingDays, formatDate, formatServiceType } from "../utils/serviceFormatter"
 
 function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nextDueDate, serviceType, cost,
-    description, remainingKm, remainingDays, onEdit, showExtraDetails, brand, model, year}) {
+    description, remainingKm, remainingDays, onEdit, showExtraDetails, brand, model, year, highlightRemaining }) {
 
 
     return (
@@ -10,7 +10,7 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
 
             {showExtraDetails && (
                 <div>
-                    <h2 style={{color: "black"}}>{year} {brand} {model}</h2>
+                    <h2 style={{ color: "black" }}>{year} {brand} {model}</h2>
                 </div>
             )}
             <h3>Service Date: {formatDate(serviceDate)} </h3>
@@ -24,8 +24,13 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
                     <p>Next due date: {formatDate(nextDueDate)}</p>
                 </>
             )}
-            <p>{formatRemainingKM(remainingKm)}</p>
-            <p>{formatRemainingDays(remainingDays)}</p>
+
+            <p style={{ color: highlightRemaining && remainingKm > 0 && remainingKm <= 1500 ? "Orange" : "black" }}>
+                {formatRemainingKM(remainingKm)}
+            </p>
+            <p style={{ color: highlightRemaining && remainingDays > 0 && remainingDays <= 30? "Orange" : "black" }}>
+                {formatRemainingDays(remainingDays)}
+            </p>
             <button type="edit" onClick={onEdit}>Edit</button>
         </div>
     );

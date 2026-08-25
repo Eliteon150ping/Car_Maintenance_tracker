@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sia.sever.dto.car.CarResponseDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordRequestDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
 import sia.sever.enums.ServiceCategory;
@@ -98,6 +99,12 @@ public class ServiceHistoryController {
         return ResponseEntity.ok(getServiceHistoryByCarAndCategory);
     }
 
+    // Filter and show only Upcoming services
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<ServiceRecordResponseDTO>> getUpcomingServiceRecords(){
+        List<ServiceRecordResponseDTO> getAllUpcomingRecords = serviceHistoryService.getUpcomingServiceRecords();
+        return ResponseEntity.ok(getAllUpcomingRecords);
+    }
 
 
     // Pagination

@@ -38,6 +38,9 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
 
+    private static final int UPCOMING_DAYS_THRESHOLD = 40;
+    private static final int UPCOMING_KM_THRESHOLD = 1500;
+
     @Autowired
     public ServiceHistoryServiceImpl(ServiceHistoryRepository serviceHistoryRepository,
                                      CarRepository carRepository, UserRepository userRepository) {
@@ -103,6 +106,11 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 throw new InvalidMileageException("New service mileage cannot be lower than the last latest service mileage");
             }
         }
+        // Check if the service date is NOT before the car's year model
+        if(convertToEntity.getServiceDate().getYear() < car.getYear()){
+            throw new InvalidDateException("Service Date cannot be before the car's year model: " + car.getYear());
+        }
+
         // Check if the service date is NOT before the service's last service date
         if (lastLatestServiceDate != null) {
             if (convertToEntity.getServiceDate().isBefore(lastLatestServiceDate.getServiceDate())) {
@@ -157,6 +165,28 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
         ServiceHistory newUpdatedServiceHistory = serviceHistoryRepository.save(existingServiceHistory);
         return mapToServiceRecordResponseDTO(newUpdatedServiceHistory);
+    }
+
+    // Filter upcoming services by remaining km or days
+    @Override
+    public List<ServiceRecordResponseDTO> getUpcomingServiceRecords() {
+        User user = getAuthenticatedUser();
+        List<ServiceHistory> getAllUpcomingServiceRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDesc(user);
+
+        return getAllUpcomingServiceRecords.stream()
+                .filter(serviceHistory -> {
+
+                    if(serviceHistory.getServiceType() == ServiceType.OTHER){
+                        return false;
+                    }
+                    int remainingKm = calculateRemainingKm(serviceHistory);
+                    int remainingDays = calculateRemainingDays(serviceHistory);
+
+                    return (remainingKm > 0 && remainingKm <= UPCOMING_KM_THRESHOLD) ||
+                            (remainingDays > 0 && remainingDays <= UPCOMING_DAYS_THRESHOLD);
+                })
+                .map(this::mapToServiceRecordResponseDTO)
+                .collect(Collectors.toList());
     }
 
     // Filter different Service categories
