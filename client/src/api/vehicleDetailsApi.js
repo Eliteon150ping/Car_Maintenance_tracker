@@ -157,3 +157,25 @@ export async function getUpcomingRecords(){
 
     return upcomingServices;
 }
+
+// Get all overdue services
+export async function getOverdueRecords(){
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:8080/api/service-records/overdue", {
+
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if(!response.ok){
+        throw new Error(`HTTP ${response.status}`)
+    }
+
+    const overdueServices = await response.json();
+
+    return overdueServices;
+}

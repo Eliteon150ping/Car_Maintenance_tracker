@@ -23,6 +23,7 @@ public interface ServiceHistoryService {
     List<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType);
     List<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory);
     List<ServiceRecordResponseDTO> getUpcomingServiceRecords();
+    List<ServiceRecordResponseDTO> getOverDueServiceRecords();
 
     // Pagination methods(optional but helps the frontend load data quicker)
     Page<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId, int page, int size);

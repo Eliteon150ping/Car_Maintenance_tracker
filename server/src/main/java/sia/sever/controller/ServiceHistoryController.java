@@ -106,6 +106,13 @@ public class ServiceHistoryController {
         return ResponseEntity.ok(getAllUpcomingRecords);
     }
 
+    // Filter and show only Overdue services
+    @GetMapping("/overdue")
+    public ResponseEntity<List<ServiceRecordResponseDTO>> getOverdueServiceRecords(){
+        List<ServiceRecordResponseDTO> getAllOverdueRecords = serviceHistoryService.getOverDueServiceRecords();
+        return ResponseEntity.ok(getAllOverdueRecords);
+    }
+
 
     // Pagination
     // Get service history by car and date

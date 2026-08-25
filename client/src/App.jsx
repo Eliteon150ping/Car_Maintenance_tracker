@@ -10,6 +10,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import ServiceHistoryPage from "./pages/ServiceHistoryPage";
 import UpcomingServicesPage from "./pages/UpcomingServicesPage";
+import OverdueServicesPage from "./pages/OverdueServicesPage";
 
 // Root component responsible for application routing
 function App() {
@@ -82,6 +83,17 @@ function App() {
           <ProtectedRoute>
             <MainLayout>
               <UpcomingServicesPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+        />
+
+        <Route 
+        path="/overdue-services"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <OverdueServicesPage />
             </MainLayout>
           </ProtectedRoute>
         }

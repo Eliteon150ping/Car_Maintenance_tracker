@@ -4,7 +4,7 @@ import "../styles/DashboardPage.css";
 import { getAllVehicles } from "../api/vehicleApi";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllServiceRecords, getUpcomingRecords } from "../api/vehicleDetailsApi";
+import { getAllServiceRecords, getOverdueRecords, getUpcomingRecords } from "../api/vehicleDetailsApi";
 
 // Component Names always start with Capital letters to distinguish from HTML elements
 // Component Names should match the file name for better readability
@@ -13,6 +13,7 @@ function DashboardPage() {
     const [vehicleCount, setVehicleCount] = useState(0);
     const [serviceRecordCount, setServiceRecordCount] = useState(0);
     const [upcomingCount, setUpcomingCount] = useState(0);
+    const [overdueCount, setOverDueCount] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,8 +31,10 @@ function DashboardPage() {
     async function loadServiceRecordsCount() {
         const serviceRecords = await getAllServiceRecords();
         const upcomingServices = await getUpcomingRecords();
+        const overdueServices = await getOverdueRecords();
         setServiceRecordCount(serviceRecords.length);
         setUpcomingCount(upcomingServices.length);
+        setOverDueCount(overdueServices.length);
     }
 
     return (
@@ -61,9 +64,10 @@ function DashboardPage() {
                     onClick={() => navigate("/upcoming-services")}
                 />
 
-                <SummaryCard
+                <SummaryCard 
                     title="Overdue"
-                    value={3}
+                    value={overdueCount}
+                    onClick={() => navigate("/overdue-services")}
                 />
 
             </div>

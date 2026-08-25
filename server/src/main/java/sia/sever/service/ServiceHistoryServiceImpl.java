@@ -19,8 +19,7 @@ import sia.sever.repository.ServiceHistoryRepository;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -172,18 +171,57 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     public List<ServiceRecordResponseDTO> getUpcomingServiceRecords() {
         User user = getAuthenticatedUser();
         List<ServiceHistory> getAllUpcomingServiceRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDesc(user);
+        Collection<ServiceHistory> latestRecords = getAllUpcomingServiceRecords.stream()
+                .collect(Collectors.groupingBy(
+                        record -> Arrays.asList(record.getCar().getId(), record.getServiceType()),
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparing(ServiceHistory::getServiceDate)),
+                                Optional::get
+                        )
+                )).values();
 
-        return getAllUpcomingServiceRecords.stream()
+        return latestRecords.stream()
                 .filter(serviceHistory -> {
 
                     if(serviceHistory.getServiceType() == ServiceType.OTHER){
                         return false;
                     }
+
                     int remainingKm = calculateRemainingKm(serviceHistory);
                     int remainingDays = calculateRemainingDays(serviceHistory);
 
                     return (remainingKm > 0 && remainingKm <= UPCOMING_KM_THRESHOLD) ||
                             (remainingDays > 0 && remainingDays <= UPCOMING_DAYS_THRESHOLD);
+                })
+                .map(this::mapToServiceRecordResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Filter overdue services by remaining km or days
+    @Override
+    public List<ServiceRecordResponseDTO> getOverDueServiceRecords() {
+        User user = getAuthenticatedUser();
+        List<ServiceHistory> getAllOverdueServiceRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDesc(user);
+        Collection<ServiceHistory> latestRecords = getAllOverdueServiceRecords.stream()
+                .collect(Collectors.groupingBy(
+                        record -> Arrays.asList(record.getCar().getId(), record.getServiceType()),
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparing(ServiceHistory::getServiceDate)),
+                                Optional::get
+                        )
+                )).values();
+
+        return latestRecords.stream()
+                .filter(serviceHistory -> {
+
+                    if(serviceHistory.getServiceType() == ServiceType.OTHER){
+                        return false;
+                    }
+
+                    int remainingKm = calculateRemainingKm(serviceHistory);
+                    int remainingDays = calculateRemainingDays(serviceHistory);
+
+                    return (remainingKm < 0) || (remainingDays < 0);
                 })
                 .map(this::mapToServiceRecordResponseDTO)
                 .collect(Collectors.toList());

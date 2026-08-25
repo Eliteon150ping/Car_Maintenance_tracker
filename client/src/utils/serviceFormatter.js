@@ -6,7 +6,7 @@ export function formatRemainingKM(km){
     }
 
     if (km < 0){
-        return `Remaining KM: Service overdue by ${Math.abs(km).toLocaleString()}`;
+        return `Remaining KM: Service overdue by ${Math.abs(km).toLocaleString()} km`;
     }
 
     return `Remaining KM: ${km.toLocaleString()} km remaining`;

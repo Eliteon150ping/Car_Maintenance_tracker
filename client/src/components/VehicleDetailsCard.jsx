@@ -25,10 +25,12 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
                 </>
             )}
 
-            <p style={{ color: highlightRemaining && remainingKm > 0 && remainingKm <= 1500 ? "Orange" : "black" }}>
+            <p style={{ color: highlightRemaining && remainingKm > 0 && remainingKm <= 1500 ? "Orange" : 
+                highlightRemaining && remainingKm < 0 ? "red" : "black"}}>
                 {formatRemainingKM(remainingKm)}
             </p>
-            <p style={{ color: highlightRemaining && remainingDays > 0 && remainingDays <= 30? "Orange" : "black" }}>
+            <p style={{ color: highlightRemaining && remainingDays > 0 && remainingDays <= 30? "Orange" : 
+                highlightRemaining && remainingDays < 0 ? "red" : "black"}}>
                 {formatRemainingDays(remainingDays)}
             </p>
             <button type="edit" onClick={onEdit}>Edit</button>
