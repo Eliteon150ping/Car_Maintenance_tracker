@@ -132,7 +132,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public List<ServiceRecordResponseDTO> getAllServiceRecords() {
         User user = getAuthenticatedUser();
-        List<ServiceHistory> findAllRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDesc(user);
+        List<ServiceHistory> findAllRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(user);
         return findAllRecords.stream()
                 .map(this::mapToServiceRecordResponseDTO)
                 .collect(Collectors.toList());
@@ -170,12 +170,13 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public List<ServiceRecordResponseDTO> getUpcomingServiceRecords() {
         User user = getAuthenticatedUser();
-        List<ServiceHistory> getAllUpcomingServiceRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDesc(user);
+        List<ServiceHistory> getAllUpcomingServiceRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(user);
         Collection<ServiceHistory> latestRecords = getAllUpcomingServiceRecords.stream()
                 .collect(Collectors.groupingBy(
                         record -> Arrays.asList(record.getCar().getId(), record.getServiceType()),
                         Collectors.collectingAndThen(
-                                Collectors.maxBy(Comparator.comparing(ServiceHistory::getServiceDate)),
+                                Collectors.maxBy(Comparator.comparing(ServiceHistory::getServiceDate)
+                                        .thenComparing(ServiceHistory::getMileageAtService)),
                                 Optional::get
                         )
                 )).values();
@@ -201,12 +202,13 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public List<ServiceRecordResponseDTO> getOverDueServiceRecords() {
         User user = getAuthenticatedUser();
-        List<ServiceHistory> getAllOverdueServiceRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDesc(user);
+        List<ServiceHistory> getAllOverdueServiceRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(user);
         Collection<ServiceHistory> latestRecords = getAllOverdueServiceRecords.stream()
                 .collect(Collectors.groupingBy(
                         record -> Arrays.asList(record.getCar().getId(), record.getServiceType()),
                         Collectors.collectingAndThen(
-                                Collectors.maxBy(Comparator.comparing(ServiceHistory::getServiceDate)),
+                                Collectors.maxBy(Comparator.comparing(ServiceHistory::getServiceDate)
+                                        .thenComparing(ServiceHistory::getMileageAtService)),
                                 Optional::get
                         )
                 )).values();
@@ -285,7 +287,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId) {
         User user = getAuthenticatedUser();
-        List<ServiceHistory> findByCar = serviceHistoryRepository.findByCarOrderByServiceDateDesc(getUserCar(carId, user));
+        List<ServiceHistory> findByCar = serviceHistoryRepository.findByCarOrderByServiceDateDescMileageAtServiceDesc(getUserCar(carId, user));
         return findByCar.stream()
                 .map(this::mapToServiceRecordResponseDTO)
                 .collect(Collectors.toList());
