@@ -19,6 +19,14 @@ function ServiceHistoryPage() {
         setServiceRecords(data);
     }
 
+    const latestRecordsByServiceType = {};
+    serviceRecords.forEach(serviceRecord => {
+        const key = `${serviceRecord.car.id}-${serviceRecord.serviceType}`;
+        if(!latestRecordsByServiceType[key]){
+            latestRecordsByServiceType[key] = serviceRecord.id
+        }
+    });
+
     return (
         <div>
             <PageHeader
@@ -40,11 +48,14 @@ function ServiceHistoryPage() {
                     nextDueMileage={serviceRecord.nextDueMileage}
                     nextDueDate={serviceRecord.nextDueDate}
                     serviceType={serviceRecord.serviceType}
+                    isLatestRecord={latestRecordsByServiceType[
+                        `${serviceRecord.car.id}-${serviceRecord.serviceType}`] === serviceRecord.id}
                     cost={serviceRecord.cost}
                     description={serviceRecord.description}
                     remainingKm={serviceRecord.remainingKm}
                     remainingDays={serviceRecord.remainingDays}
                     showExtraDetails={true}
+                    highlightRemaining={true}
 
                     onEdit={() => {
                         navigate(`/vehicles/${serviceRecord.car.id}`, {

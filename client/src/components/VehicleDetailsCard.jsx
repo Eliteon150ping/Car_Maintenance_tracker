@@ -1,7 +1,8 @@
 import { formatRemainingKM, formatRemainingDays, formatDate, formatServiceType } from "../utils/serviceFormatter"
 
 function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nextDueDate, serviceType, cost,
-    description, remainingKm, remainingDays, onEdit, showExtraDetails, brand, model, year, highlightRemaining }) {
+    description, remainingKm, remainingDays, onEdit, showExtraDetails, brand, model, year, highlightRemaining,
+    isLatestRecord }) {
 
 
     return (
@@ -25,14 +26,22 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
                 </>
             )}
 
-            <p style={{ color: highlightRemaining && remainingKm > 0 && remainingKm <= 1500 ? "Orange" : 
-                highlightRemaining && remainingKm < 0 ? "red" : "black"}}>
-                {formatRemainingKM(remainingKm)}
-            </p>
-            <p style={{ color: highlightRemaining && remainingDays > 0 && remainingDays <= 30? "Orange" : 
-                highlightRemaining && remainingDays < 0 ? "red" : "black"}}>
-                {formatRemainingDays(remainingDays)}
-            </p>
+            {isLatestRecord ?
+                <p style={{
+                    color: highlightRemaining && remainingKm > 0 && remainingKm <= 1500 ? "Orange" :
+                        highlightRemaining && remainingKm < 0 ? "red" : "black"
+                }}>
+                    {formatRemainingKM(remainingKm)}
+                </p> : <p>Remaining KM: Service done</p>
+            }
+            {isLatestRecord ?
+                <p style={{
+                    color: highlightRemaining && remainingDays > 0 && remainingDays <= 30 ? "Orange" :
+                        highlightRemaining && remainingDays < 0 ? "red" : "black"
+                }}>
+                    {formatRemainingDays(remainingDays)}
+                </p> : <p>Remaining Days: Service done</p>
+            }
             <button type="edit" onClick={onEdit}>Edit</button>
         </div>
     );

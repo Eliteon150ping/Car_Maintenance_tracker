@@ -139,7 +139,7 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
             onSave();
         } catch (error) {
             console.error("Error caught: " + error.message);
-            setErrors(["Unable to save service record"]);
+            setErrors(error.errors?.length ? error.errors : [error.message]);
         }
     }
 

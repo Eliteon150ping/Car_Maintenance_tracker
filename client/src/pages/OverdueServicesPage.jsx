@@ -40,6 +40,7 @@ function OverdueServicesPage(){
                     nextDueMileage={serviceRecord.nextDueMileage}
                     nextDueDate={serviceRecord.nextDueDate}
                     serviceType={serviceRecord.serviceType}
+                    isLatestRecord={true}
                     cost={serviceRecord.cost}
                     description={serviceRecord.description}
                     remainingKm={serviceRecord.remainingKm}

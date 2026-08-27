@@ -106,7 +106,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
             }
         }
         // Check if the service date is NOT before the car's year model
-        if(convertToEntity.getServiceDate().getYear() < car.getYear()){
+        if (convertToEntity.getServiceDate().getYear() < car.getYear()) {
             throw new InvalidDateException("Service Date cannot be before the car's year model: " + car.getYear());
         }
 
@@ -115,6 +115,13 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
             if (convertToEntity.getServiceDate().isBefore(lastLatestServiceDate.getServiceDate())) {
                 throw new InvalidDateException("New service date cannot be before the " + lastLatestServiceDate.getServiceDate());
             }
+        }
+
+        // Prevent duplicate service records of the same type on the same date with the same mileage at service
+        boolean isExistingRecord = serviceHistoryRepository.existsByCarAndServiceTypeAndServiceDateAndMileageAtService(car,
+                serviceHistory.getServiceType(), serviceHistory.getServiceDate(), serviceHistory.getMileageAtService());
+        if (isExistingRecord) {
+            throw new InvalidClassException("Cannot add duplicate service record for the same service type with same mileage and date");
         }
 
         // Check if 'Other' service is selected then make use of custom notes for it
@@ -184,7 +191,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         return latestRecords.stream()
                 .filter(serviceHistory -> {
 
-                    if(serviceHistory.getServiceType() == ServiceType.OTHER){
+                    if (serviceHistory.getServiceType() == ServiceType.OTHER) {
                         return false;
                     }
 
@@ -216,7 +223,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         return latestRecords.stream()
                 .filter(serviceHistory -> {
 
-                    if(serviceHistory.getServiceType() == ServiceType.OTHER){
+                    if (serviceHistory.getServiceType() == ServiceType.OTHER) {
                         return false;
                     }
 

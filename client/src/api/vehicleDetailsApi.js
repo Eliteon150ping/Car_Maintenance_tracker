@@ -59,11 +59,15 @@ export async function addServiceRecord(carId, serviceRecord) {
         }
     });
 
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
-    }
-
     const createdServiceRecord = await response.json();
+
+    if (!response.ok) {
+        const error = new Error(createdServiceRecord.message || "Unable to save service record, please try again later");
+
+        error.errors = createdServiceRecord.errors || [];
+
+        throw error;
+    }
 
     return createdServiceRecord;
 }

@@ -69,6 +69,15 @@ function VehicleDetailsPage() {
         }
     }
 
+    // Find the latest record of each service type by comparing the id of the record and storing it if it
+    // doesn't exist else ignore it
+    const latestRecordsByServiceType = {};
+    serviceRecords.forEach(serviceRecord => {
+        if(!latestRecordsByServiceType[serviceRecord.serviceType]){
+            latestRecordsByServiceType[serviceRecord.serviceType] = serviceRecord.id
+        }
+    });
+
     return (
         <div>
             <PageHeader
@@ -158,10 +167,12 @@ function VehicleDetailsPage() {
                     nextDueMileage={serviceRecord.nextDueMileage}
                     nextDueDate={serviceRecord.nextDueDate}
                     serviceType={serviceRecord.serviceType}
+                    isLatestRecord={latestRecordsByServiceType[serviceRecord.serviceType] === serviceRecord.id}
                     cost={serviceRecord.cost}
                     description={serviceRecord.description}
                     remainingKm={serviceRecord.remainingKm}
                     remainingDays={serviceRecord.remainingDays}
+                    highlightRemaining={true}
 
                     // Store the selected service record in state and open the form.
                     // The form receives this object as a prop and fills the inputs using useEffect. 
