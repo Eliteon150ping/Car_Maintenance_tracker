@@ -6,9 +6,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sia.sever.dto.car.CarResponseDTO;
-import sia.sever.dto.serviceRecord.ServiceRecordRequestDTO;
+import sia.sever.dto.serviceRecord.CreateServiceRecordDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
+import sia.sever.dto.serviceRecord.UpdateServiceRecordDTO;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import sia.sever.service.ServiceHistoryService;
@@ -27,7 +27,7 @@ public class ServiceHistoryController {
 
     // Create Service Record
     @PostMapping("/car/{carId}")
-    public ResponseEntity<ServiceRecordResponseDTO> createServiceRecord(@Valid @RequestBody ServiceRecordRequestDTO serviceHistory, @PathVariable Long carId){
+    public ResponseEntity<ServiceRecordResponseDTO> createServiceRecord(@Valid @RequestBody CreateServiceRecordDTO serviceHistory, @PathVariable Long carId){
         ServiceRecordResponseDTO createdServiceRecord = serviceHistoryService.createServiceHistory(serviceHistory, carId);
         return new ResponseEntity<>(createdServiceRecord, HttpStatus.CREATED);
     }
@@ -48,7 +48,7 @@ public class ServiceHistoryController {
 
     // Update service record
     @PutMapping("/car/{carId}/service/{id}")
-    public ResponseEntity<ServiceRecordResponseDTO> updateServiceRecord(@PathVariable Long id, @Valid @RequestBody ServiceRecordRequestDTO serviceHistory, @PathVariable Long carId){
+    public ResponseEntity<ServiceRecordResponseDTO> updateServiceRecord(@PathVariable Long id, @Valid @RequestBody UpdateServiceRecordDTO serviceHistory, @PathVariable Long carId){
         ServiceRecordResponseDTO updatedServiceRecord = serviceHistoryService.updateServiceHistory(id, serviceHistory, carId);
         return ResponseEntity.ok(updatedServiceRecord);
     }

@@ -1,13 +1,14 @@
 import PageHeader from "../components/PageHeader";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import "../styles/LoginPage.css"
 
 function LoginPage() {
 
     const [email, setEmail] = useState("");        // these hooks will store the email and password when needed for
     const [password, setPassword] = useState("");  // submitting the form
-    const {login} = useAuth();                     // Use the login function that AuthContext is sharing
+    const { login } = useAuth();                     // Use the login function that AuthContext is sharing
     const navigate = useNavigate();
     const [errors, setErrors] = useState([]);
 
@@ -16,63 +17,70 @@ function LoginPage() {
 
         const validationErrors = [];
 
-        function validateEmail(){
-            if(email.trim() == ""){
+        function validateEmail() {
+            if (email.trim() == "") {
                 validationErrors.push("Email cannot be empty");
             }
         }
         validateEmail();
 
-        function validatePassword(){
-            if(password.trim() == ""){
+        function validatePassword() {
+            if (password.trim() == "") {
                 validationErrors.push("Password cannot be empty");
             }
         }
         validatePassword();
 
-        if(validationErrors.length > 0){
+        if (validationErrors.length > 0) {
             setErrors(validationErrors);
             return;
         }
 
         setErrors([]);
-        try{
-            await login(email,password);
+        try {
+            await login(email, password);
             navigate("/");
-        }catch(error){
+        } catch (error) {
             console.error("Error caught: " + error.message);
-            setErrors([error.errors?.length ? error.errors : [error.message]])
+            setErrors(error.errors?.length ? error.errors : [error.message])
         }
-        
+
     }
 
     return (
-        <div>
+        <div className="auth-page">
+
             <PageHeader
                 title="Login"
                 description="Please enter your details to continue"
             />
-            <form onSubmit={handleSubmit}>
-                <label>Email
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+
+                <label className="form-field">Email
                     <input type="email"
                         placeholder="Enter your email address"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)} />
                 </label>
-                <label>Password
+
+                <label className="form-field">Password
                     <input type="password"
-                    placeholder="Enter your password"
+                        placeholder="Enter your password"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)} />
                 </label>
+
                 {errors.length > 0 && (
-                    <ul style={{color: "red"}}>
+                    <ul className="form-errors">
                         {errors.map((error, index) => (
                             <li key={index}>{error}</li>
                         ))}
                     </ul>
                 )}
-                <button type="submit">Login</button>
+
+                <button className="auth-button" type="submit">Login</button>
+
             </form>
         </div>
     );

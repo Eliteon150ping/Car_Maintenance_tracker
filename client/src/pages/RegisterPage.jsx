@@ -69,7 +69,7 @@ function RegisterPage() {
             <form onSubmit={handleSubmit}>
 
                 <label>Username
-                    <input type="username"
+                    <input type="text"
                         placeholder="eg. John Doe"
                         value={userName}
                         onChange={(event) => setUserName(event.target.value)} />

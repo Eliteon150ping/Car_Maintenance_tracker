@@ -6,8 +6,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import sia.sever.dto.car.CarSummaryDTO;
-import sia.sever.dto.serviceRecord.ServiceRecordRequestDTO;
+import sia.sever.dto.car.UpdateCarDTO;
+import sia.sever.dto.serviceRecord.CreateServiceRecordDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
+import sia.sever.dto.serviceRecord.UpdateServiceRecordDTO;
 import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
 import sia.sever.entity.User;
@@ -73,21 +75,32 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     }
 
     // Mapper to convert ServiceRecordRequestDTO into an entity
-    private ServiceHistory mapToEntity(ServiceRecordRequestDTO serviceRecordRequestDTO) {
+    private ServiceHistory mapToEntity(CreateServiceRecordDTO createServiceRecordDTO) {
         ServiceHistory serviceRecord = new ServiceHistory();
-        serviceRecord.setServiceDate(serviceRecordRequestDTO.getServiceDate());
-        serviceRecord.setMileageAtService(serviceRecordRequestDTO.getMileageAtService());
-        serviceRecord.setServiceType(serviceRecordRequestDTO.getServiceType());
-        serviceRecord.setCost(serviceRecordRequestDTO.getCost());
-        serviceRecord.setDescription(serviceRecordRequestDTO.getDescription());
-        serviceRecord.setServiceDate(serviceRecordRequestDTO.getServiceDate());
+        serviceRecord.setServiceDate(createServiceRecordDTO.getServiceDate());
+        serviceRecord.setMileageAtService(createServiceRecordDTO.getMileageAtService());
+        serviceRecord.setServiceType(createServiceRecordDTO.getServiceType());
+        serviceRecord.setCost(createServiceRecordDTO.getCost());
+        serviceRecord.setDescription(createServiceRecordDTO.getDescription());
+        serviceRecord.setServiceDate(createServiceRecordDTO.getServiceDate());
         return serviceRecord;
+    }
+
+    // Mapper to apply update DTO changes to an existing managed entity
+    private void updateEntityFromDTO(UpdateServiceRecordDTO updateServiceRecordDTO, ServiceHistory existingServiceRecord){
+
+        if(updateServiceRecordDTO.getDescription() != null){
+            existingServiceRecord.setDescription(updateServiceRecordDTO.getDescription());
+        }
+        if(updateServiceRecordDTO.getCost() != null){
+            existingServiceRecord.setCost(updateServiceRecordDTO.getCost());
+        }
     }
 
 
     // Create a service record
     @Override
-    public ServiceRecordResponseDTO createServiceHistory(ServiceRecordRequestDTO serviceHistory, Long carId) {
+    public ServiceRecordResponseDTO createServiceHistory(CreateServiceRecordDTO serviceHistory, Long carId) {
 
         ServiceHistory convertToEntity = mapToEntity(serviceHistory);
 
@@ -125,7 +138,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         }
 
         // Check if 'Other' service is selected then make use of custom notes for it
-        validateOtherServiceDescription(serviceHistory);
+        validateOtherServiceDescription(serviceHistory.getServiceType(), serviceHistory.getDescription());
 
         // Check if user did a service, give the next change interval/date
         convertToEntity.setNextDueMileage(calculateNextServiceMileage(convertToEntity));
@@ -156,7 +169,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
     // Update the service record
     @Override
-    public ServiceRecordResponseDTO updateServiceHistory(Long id, ServiceRecordRequestDTO updatedServiceHistory, Long carId) {
+    public ServiceRecordResponseDTO updateServiceHistory(Long id, UpdateServiceRecordDTO updatedServiceHistory, Long carId) {
 
         User user = getAuthenticatedUser();
         Car car = getUserCar(carId, user);
@@ -164,10 +177,9 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found for this car"));
 
         // Check if 'Other' service is selected then make use of custom notes for it
-        validateOtherServiceDescription(updatedServiceHistory);
+        validateOtherServiceDescription(existingServiceHistory.getServiceType(), updatedServiceHistory.getDescription());
 
-        existingServiceHistory.setDescription(updatedServiceHistory.getDescription());
-        existingServiceHistory.setCost(updatedServiceHistory.getCost());
+        updateEntityFromDTO(updatedServiceHistory, existingServiceHistory);
 
         ServiceHistory newUpdatedServiceHistory = serviceHistoryRepository.save(existingServiceHistory);
         return mapToServiceRecordResponseDTO(newUpdatedServiceHistory);
@@ -376,9 +388,8 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     }
 
     // Check if 'Other' service is selected then make use of custom notes for it
-    private void validateOtherServiceDescription(ServiceRecordRequestDTO serviceHistory) {
-        if (serviceHistory.getServiceType() == ServiceType.OTHER && (serviceHistory.getDescription() == null
-                || serviceHistory.getDescription().trim().isEmpty())) {
+    private void validateOtherServiceDescription(ServiceType serviceType, String description) {
+        if (serviceType == ServiceType.OTHER && (description == null || description.trim().isEmpty())) {
             throw new InvalidClassException("Description cannot be empty when service type is OTHER");
         }
     }

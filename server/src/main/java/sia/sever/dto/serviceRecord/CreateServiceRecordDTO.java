@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import sia.sever.enums.ServiceType;
 import java.time.LocalDate;
 
-public class ServiceRecordRequestDTO {
+public class CreateServiceRecordDTO {
 
     // Fields
     @NotNull
@@ -22,9 +22,9 @@ public class ServiceRecordRequestDTO {
     private String description;
 
     // Constructor
-    public ServiceRecordRequestDTO(){}
-    public ServiceRecordRequestDTO(LocalDate serviceDate, Integer mileageAtService, ServiceType serviceType,
-                                   Double cost, String description)
+    public CreateServiceRecordDTO(){}
+    public CreateServiceRecordDTO(LocalDate serviceDate, Integer mileageAtService, ServiceType serviceType,
+                                  Double cost, String description)
     {
         this.serviceDate = serviceDate;
         this.mileageAtService = mileageAtService;

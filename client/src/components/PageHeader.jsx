@@ -1,7 +1,9 @@
+import "../styles/PageHeader.css"
+
 function PageHeader({title, description}){
 
     return(
-        <header>
+        <header className="page-header">
             <h1>{title}</h1>
             <p>{description}</p>
         </header>

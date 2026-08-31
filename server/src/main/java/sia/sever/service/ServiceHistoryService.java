@@ -1,9 +1,9 @@
 package sia.sever.service;
 
 import org.springframework.data.domain.Page;
-import sia.sever.dto.serviceRecord.ServiceRecordRequestDTO;
+import sia.sever.dto.serviceRecord.CreateServiceRecordDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
-import sia.sever.entity.ServiceHistory;
+import sia.sever.dto.serviceRecord.UpdateServiceRecordDTO;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import java.time.LocalDate;
@@ -12,10 +12,10 @@ import java.util.List;
 public interface ServiceHistoryService {
 
     // These methods must be defined in the class that uses this interface(eg. ServiceHistoryImpl)
-    ServiceRecordResponseDTO createServiceHistory(ServiceRecordRequestDTO serviceHistory, Long carId);
+    ServiceRecordResponseDTO createServiceHistory(CreateServiceRecordDTO serviceHistory, Long carId);
     List<ServiceRecordResponseDTO> getAllServiceRecords();
     ServiceRecordResponseDTO getServiceHistoryById(Long id);
-    ServiceRecordResponseDTO updateServiceHistory(Long id, ServiceRecordRequestDTO serviceHistory, Long carId);
+    ServiceRecordResponseDTO updateServiceHistory(Long id, UpdateServiceRecordDTO serviceHistory, Long carId);
     List<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId);
     List<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate);
     List<ServiceRecordResponseDTO> getServiceHistoryByServiceType(ServiceType serviceType);
