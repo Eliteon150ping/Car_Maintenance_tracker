@@ -14,7 +14,9 @@ import sia.sever.security.jwt.JwtUtility;
 import sia.sever.security.userDetails.CustomUserDetails;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,15 +55,15 @@ public class UserServiceImpl implements UserService {
         // Check if the email and username exists first
         User validateEmail = userRepository.findByEmail(user.getEmail());
         User validateUsername = userRepository.findByUserName(user.getUserName());
-        List<String> errorList = new ArrayList<>();
+        Map<String, String> errors = new HashMap<>();
         if (validateUsername != null) {
-            errorList.add(" This username already exists, please try a different one ");
+            errors.put("userName" ," This username already exists, please try a different one ");
         }
         if (validateEmail != null) {
-            errorList.add(" This email already exists, please try a different one ");
+            errors.put("email" ," This email already exists, please try a different one ");
         }
-        if (!errorList.isEmpty()) {
-            throw new ValidationException("Validation failed", errorList);
+        if (!errors.isEmpty()) {
+            throw new ValidationException("Validation failed", errors);
         }
 
         // Encode password and save the user
@@ -78,15 +80,16 @@ public class UserServiceImpl implements UserService {
 
         // Find user by email
         User validateUser = userRepository.findByEmail(user.getEmail());
-        List<String> errorList = new ArrayList<>();
+        Map<String, String> errors = new HashMap<>();
+
         if (validateUser == null) {
-            errorList.add("Email not found, please register instead");
+            errors.put("email" ,"Email not found, please register instead");
         } else if (!passwordEncoder.matches(user.getPassword(), validateUser.getPassword())) {
             // Compare passwords using the input one and the one stored in the db
-            errorList.add("Password is incorrect");
+            errors.put("password", "Password is incorrect");
         }
-        if (!errorList.isEmpty()) {
-            throw new ValidationException("Login failed", errorList);
+        if (!errors.isEmpty()) {
+            throw new ValidationException("Login failed", errors);
         }
 
         // This is added after jwt is implemented
@@ -103,14 +106,14 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO editProfile(UpdateUserDTO user) {
 
         User existingUser = getCurrentUser();
-        List<String> errorList = new ArrayList<>();
+        Map<String, String> errors = new HashMap<>();
 
         if (user.getUserName() != null && !user.getUserName().isBlank()) {
 
             User validateUserName = userRepository.findByUserName(user.getUserName());
 
             if(validateUserName != null && !validateUserName.getId().equals(existingUser.getId())){
-                errorList.add("User name already exists. Please type a different one");
+                errors.put("userName" ,"User name already exists. Please type a different one");
             }else{
                 existingUser.setUserName(user.getUserName());
             }
@@ -119,8 +122,8 @@ public class UserServiceImpl implements UserService {
             String hashedPassword = passwordEncoder.encode(user.getPassword());
             existingUser.setPassword(hashedPassword);
         }
-        if(!errorList.isEmpty()){
-            throw new ValidationException("Update failed", errorList);
+        if(!errors.isEmpty()){
+            throw new ValidationException("Update failed", errors);
         }
 
         User updatedUser = userRepository.save(existingUser);

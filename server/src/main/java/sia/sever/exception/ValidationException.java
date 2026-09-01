@@ -1,20 +1,20 @@
 package sia.sever.exception;
 
-import java.util.List;
+import java.util.Map;
 
 public class ValidationException extends RuntimeException {
 
     // Fields
-    private final List<String> errors;
+    private final Map<String, String> errors;
 
     // Constructor
-    public ValidationException(String message, List<String> errors) {
+    public ValidationException(String message, Map<String, String> errors) {
         super(message);
         this.errors = errors;
     }
 
     // Getters
-    public List<String> getErrors(){
+    public Map<String, String> getErrors(){
         return errors;
     }
 }

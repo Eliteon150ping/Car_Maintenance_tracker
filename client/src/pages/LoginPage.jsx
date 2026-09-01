@@ -1,8 +1,8 @@
 import PageHeader from "../components/PageHeader";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import "../styles/LoginPage.css"
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/authPage.css";
 
 function LoginPage() {
 
@@ -10,41 +10,50 @@ function LoginPage() {
     const [password, setPassword] = useState("");  // submitting the form
     const { login } = useAuth();                     // Use the login function that AuthContext is sharing
     const navigate = useNavigate();
-    const [errors, setErrors] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [shake, setShake] = useState(false);
 
     async function handleSubmit(event) {           // React calls this function when the form is submitted.
         event.preventDefault();
 
-        const validationErrors = [];
+        const validationErrors = {};
 
         function validateEmail() {
             if (email.trim() == "") {
-                validationErrors.push("Email cannot be empty");
+                validationErrors.email = "Email cannot be empty";
             }
         }
         validateEmail();
 
         function validatePassword() {
             if (password.trim() == "") {
-                validationErrors.push("Password cannot be empty");
+                validationErrors.password = "Password cannot be empty";
             }
         }
         validatePassword();
 
-        if (validationErrors.length > 0) {
+        if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
+           triggerShake();
             return;
         }
 
-        setErrors([]);
+        setErrors({});
         try {
             await login(email, password);
             navigate("/");
         } catch (error) {
             console.error("Error caught: " + error.message);
-            setErrors(error.errors?.length ? error.errors : [error.message])
+            setErrors(error.errors ? error.errors : { general: error.message });
+            triggerShake();
         }
 
+        function triggerShake(){
+            setShake(true);
+            setTimeout(() => {
+                setShake(false)
+            }, 400);
+        }
     }
 
     return (
@@ -59,27 +68,35 @@ function LoginPage() {
 
                 <label className="form-field">Email
                     <input type="email"
+                        className={errors.email ? (shake ? `input-error input-shake` :`input-error`) : ""}
                         placeholder="Enter your email address"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)} />
+
+                    {errors.email && (
+                        <span className="field-error">
+                            {errors.email}
+                        </span>
+                    )}
                 </label>
 
                 <label className="form-field">Password
                     <input type="password"
+                        className={errors.password ? (shake ? `input-error input-shake` : `input-error`) : ""}
                         placeholder="Enter your password"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)} />
+
+                    {errors.password && (
+                        <span className="field-error">
+                            {errors.password}
+                        </span>
+                    )}
                 </label>
 
-                {errors.length > 0 && (
-                    <ul className="form-errors">
-                        {errors.map((error, index) => (
-                            <li key={index}>{error}</li>
-                        ))}
-                    </ul>
-                )}
-
                 <button className="auth-button" type="submit">Login</button>
+
+                <p className="auth-link">Don't have an account? <Link to="/register">Make one here</Link></p>
 
             </form>
         </div>

@@ -10,7 +10,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice // Better than @ControllerAdvice for rest apis, returning json instead of for returning html
 public class GlobalExceptionHandler {
@@ -50,8 +52,8 @@ public class GlobalExceptionHandler {
     // Handle Validation error input
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(ValidationException validationError, HttpServletRequest request) {
-        List<String> errorList = validationError.getErrors();
-        ErrorResponse validationInputError = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), validationError.getMessage(), request.getRequestURI(), errorList);
+        Map<String, String> errors = validationError.getErrors();
+        ErrorResponse validationInputError = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), validationError.getMessage(), request.getRequestURI(), errors);
         return new ResponseEntity<>(validationInputError, HttpStatus.BAD_REQUEST);
     }
 
@@ -86,12 +88,11 @@ public class GlobalExceptionHandler {
     // Handle Method Arguments not valid
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        List<String> errorList = new ArrayList<>();
-        ex.getBindingResult();
+        Map<String, String> errors = new HashMap<>();
         for (FieldError fieldError : ex.getFieldErrors()) {
-            errorList.add(fieldError.getDefaultMessage());
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
-        ErrorResponse exInputError = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),"Validation failed", request.getRequestURI(), errorList);
+        ErrorResponse exInputError = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),"Validation failed", request.getRequestURI(), errors);
         return new ResponseEntity<>(exInputError, HttpStatus.BAD_REQUEST);
     }
 
