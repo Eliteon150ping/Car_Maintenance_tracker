@@ -2,7 +2,7 @@ import PageHeader from "../components/PageHeader";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import "../styles/authPage.css";
+import "../styles/AuthPage.css";
 
 function LoginPage() {
 

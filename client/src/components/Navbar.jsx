@@ -12,15 +12,15 @@ function Navbar() {
             <h2>Car Maintenance Tracker</h2>
             {user ? (
                 <ul>
-                    <Link to="/">Dashboard</Link>
-                    <Link to="/vehicles">My Garage</Link>
-                    <Link to="/profile">Profile</Link>
+                    <Link className="link" to="/">Dashboard</Link>
+                    <Link className="link" to="/vehicles">My Garage</Link>
+                    <Link className="link" to="/profile">Profile</Link>
 
                 </ul>
             ) : (
                 <ul>
-                    <Link to="/login">Login</Link>
-                    <Link to="/register">Register</Link>
+                    <Link className="link" to="/login">Login</Link>
+                    <Link className="link" to="/register">Register</Link>
                 </ul>
             )}
 

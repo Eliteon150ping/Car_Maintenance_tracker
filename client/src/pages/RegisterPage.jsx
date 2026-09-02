@@ -2,7 +2,7 @@ import { useState } from "react";
 import PageHeader from "../components/PageHeader";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/authPage.css";
+import "../styles/AuthPage.css";
 
 function RegisterPage() {
 

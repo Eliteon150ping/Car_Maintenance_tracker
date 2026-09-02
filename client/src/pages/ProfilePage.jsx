@@ -6,6 +6,7 @@ import UpdateProfileForm from "../components/UpdateProfileForm";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "../components/ConfirmationModal";
+import "../styles/ProfilePage.css";
 
 function ProfilePage() {
 
@@ -43,41 +44,47 @@ function ProfilePage() {
 
     return (
 
-        <>
+        <div className="profile-page">
+
             <PageHeader
                 title="Profile"
                 description="View your profile details here"
             />
 
-            {profile && (
+            {!showEditingForm && profile && (
                 <UserDetailsCard
-                    key={profile.id}
                     id={profile.id}
                     userName={profile.userName}
                     email={profile.email}
-
                 />
             )}
 
-            {showEditingForm ? <UpdateProfileForm
+            {showEditingForm && (
+                <UpdateProfileForm
 
-                profile={profile}
-                id={profile?.id}
+                    profile={profile}
+                    id={profile?.id}
 
-                onSave={() => {
-                    loadProfile();
-                    setShowEditingForm(false);
-                }}
+                    onSave={() => {
+                        loadProfile();
+                        setShowEditingForm(false);
+                    }}
 
-                onCancel={() => {
-                    setShowEditingForm(false);
-                }}
-            /> : <button onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>}
+                    onCancel={() => {
+                        setShowEditingForm(false);
+                    }}
+                />
+            )}
+
+            {profile != null && !showEditingForm && (
+                <button onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>
+            )}
 
             <button onClick={() => {
                 logout();
                 navigate("/login")
             }}>Logout</button>
+
             {errors.length > 0 && (
                 <ul style={{ color: "red" }}>
                     {errors.map((error, index) => (
@@ -97,7 +104,7 @@ function ProfilePage() {
                     onCancel={() => setShowDeleteConfirmation(false)}
                 />
             )}
-        </>
+        </div>
     );
 }
 

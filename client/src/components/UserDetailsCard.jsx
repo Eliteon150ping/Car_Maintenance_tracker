@@ -1,12 +1,29 @@
-function UserDetailsCard({id, userName, email}){
+import "../styles/UserDetailsCard.css";
 
-    return(
+function UserDetailsCard({ userName, email }) {
+
+    return (
 
         <div className="user-details-card">
             <h3>User Details</h3>
-            <p>Username: {userName}</p>
-            <p>Email: {email}</p>
-            <p>Password: *****</p>
+
+            <label>Username
+                <input
+                    value={userName}
+                    disabled={true} />
+            </label>
+
+            <label>Email
+                <input
+                    value={email}
+                    disabled={true} />
+            </label>
+
+            <label>Password
+                <input
+                    value="*****"
+                    disabled={true} />
+            </label>
         </div>
     );
 }

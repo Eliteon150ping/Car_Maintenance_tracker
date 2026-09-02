@@ -65,6 +65,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
 
         <form onSubmit={handleSubmit}>
 
+            <h2 style={{color: "black"}}>Update profile</h2>
             <label>Username
                 <input type="text"
                     placeholder="Enter a new username"
