@@ -7,19 +7,19 @@ function UserDetailsCard({ userName, email }) {
         <div className="user-details-card">
             <h3>User Details</h3>
 
-            <label>Username
+            <label className="user-details-field">Username
                 <input
                     value={userName}
                     disabled={true} />
             </label>
 
-            <label>Email
+            <label className="user-details-field">Email
                 <input
                     value={email}
                     disabled={true} />
             </label>
 
-            <label>Password
+            <label className="user-details-field">Password
                 <input
                     value="*****"
                     disabled={true} />

@@ -1,3 +1,28 @@
 .user-details-card{
-    margin: 40px auto;
+    padding-left: 6.5%;
+    padding-right: 6.5%;
+    padding-bottom: 1px;
 }
+
+h3{
+    text-align: center;
+}
+
+.user-details-field{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+
+}
+
+.user-details-field input{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    width: 100%;
+    border-color: orange;
+}
+

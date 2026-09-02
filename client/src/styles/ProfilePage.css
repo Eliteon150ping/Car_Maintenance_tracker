@@ -1,5 +1,34 @@
-.profile-page{
+.profile-page {
     max-width: 500px;
     margin: 40px auto;
     padding: 20px;
+}
+
+.profile-container{
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding-bottom: 23px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.profile-buttons {
+    display: flex;
+    gap: 10px;
+    padding-left: 6.5%;
+    padding-right: 6.5%;
+}
+
+.profile-button {
+    flex-grow: 1;    /* flex-grow → how much space each button gets */
+    cursor: pointer;
+    border: none;
+    color: aliceblue;
+    background-color: deepskyblue;
+    padding: 11px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.profile-delete{
+    background-color: red;
 }

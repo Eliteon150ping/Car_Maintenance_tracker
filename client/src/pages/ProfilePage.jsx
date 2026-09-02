@@ -51,39 +51,47 @@ function ProfilePage() {
                 description="View your profile details here"
             />
 
-            {!showEditingForm && profile && (
-                <UserDetailsCard
-                    id={profile.id}
-                    userName={profile.userName}
-                    email={profile.email}
-                />
-            )}
+            <div className="profile-container">
+                
+                {!showEditingForm && profile && (
+                    <UserDetailsCard
+                        id={profile.id}
+                        userName={profile.userName}
+                        email={profile.email}
+                    />
+                )}
 
-            {showEditingForm && (
-                <UpdateProfileForm
+                {showEditingForm && (
+                    <UpdateProfileForm
 
-                    profile={profile}
-                    id={profile?.id}
+                        profile={profile}
+                        id={profile?.id}
 
-                    onSave={() => {
-                        loadProfile();
-                        setShowEditingForm(false);
-                    }}
+                        onSave={() => {
+                            loadProfile();
+                            setShowEditingForm(false);
+                        }}
 
-                    onCancel={() => {
-                        setShowEditingForm(false);
-                    }}
-                />
-            )}
+                        onCancel={() => {
+                            setShowEditingForm(false);
+                        }}
+                    />
+                )}
 
-            {profile != null && !showEditingForm && (
-                <button onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>
-            )}
+                <div className="profile-buttons">
 
-            <button onClick={() => {
-                logout();
-                navigate("/login")
-            }}>Logout</button>
+                    {profile != null && !showEditingForm && (
+                        <button className="profile-button" onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>
+                    )}
+
+                    <button className="profile-button" onClick={() => {
+                        logout();
+                        navigate("/login")
+                    }}>Logout</button>
+
+                    <button className="profile-button profile-delete" onClick={() => setShowDeleteConfirmation(true)}>Delete Account</button>
+                </div>
+            </div>
 
             {errors.length > 0 && (
                 <ul style={{ color: "red" }}>
@@ -93,7 +101,6 @@ function ProfilePage() {
                 </ul>
             )}
 
-            <button onClick={() => setShowDeleteConfirmation(true)}>Delete Account</button>
             {showDeleteConfirmation && (
                 <ConfirmationModal
                     title="Delete Account"
