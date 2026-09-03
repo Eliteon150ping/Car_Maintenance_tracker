@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
             User validateUserName = userRepository.findByUserName(user.getUserName());
 
             if(validateUserName != null && !validateUserName.getId().equals(existingUser.getId())){
-                errors.put("userName" ,"User name already exists. Please type a different one");
+                errors.put("userName" ,"Username already exists. Please type a different one");
             }else{
                 existingUser.setUserName(user.getUserName());
             }

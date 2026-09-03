@@ -34,7 +34,7 @@ function LoginPage() {
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-           triggerShake();
+            triggerShake();
             return;
         }
 

@@ -4,7 +4,6 @@
     border-radius: 10px;        /* How rounded the corners are */
     border: 1px solid white;   /* border thickness, border style, border colour */
     text-align: center;
-
     transition: all 0.25s ease;
 }
 

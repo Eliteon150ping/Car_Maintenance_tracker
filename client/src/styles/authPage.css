@@ -42,10 +42,12 @@
     cursor: pointer;
     background-color: deepskyblue;
     color: white;
+    transition: all 0.25s ease;
 }
 
 .auth-button:hover {
     opacity: 0.9;
+    transform: translateY(-6px);
 }
 
 @keyframes shake {

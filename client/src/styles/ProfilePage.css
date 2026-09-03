@@ -27,6 +27,12 @@
     padding: 11px;
     border-radius: 5px;
     font-size: 16px;
+    transition: all 0.25s ease;
+}
+
+.profile-button:hover{
+    opacity: 0.9;
+    transform: translateY(-6px);
 }
 
 .profile-delete{

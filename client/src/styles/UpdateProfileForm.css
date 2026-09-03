@@ -1,0 +1,57 @@
+.update-profile-page {
+    padding-left: 6.5%;
+    padding-right: 6.5%;
+    padding-bottom: 1px;
+}
+
+.update-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.update-field input{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    width: 100%;
+    border-color: orange;
+}
+
+.update-field input:focus{
+    outline: none;
+    border-color: darkorange;
+}
+
+.update-field input.input-error{
+    border: 1px solid red;
+}
+
+.update-profile-buttons{
+    display: flex;
+    gap: 10px;
+}
+
+.update-profile-button{
+    flex-grow: 1;    /* flex-grow → how much space each button gets */
+    cursor: pointer;
+    border: none;
+    color: aliceblue;
+    background-color: deepskyblue;
+    padding: 11px;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: all 0.25s ease;
+}
+
+.update-profile-button:hover{
+    opacity: 0.9;
+    transform: translateY(-6px);
+}
+
+.cancel{
+    background-color: red;
+}

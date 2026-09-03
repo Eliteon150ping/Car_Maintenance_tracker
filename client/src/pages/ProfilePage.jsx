@@ -52,13 +52,14 @@ function ProfilePage() {
             />
 
             <div className="profile-container">
-                
+
                 {!showEditingForm && profile && (
                     <UserDetailsCard
                         id={profile.id}
                         userName={profile.userName}
                         email={profile.email}
                     />
+
                 )}
 
                 {showEditingForm && (
@@ -78,28 +79,22 @@ function ProfilePage() {
                     />
                 )}
 
-                <div className="profile-buttons">
+                {!showEditingForm && (
+                    <div className="profile-buttons">
 
-                    {profile != null && !showEditingForm && (
-                        <button className="profile-button" onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>
-                    )}
+                        {profile != null && !showEditingForm && (
+                            <button className="profile-button" onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>
+                        )}
 
-                    <button className="profile-button" onClick={() => {
-                        logout();
-                        navigate("/login")
-                    }}>Logout</button>
+                        <button className="profile-button" onClick={() => {
+                            logout();
+                            navigate("/login")
+                        }}>Logout</button>
 
-                    <button className="profile-button profile-delete" onClick={() => setShowDeleteConfirmation(true)}>Delete Account</button>
-                </div>
+                        <button className="profile-button profile-delete" onClick={() => setShowDeleteConfirmation(true)}>Delete Account</button>
+                    </div>
+                )}
             </div>
-
-            {errors.length > 0 && (
-                <ul style={{ color: "red" }}>
-                    {errors.map((error, index) => (
-                        <li key={index}>{error}</li>
-                    ))}
-                </ul>
-            )}
 
             {showDeleteConfirmation && (
                 <ConfirmationModal

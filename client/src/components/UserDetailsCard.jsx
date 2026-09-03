@@ -5,7 +5,7 @@ function UserDetailsCard({ userName, email }) {
     return (
 
         <div className="user-details-card">
-            <h3>User Details</h3>
+            <h3 className="user-details">User Details</h3>
 
             <label className="user-details-field">Username
                 <input
