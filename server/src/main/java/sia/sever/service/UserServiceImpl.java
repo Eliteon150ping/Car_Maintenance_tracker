@@ -13,7 +13,6 @@ import sia.sever.repository.UserRepository;
 import sia.sever.security.jwt.JwtUtility;
 import sia.sever.security.userDetails.CustomUserDetails;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,10 +56,10 @@ public class UserServiceImpl implements UserService {
         User validateUsername = userRepository.findByUserName(user.getUserName());
         Map<String, String> errors = new HashMap<>();
         if (validateUsername != null) {
-            errors.put("userName" ," This username already exists, please try a different one ");
+            errors.put("userName", " This username already exists, please try a different one ");
         }
         if (validateEmail != null) {
-            errors.put("email" ," This email already exists, please try a different one ");
+            errors.put("email", " This email already exists, please try a different one ");
         }
         if (!errors.isEmpty()) {
             throw new ValidationException("Validation failed", errors);
@@ -83,7 +82,7 @@ public class UserServiceImpl implements UserService {
         Map<String, String> errors = new HashMap<>();
 
         if (validateUser == null) {
-            errors.put("email" ,"Email not found, please register instead");
+            errors.put("email", "Email not found, please register instead");
         } else if (!passwordEncoder.matches(user.getPassword(), validateUser.getPassword())) {
             // Compare passwords using the input one and the one stored in the db
             errors.put("password", "Password is incorrect");
@@ -112,9 +111,9 @@ public class UserServiceImpl implements UserService {
 
             User validateUserName = userRepository.findByUserName(user.getUserName());
 
-            if(validateUserName != null && !validateUserName.getId().equals(existingUser.getId())){
-                errors.put("userName" ,"Username already exists. Please type a different one");
-            }else{
+            if (validateUserName != null && !validateUserName.getId().equals(existingUser.getId())) {
+                errors.put("userName", "Username already exists. Please type a different one");
+            } else {
                 existingUser.setUserName(user.getUserName());
             }
         }
@@ -122,12 +121,34 @@ public class UserServiceImpl implements UserService {
             String hashedPassword = passwordEncoder.encode(user.getPassword());
             existingUser.setPassword(hashedPassword);
         }
-        if(!errors.isEmpty()){
+
+        if (!errors.isEmpty()) {
             throw new ValidationException("Update failed", errors);
         }
 
         User updatedUser = userRepository.save(existingUser);
         return mapToUserResponseDTO(updatedUser);
+    }
+
+    // Validate the updated new username to display in the frontend immediately before the confirmation
+    // box
+    @Override
+    public void validateUserName(String userName) {
+        User existingUser = getCurrentUser();
+        Map<String, String> errors = new HashMap<>();
+
+        if (userName != null && !userName.isBlank()) {
+
+            User validateUserName = userRepository.findByUserName(userName);
+
+            if (validateUserName != null && !validateUserName.getId().equals(existingUser.getId())) {
+                errors.put("userName", "Username already exists. Please type a different one");
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            throw new ValidationException("Update failed", errors);
+        }
     }
 
     // Delete a user by id

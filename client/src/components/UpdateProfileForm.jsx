@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { updateUserDetails } from "../api/authApi";
+import { validateUserName, updateUserDetails } from "../api/authApi";
 import "../styles/UpdateProfileForm.css";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 function UpdateProfileForm({ profile, onSave, onCancel }) {
 
@@ -9,6 +10,8 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({});
     const [shake, setShake] = useState(false);
+    const [showUnsavedConfirmation, setShowUnsavedConfirmation] = useState(false);
+    const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
 
     const formData = {
         userName,
@@ -24,9 +27,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
 
     }, [profile])
 
-    async function handleSubmit(event) {
-        event.preventDefault();
-
+    async function handleClickSave() {
         const validationErrors = {};
 
         function validateNewUserName() {
@@ -46,15 +47,33 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
         }
         validatePassword();
 
-
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             triggerShake();
             return;
         }
 
+        try {
+            await validateUserName(userName);
+            setShowSaveConfirmation(true);
+        } catch (error) {
+            console.error("Error caught " + error.message);
+            setErrors(error.errors ? error.errors : { general: error.message });
+            triggerShake();
+        }
+    }
+
+    function triggerShake() {
+        setShake(true);
+        setTimeout(() => {
+            setShake(false);
+        }, 400);
+    }
+
+    async function saveChanges() {
         setErrors({});
         try {
+            setShowSaveConfirmation(false);
             await updateUserDetails(formData);
             onSave();
 
@@ -63,18 +82,11 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
             setErrors(error.errors ? error.errors : { general: error.message });
             triggerShake();
         }
-
-        function triggerShake() {
-            setShake(true);
-            setTimeout(() => {
-                setShake(false);
-            }, 400);
-        }
     }
 
     return (
 
-        <form className="update-profile-page" onSubmit={handleSubmit}>
+        <form className="update-profile-page">
 
             <h3 className="user-details" style={{ color: "black" }}>Update profile</h3>
             <label className="update-field">Username
@@ -118,11 +130,33 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
                     </span>
                 )}
             </label>
-            
+
             <div className="update-profile-buttons">
-                <button className="update-profile-button" type="submit">Save changes</button>
-                <button className="update-profile-button cancel" type="button" onClick={onCancel}>Cancel</button>
+                <button className="update-profile-button" type="button" onClick={handleClickSave}>Save changes</button>
+                <button className="update-profile-button cancel" type="button" onClick={() => setShowUnsavedConfirmation(true)}>Cancel</button>
             </div>
+
+            {showSaveConfirmation && (
+                <ConfirmationModal
+                    title="Save changes?"
+                    message="Are you sure you want to save your new changes?"
+                    confirmText="Yes"
+                    cancelText="No"
+                    onConfirm={saveChanges}
+                    onCancel={() => setShowSaveConfirmation(false)}
+                />
+            )}
+
+            {showUnsavedConfirmation && (
+                <ConfirmationModal
+                    title="Cancel unsaved changes?"
+                    message="Are you sure you want to cancel any unsaved changes?"
+                    confirmText="Yes"
+                    cancelText="No"
+                    onConfirm={() => onCancel()}
+                    onCancel={() => setShowUnsavedConfirmation(false)}
+                />
+            )}
         </form>
     );
 }

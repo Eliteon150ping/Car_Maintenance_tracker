@@ -114,6 +114,32 @@ export async function updateUserDetails(profile) {
     return updatedUserDetails;
 }
 
+// Get the username to validate before the confirmation box shows
+export async function validateUserName(userName) {
+
+    const token = localStorage.getItem("token");
+    const profileUserName = JSON.stringify({userName});
+
+    const response = await fetch("http://localhost:8080/api/users/profile/username",{
+
+        method: "PUT",
+        body: profileUserName,
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        const validationError = await response.json();
+        const error = new Error(validationError.message || "Unable to update profile, please try again later");
+
+        error.errors = validationError.errors || [];
+
+        throw error;
+    }
+}
+
 // Delete User's account
 export async function deleteAccount(){
 

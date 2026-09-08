@@ -42,6 +42,13 @@ public class UserController {
         return ResponseEntity.ok(editedProfile);
     }
 
+    // Check the username before showing the confirmation box(insane how all this needs to be done for that)
+    @PutMapping("/profile/username")
+    public ResponseEntity<Void> validateUserName(@RequestBody UsernameValidationDTO userName){
+        userService.validateUserName(userName.getUserName());
+        return ResponseEntity.noContent().build();
+    }
+
     // Delete profile
     @DeleteMapping("/profile")
     public ResponseEntity<Void> deleteProfile(){

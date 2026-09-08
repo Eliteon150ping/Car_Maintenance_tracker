@@ -11,4 +11,5 @@ public interface UserService {
     void deleteProfile();
     List<UserResponseDTO> getAllUsers();
     UserResponseDTO getCurrentUserLogged();
+    void validateUserName(String userName);
 }

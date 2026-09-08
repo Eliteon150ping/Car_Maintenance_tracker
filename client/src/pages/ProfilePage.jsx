@@ -16,6 +16,7 @@ function ProfilePage() {
     const navigate = useNavigate();
     const [errors, setErrors] = useState([]);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
 
     useEffect(() => {
 
@@ -86,15 +87,27 @@ function ProfilePage() {
                             <button className="profile-button" onClick={() => { setShowEditingForm(true) }}>Edit Profile</button>
                         )}
 
-                        <button className="profile-button" onClick={() => {
-                            logout();
-                            navigate("/login")
-                        }}>Logout</button>
+                        <button className="profile-button" onClick={() =>
+                            setShowLogoutConfirmation(true)
+                        }>Logout</button>
 
-                        <button className="profile-button profile-delete" onClick={() => setShowDeleteConfirmation(true)}>Delete Account</button>
+                        <button className="profile-button profile-delete" onClick={() =>
+                            setShowDeleteConfirmation(true)
+                        }>Delete Account</button>
                     </div>
                 )}
             </div>
+
+            {showLogoutConfirmation && (
+                <ConfirmationModal
+                    title="Logout?"
+                    message="Are you sure you want to logout? You will be redirected to the login page."
+                    confirmText="Logout"
+                    cancelText="Cancel"
+                    onConfirm={() => { logout(), navigate("/login") }}
+                    onCancel={() => setShowLogoutConfirmation(false)}
+                />
+            )}
 
             {showDeleteConfirmation && (
                 <ConfirmationModal
