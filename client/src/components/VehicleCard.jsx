@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
+import "../styles/VehicleCard.css"
 
 function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete }) {
 
     const [showConfirmationCard, setShowConfirmationCard] = useState(false);
 
     return (
-        <div>
+        <div className="main-vehicle-card">
             <Link to={`/vehicles/${id}`}>
                 <div className="vehicle-card">
+                    <img className="vehicle-image" src="/images/generic_car.png" alt="Generic car" />
                     <h3>{year} {brand} {model}</h3>
                     <p>Mileage: {currentMileage.toLocaleString()} km</p>
                 </div>

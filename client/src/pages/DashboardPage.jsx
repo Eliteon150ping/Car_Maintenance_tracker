@@ -46,7 +46,7 @@ function DashboardPage() {
 
             <div className="summary-grid">
 
-                <SummaryCard
+                <SummaryCard 
                     title="Vehicles"
                     value={vehicleCount}
                     onClick={() => navigate("/vehicles")}
@@ -64,7 +64,7 @@ function DashboardPage() {
                     onClick={() => navigate("/upcoming-services")}
                 />
 
-                <SummaryCard 
+                <SummaryCard className="summary-grid summary-overdue"
                     title="Overdue"
                     value={overdueCount}
                     onClick={() => navigate("/overdue-services")}

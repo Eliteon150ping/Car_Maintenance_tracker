@@ -5,7 +5,7 @@ import { getAllVehicles } from "../api/vehicleApi.js";
 import CarForm from "../components/CarForm.jsx";
 import { useNavigate } from "react-router-dom";
 import { deleteCar } from "../api/vehicleApi.js";
-import ConfirmationModal from "../components/ConfirmationModal.jsx";
+import "../styles/VehiclePage.css";
 
 function VehiclesPage() {
 
@@ -23,14 +23,14 @@ function VehiclesPage() {
 
         // useEffect runs this function once when the component
         // initially mounts because the dependency array is empty.
-        
+
         // loadVehicles() is called here so the garage is populated
         // with the user's vehicles when they first open the page.
 
         loadVehicles();                            // Call the async function 
 
     }, [])                                         // [] is to run this effect after the component's initial render, 
-                                                   //    and don't rerun it when state/props change. 
+    //    and don't rerun it when state/props change. 
 
     async function loadVehicles() {
 
@@ -47,63 +47,66 @@ function VehiclesPage() {
 
     }
 
-    async function handleDeleteCar(id){
-        try{
+    async function handleDeleteCar(id) {
+        try {
             await deleteCar(id);
             await loadVehicles();
-        }catch(error){
+        } catch (error) {
             console.error("Error caught: " + error.message);
             setErrors(["Unable to delete car, please try again later"]);
         }
     }
 
     return (
-        <div>
+        <div className="vehicle-page">
+
             <PageHeader
                 title="My Garage"
                 description="View your entire vehicle catalogue here"
             />
 
-            {showCarForm ? <CarForm
+            <div className="card-flow">
+                {showCarForm ? <CarForm
 
-               editingCarForm={editingCarForm}
-               carId={editingCarForm?.id}
+                    editingCarForm={editingCarForm}
+                    carId={editingCarForm?.id}
 
-                onSave={() => {
-                    loadVehicles();
-                    setShowCarForm(false);
-                }}
+                    onSave={() => {
+                        loadVehicles();
+                        setShowCarForm(false);
+                    }}
 
-                onCancel={() => {
+                    onCancel={() => {
+                        setEditingCarForm(null);
+                        setShowCarForm(false);
+                    }}
+
+                /> : <button className="add-button" onClick={() => {
                     setEditingCarForm(null);
-                    setShowCarForm(false);
-                }}
+                    setShowCarForm(true);
+                }}><img className="vehicle-image" src="/images/generic_car.png" alt="Generic car" />Add Car</button>}
 
-            /> : <button onClick={() => {
-                setEditingCarForm(null);
-                setShowCarForm(true);
-            }}>Add Car</button>}
+                {vehicles.map(vehicle => (
+                    <VehicleCard
+                        key={vehicle.id}
+                        id={vehicle.id}
+                        brand={vehicle.brand}
+                        model={vehicle.model}
+                        year={vehicle.year}
+                        colour={vehicle.colour}
+                        currentMileage={vehicle.currentMileage}
+                        onEdit={() => {
+                            navigate(`/vehicles/${vehicle.id}`, {
+                                state: { editing: true }
+                            });
+                        }}
 
-            {vehicles.map(vehicle => (
-                <VehicleCard
-                    key={vehicle.id}
-                    id={vehicle.id}
-                    brand={vehicle.brand}
-                    model={vehicle.model}
-                    year={vehicle.year}
-                    colour={vehicle.colour}
-                    currentMileage={vehicle.currentMileage}
-                    onEdit={() => {
-                        navigate(`/vehicles/${vehicle.id}`, {
-                            state: {editing: true}
-                        }); 
-                    }}
-
-                    onDelete={() => {
-                        handleDeleteCar(vehicle.id)
-                    }}
-                />
-            ))}
+                        onDelete={() => {
+                            handleDeleteCar(vehicle.id)
+                        }}
+                    />
+                ))}
+            </div>
 
             {errors.length > 0 && (
                 <ul style={{ color: "red" }}>
