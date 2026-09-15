@@ -66,6 +66,7 @@ function VehiclesPage() {
             />
 
             <div className="card-flow">
+
                 {showCarForm ? <CarForm
 
                     editingCarForm={editingCarForm}
@@ -86,26 +87,29 @@ function VehiclesPage() {
                     setShowCarForm(true);
                 }}><img className="vehicle-image" src="/images/generic_car.png" alt="Generic car" />Add Car</button>}
 
-                {vehicles.map(vehicle => (
-                    <VehicleCard
-                        key={vehicle.id}
-                        id={vehicle.id}
-                        brand={vehicle.brand}
-                        model={vehicle.model}
-                        year={vehicle.year}
-                        colour={vehicle.colour}
-                        currentMileage={vehicle.currentMileage}
-                        onEdit={() => {
-                            navigate(`/vehicles/${vehicle.id}`, {
-                                state: { editing: true }
-                            });
-                        }}
+                {!showCarForm && (
+                    vehicles.map(vehicle => (
+                        <VehicleCard
+                            key={vehicle.id}
+                            id={vehicle.id}
+                            brand={vehicle.brand}
+                            model={vehicle.model}
+                            year={vehicle.year}
+                            colour={vehicle.colour}
+                            currentMileage={vehicle.currentMileage}
+                            onEdit={() => {
+                                navigate(`/vehicles/${vehicle.id}`, {
+                                    state: { editing: true }
+                                });
+                            }}
 
-                        onDelete={() => {
-                            handleDeleteCar(vehicle.id)
-                        }}
-                    />
-                ))}
+                            onDelete={() => {
+                                handleDeleteCar(vehicle.id)
+                            }}
+                        />
+                    ))
+                )}
+
             </div>
 
             {errors.length > 0 && (
