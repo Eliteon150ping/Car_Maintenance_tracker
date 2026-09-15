@@ -1,10 +1,17 @@
-.main-vehicle-card{
+.main-vehicle-card {
     width: 100%;
     height: 100%;
     padding: 20px;
-    border: 1px solid grey;
+    border: 1px solid orange;
     border-radius: 10px;
     box-sizing: border-box;
+    position: relative;
+    transition: all 0.25s ease;
+}
+
+.vehicle-link {
+    text-decoration: none;
+    color: inherit;
 }
 
 .vehicle-card {
@@ -13,10 +20,95 @@
     align-items: center;
 }
 
-.vehicle-image{
+.main-vehicle-card:hover{
+    animation: orangeGlow 1.5s ease-in-out infinite;
+    opacity: 0.9;
+    box-shadow: 0 0 12px orange;
+    transform: translateY(-6px);
+    
+}
+
+@keyframes orangeGlow {
+
+    0%, 100%{
+        box-shadow: 0 0 3px orange;
+    }
+
+    50%{
+        box-shadow: 0 0 12px orange;
+    }
+    
+}
+
+.vehicle-image {
     width: 100%;
-    height: 1000px;
+    height: 100px;
     object-fit: contain;
     display: block;
 }
 
+.vehicle-menu {
+    position: absolute;
+    right: 10px;
+    bottom: 3px;
+}
+
+.vehicle-menu-button {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    border: none;
+}
+
+.vehicle-menu-button button {
+    border: none;
+    background-color: white;
+    padding: 8px 15px;
+}
+
+.vehicle-menu-options {
+    position: absolute;
+    right: 0;
+    bottom: -45px;
+    background-color: white;
+    border: 1px solid orange;
+    border-radius: 5px;
+    overflow: hidden;
+    min-width: 80px;
+    text-align: center;
+}
+
+.delete-button{
+    color: red;
+}
+
+.vehicle-menu-options button {
+    border: none;
+    background-color: white;
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+.vehicle-name {
+    height: 48px;
+    margin: 10px 0;
+    font-size: 15px;
+    text-decoration: none;
+    text-align: center;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.vehicle-mileage {
+    height: 48px;
+    margin: 10px 1;
+    text-align: center;
+    font-size: 15px;
+    overflow: hidden;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}

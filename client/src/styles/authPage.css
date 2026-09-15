@@ -31,6 +31,17 @@
 .form-field input:focus {
     outline: none;
     border-color: darkorange;
+    animation: orangeGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes orangeGlow {
+    0%, 100%{
+        box-shadow: 0 0 3px orange;
+    }
+
+    50%{
+        box-shadow: 0 0 12px orange;
+    }
 }
 
 .auth-button {
