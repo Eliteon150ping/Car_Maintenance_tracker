@@ -1,4 +1,5 @@
-import { formatRemainingKM, formatRemainingDays, formatDate, formatServiceType } from "../utils/serviceFormatter"
+import { formatRemainingKM, formatRemainingDays, formatDate, formatServiceType } from "../utils/serviceFormatter";
+import "../styles/VehicleServiceHistoryCard.css";
 
 function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nextDueDate, serviceType, cost,
     description, remainingKm, remainingDays, onEdit, showExtraDetails, brand, model, year, highlightRemaining,
@@ -14,35 +15,64 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
                     <h2 style={{ color: "black" }}>{year} {brand} {model}</h2>
                 </div>
             )}
-            <h3>Service Date: {formatDate(serviceDate)} </h3>
-            <p>Mileage At Service: {mileageAtService.toLocaleString()} km</p>
-            <p>Service type: {formatServiceType(serviceType)}</p>
-            <p>Description: {description}</p>
-            <p>cost: R{cost}</p>
-            {serviceType != "OTHER" && (
-                <>
-                    <p>Next due mileage: {nextDueMileage.toLocaleString()} km</p>
-                    <p>Next due date: {formatDate(nextDueDate)}</p>
-                </>
-            )}
 
-            {isLatestRecord ?
-                <p style={{
-                    color: highlightRemaining && remainingKm > 0 && remainingKm <= 1500 ? "Orange" :
-                        highlightRemaining && remainingKm < 0 ? "red" : "black"
-                }}>
-                    {formatRemainingKM(remainingKm)}
-                </p> : <p>Remaining KM: Service done</p>
-            }
-            {isLatestRecord ?
-                <p style={{
-                    color: highlightRemaining && remainingDays > 0 && remainingDays <= 30 ? "Orange" :
-                        highlightRemaining && remainingDays < 0 ? "red" : "black"
-                }}>
-                    {formatRemainingDays(remainingDays)}
-                </p> : <p>Remaining Days: Service done</p>
-            }
-            <button type="edit" onClick={onEdit}>Edit</button>
+            <div className="service-column">
+                <p>{formatDate(serviceDate)}</p>
+            </div>
+
+            <div className="service-column">
+                <p>{mileageAtService.toLocaleString()} km</p>
+            </div>
+
+            <div className="service-column">
+                <p>{formatServiceType(serviceType)}</p>
+            </div>
+
+            <div className="service-column">
+                <p>{description.trim() == "" ? "N/A" : description}</p>
+            </div>
+
+            <div className="service-column">
+                <p>R{cost}</p>
+            </div>
+
+            <div className="service-column">
+                <p>
+                    {serviceType != "OTHER" ? `${nextDueMileage.toLocaleString()} km` : "-"}
+                </p>
+            </div>
+
+            <div className="service-column">
+                <p>
+                    {serviceType != "OTHER" ? formatDate(nextDueDate) : "-"}
+                </p>
+            </div>
+
+            <div className="service-column">
+                {isLatestRecord ?
+                    <p style={{
+                        color: highlightRemaining && remainingKm > 0 && remainingKm <= 1500 ? "Orange" :
+                            highlightRemaining && remainingKm < 0 ? "red" : "black"
+                    }}>
+                        {formatRemainingKM(remainingKm)}
+                    </p> : <p style={{ color: "green" }}>Service done</p>
+                }
+            </div>
+
+            <div className="service-column">
+                {isLatestRecord ?
+                    <p style={{
+                        color: highlightRemaining && remainingDays > 0 && remainingDays <= 30 ? "Orange" :
+                            highlightRemaining && remainingDays < 0 ? "red" : "black"
+                    }}>
+                        {formatRemainingDays(remainingDays)}
+                    </p> : <p style={{ color: "green" }}>Service done</p>
+                }
+            </div>
+
+            <div className="service-column">
+                <button className="service-column-button" type="button" onClick={onEdit}>Edit</button>
+            </div>
         </div>
     );
 }

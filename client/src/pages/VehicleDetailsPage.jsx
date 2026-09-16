@@ -7,6 +7,7 @@ import VehicleInformationCard from "../components/VehicleInformationCard";
 import ServiceRecordForm from "../components/ServiceRecordForm";
 import CarForm from "../components/CarForm";
 import { useLocation } from "react-router-dom";
+import "../styles/VehicleDetailsPage.css";
 
 function VehicleDetailsPage() {
 
@@ -38,7 +39,7 @@ function VehicleDetailsPage() {
 
             navigate(location.pathname, {  // Opens the edit form when arriving from the Garage,
                 replace: true, state: null // then clears the navigation state so the edit form
-                                           // does not reopen after refreshing the page.            
+                // does not reopen after refreshing the page.            
             });
         }
 
@@ -49,16 +50,16 @@ function VehicleDetailsPage() {
         const data = await getServiceRecordsByCarId(id);
         setServiceRecords(data);
 
-        if(editingServiceRecordId){
+        if (editingServiceRecordId) {
 
             const recordToEdit = data.find(   // .find() loops through the array and returns the first object
-                                              // for which the condition evaluates to true. If it can't find
-                                              // anything that satisfies the condition, it returns undefined
-                                              // instead of false.
+                // for which the condition evaluates to true. If it can't find
+                // anything that satisfies the condition, it returns undefined
+                // instead of false.
                 serviceRecord => serviceRecord.id === editingServiceRecordId
             );
 
-            if(recordToEdit){
+            if (recordToEdit) {
                 setEditingServiceRecord(recordToEdit);
                 setShowServiceForm(true);
             }
@@ -73,13 +74,13 @@ function VehicleDetailsPage() {
     // doesn't exist else ignore it
     const latestRecordsByServiceType = {};
     serviceRecords.forEach(serviceRecord => {
-        if(!latestRecordsByServiceType[serviceRecord.serviceType]){
+        if (!latestRecordsByServiceType[serviceRecord.serviceType]) {
             latestRecordsByServiceType[serviceRecord.serviceType] = serviceRecord.id
         }
     });
 
     return (
-        <div>
+        <div className="vehicle-details-page">
             <PageHeader
                 title="Vehicle Details"
                 description="View your vehicle's service history and information"
@@ -95,7 +96,7 @@ function VehicleDetailsPage() {
                     year={vehicle.year}
                     colour={vehicle.colour}
                     currentMileage={vehicle.currentMileage}
-                    
+
                     onEdit={() => {
                         setShowCarForm(true);
                     }}
@@ -153,10 +154,23 @@ function VehicleDetailsPage() {
 
                     // Show the Add button when the form is hidden.
                     // Clicking it clears any editing record and opens a blank form.
-                }} /> : <button onClick={() => {
+                }} /> : <button className="add-service-record-button" onClick={() => {
                     setEditingServiceRecord(null),
                         setShowServiceForm(true)
                 }}>Add service record</button>}
+
+            <div className="service-record-header">
+                <div>Service Date</div>
+                <div>Mileage</div>
+                <div>Service Type</div>
+                <div>Description</div>
+                <div>Cost</div>
+                <div>Next due mileage</div>
+                <div>Next due date</div>
+                <div>Remaining KM</div>
+                <div>Remaining Days</div>
+                <div>Edit</div>
+            </div>
 
             {serviceRecords.map(serviceRecord => (
                 <VehicleDetailsCard

@@ -1,0 +1,30 @@
+.vehicle-details-page{
+    width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.service-record-header{
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
+    align-items: center;
+    border: 1px solid orange;
+    padding: 15px;
+    gap: 0;
+    width: 1200px;
+    margin-left: -350px;
+    margin-top: 10px;
+    text-align: center;
+    background-color: aliceblue;
+    border-radius: 5px 5px 0 0;
+}
+
+.service-record-header > div {
+    border-right: 1px solid orange;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.service-record-header > div:last-child {
+    border-right: none;
+}

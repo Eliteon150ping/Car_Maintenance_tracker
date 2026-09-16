@@ -1,0 +1,68 @@
+.vehicle-information {
+    border: 1px solid orange;
+    width: 1200px;
+    margin-left: -350px;
+    padding: 20px;
+    height: 250px;
+    border-radius: 10px;
+    background-color: aliceblue;
+    display: flex;
+    justify-content: space-between;
+}
+
+.vehicle-info-content{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+}
+
+.vehicle-info {
+  font-size: 32px;
+  margin: 0 0 20px;
+}
+
+.vehicle-colour,
+.vehicle-info-mileage {
+    font-size: 22px;
+    margin: 10px 0;
+}
+
+.vehicle-info-edit {
+    width: 100px;
+    padding: 7px;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: deepskyblue;
+    color: white;
+    border: none;
+    font-size: 25px;
+    margin-top: auto;
+    transition: all 0.25s ease;
+}
+
+.vehicle-info-edit:hover{
+    animation: deepskyblueGlow ease-in-out 1.5s infinite;
+    opacity: 0.9;
+    transform: translateY(-6px);
+    box-shadow: 0 0 12px deepskyblue;
+}
+
+@keyframes deepskyblueGlow {
+
+    0%, 100%{
+        box-shadow: 0 0 3px deepskyblue;
+    }
+
+    50%{
+        box-shadow: 0 0 12px deepskyblue;
+    }
+    
+}
+
+.vehicle-info-image{
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    margin-right: 50px;
+}

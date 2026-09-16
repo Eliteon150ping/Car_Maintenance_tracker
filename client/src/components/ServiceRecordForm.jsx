@@ -68,6 +68,9 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
         function validateDescription() {
             if (serviceType == "OTHER" && description.trim() == "") {
                 validationErrors.push("Service description is required for service type: OTHER");
+
+            }else if(description.length > 500){
+                validationErrors.push("Description cannot be more than 500 characters");
             }
         }
 
