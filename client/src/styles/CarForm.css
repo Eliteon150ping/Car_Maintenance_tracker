@@ -2,18 +2,18 @@
     display: flex;
     min-height: 55vh;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     grid-column: 1/-1;
 }
 
 .form-container {
     width: 500px;
-    margin: 40px auto;
+    margin: -20px auto;
     padding: 20px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    height: 60vh;
+    min-height: 60vh;
 }
 
 .form-field {

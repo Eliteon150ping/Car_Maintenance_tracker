@@ -17,7 +17,10 @@ import sia.sever.exception.UnauthorizedException;
 import sia.sever.repository.CarRepository;
 import sia.sever.repository.UserRepository;
 import sia.sever.specification.CarSpecification;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -88,6 +91,7 @@ public class CarServiceImpl implements CarService {
     public CarResponseDTO updateCar(Long id, UpdateCarDTO updatedCar) {
 
         User user = getAuthenticatedUser();
+        Map<String, String> errors = new HashMap<>();
 
         // First Check if an entity exists before continuing with updating
         Car existingCar = getUserCar(id, user);
@@ -95,13 +99,36 @@ public class CarServiceImpl implements CarService {
         // Check if the new mileage is NOT lower than the current mileage
         if (updatedCar.getCurrentMileage() != null && updatedCar.getCurrentMileage()
                 < existingCar.getCurrentMileage()) {
-            throw new InvalidMileageException("Updated mileage cannot be less than current mileage");
+            errors.put("currentMileage", "Updated mileage cannot be less than current mileage");
         }
-
+        if(!errors.isEmpty()){
+            throw new InvalidMileageException("Updated failed", errors);
+        }
         updateEntityFromDTO(updatedCar, existingCar);
 
         Car updatedCarInfo = carRepository.save(existingCar);
         return mapToCarResponseDTO(updatedCarInfo);
+    }
+
+    // Validate the updated new mileage to display in the frontend immediately before the confirmation
+    // box
+    @Override
+    public void validateUpdateMileage(Long id, int updateMileage) {
+
+        User user = getAuthenticatedUser();
+        Map<String, String> errors = new HashMap<>();
+
+        // First Check if an entity exists before continuing with updating
+        Car existingCar = getUserCar(id, user);
+
+        // Check if the new mileage is NOT lower than the current mileage
+        if (updateMileage < existingCar.getCurrentMileage()) {
+            errors.put("currentMileage", "Updated mileage cannot be less than current mileage");
+        }
+
+        if(!errors.isEmpty()){
+            throw new InvalidMileageException("Updated failed", errors);
+        }
     }
 
     // Delete a car

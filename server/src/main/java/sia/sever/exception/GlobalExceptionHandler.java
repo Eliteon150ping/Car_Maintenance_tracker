@@ -38,7 +38,8 @@ public class GlobalExceptionHandler {
     // Handle Invalid mileage
     @ExceptionHandler(InvalidMileageException.class)
     public ResponseEntity<ErrorResponse> handleInvalidMileage(InvalidMileageException invalidMileage, HttpServletRequest request) {
-        ErrorResponse invalidMileageEntered = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), invalidMileage.getMessage(), request.getRequestURI());
+        Map<String, String> errors = invalidMileage.getErrors();
+        ErrorResponse invalidMileageEntered = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), invalidMileage.getMessage(), request.getRequestURI(), errors);
         return new ResponseEntity<>(invalidMileageEntered, HttpStatus.BAD_REQUEST);
     }
 

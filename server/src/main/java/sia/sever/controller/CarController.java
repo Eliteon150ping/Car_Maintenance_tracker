@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sia.sever.dto.car.CreateCarDTO;
+import sia.sever.dto.car.MileageValidationDTO;
 import sia.sever.dto.car.UpdateCarDTO;
 import sia.sever.service.CarService;
 import sia.sever.dto.car.CarResponseDTO;
@@ -62,6 +63,13 @@ public class CarController {
     public ResponseEntity<CarResponseDTO> updateCarById(@PathVariable Long id, @Valid @RequestBody UpdateCarDTO car){
         CarResponseDTO updatedCar = carService.updateCar(id, car);
         return ResponseEntity.ok(updatedCar);
+    }
+
+    // Check the mileage before showing the confirmation box(insane how all this needs to be done for that)
+    @PutMapping("/{id}/mileage")
+    public ResponseEntity<Void> validateMileage(@PathVariable Long id, @RequestBody MileageValidationDTO mileage){
+        carService.validateUpdateMileage(id, mileage.getMileage());
+        return ResponseEntity.noContent().build();
     }
 
     // Delete car by id

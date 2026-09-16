@@ -1,7 +1,20 @@
 package sia.sever.exception;
 
+import java.util.Map;
+
 public class InvalidMileageException extends RuntimeException {
-    public InvalidMileageException(String message) {
+
+    // Fields
+    private final Map<String, String> errors;
+
+    // Constructor
+    public InvalidMileageException(String message, Map<String, String> errors) {
         super(message);
+        this.errors = errors;
+    }
+
+    // Getters
+    public Map<String, String> getErrors(){
+        return errors;
     }
 }

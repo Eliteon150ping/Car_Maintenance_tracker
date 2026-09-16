@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { addCar, editCar } from "../api/vehicleApi";
+import { addCar, editCar, validateMileage } from "../api/vehicleApi";
 import "../styles/CarForm.css";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -12,7 +12,8 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
     const [currentMileage, setCurrentMileage] = useState("");
     const [showSaveConfrimation, setShowSaveConfirmation] = useState(false);
     const [showUnsavedConfirmation, setShowUnsavedConfirmation] = useState(false);
-    const [errors, setErrors] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [shake, setShake] = useState(false);
 
     const formData = {
         brand,
@@ -41,35 +42,35 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
     }, [editingCarForm])
 
     async function handleClickSave() {
-        const validationErrors = [];
+        const validationErrors = {};
 
         function validateBrand() {
             if (brand.trim() == "") {
-                validationErrors.push("Brand cannot be empty");
+                validationErrors.brand = "Brand cannot be empty";
             }
         }
 
         function validateModel() {
             if (model.trim() == "") {
-                validationErrors.push("Model cannot be empty");
+                validationErrors.model = "Model cannot be empty";
             }
         }
 
         function validateYear() {
             if (!year) {
-                validationErrors.push("Year cannot be empty");
+                validationErrors.year = "Year cannot be empty";
             }
         }
 
         function validateColour() {
             if (colour.trim() == "") {
-                validationErrors.push("Colour cannot be empty");
+                validationErrors.colour = "Colour cannot be empty";
             }
         }
 
         function validateCurrentMileage() {
             if (!currentMileage) {
-                validationErrors.push("Mileage cannot be empty");
+                validationErrors.currentMileage = "Mileage cannot be empty";
             }
         }
 
@@ -87,15 +88,33 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
             validateCurrentMileage();
         }
 
-        if (validationErrors.length > 0) {
+        if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
+            triggerShake();
             return;
         }
-        setShowSaveConfirmation(true);
+
+        try {
+            if(editingCarForm != null){
+                await validateMileage(carId, currentMileage);
+            }
+            setShowSaveConfirmation(true);
+        } catch (error) {
+            console.error("Error caught: " + error.message);
+            setErrors(error.errors ? error.errors : { general: error.message });
+            triggerShake();
+        }
+    }
+
+    function triggerShake() {
+        setShake(true);
+        setTimeout(() => {
+            setShake(false);
+        }, 400);
     }
 
     async function saveChanges() {
-        setErrors([]);
+        setErrors({});
         try {
             if (editingCarForm != null) {
                 await editCar(carId, formData);
@@ -105,7 +124,8 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
             onSave();
         } catch (error) {
             console.error("Error caught: " + error.message);
-            setErrors(error.errors?.length ? error.errors : [error.message]);
+            setErrors(error.errors ? error.errors : { general: error.message });
+            triggerShake();
         }
     }
 
@@ -118,24 +138,40 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
 
                 <label className="form-field">Brand
                     <input type="text"
+                        className={errors.brand ? (shake ? `input-error input-shake` : "input-error") : ""}
                         placeholder="eg. Toyota"
                         name="brand"
                         disabled={editingCarForm != null}
                         value={brand}
                         onChange={(event) => setBrand(event.target.value)} />
+
+                    {errors.brand && (
+                        <span className="field-error">
+                            {errors.brand}
+                        </span>
+                    )}
                 </label>
 
                 <label className="form-field">Model
                     <input type="text"
+                        className={errors.model ? (shake ? `input-error input-shake` : "input-error") : ""}
                         placeholder="eg. Corolla"
                         name="model"
                         disabled={editingCarForm != null}
                         value={model}
                         onChange={(event) => setModel(event.target.value)} />
+
+                    {errors.model && (
+                        <span className="field-error">
+                            {errors.model}
+                        </span>
+                    )}
+
                 </label>
 
                 <label className="form-field">Year
                     <input type="number"
+                        className={errors.year ? (shake ? `input-error input-shake` : "input-error") : ""}
                         placeholder="eg. 2020"
                         name="year"
                         min="1886"
@@ -143,32 +179,44 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
                         disabled={editingCarForm != null}
                         value={year}
                         onChange={(event) => setYear(event.target.value)} />
+
+                    {errors.year && (
+                        <span className="field-error">
+                            {errors.year}
+                        </span>
+                    )}
                 </label>
 
                 <label className="form-field">Colour
                     <input type="text"
+                        className={errors.colour ? (shake ? `input-error input-shake` : "input-error") : ""}
                         placeholder="eg. White"
                         name="colour"
                         value={colour}
                         onChange={(event) => setColour(event.target.value)} />
+
+                    {errors.colour && (
+                        <span className="field-error">
+                            {errors.colour}
+                        </span>
+                    )}
                 </label>
 
                 <label className="form-field">Current Mileage
                     <input type="number"
+                        className={errors.currentMileage ? (shake ? `input-error input-shake` : "input-error") : ""}
                         placeholder="eg. 20,345"
                         name="currentMileage"
                         min="1"
                         value={currentMileage}
                         onChange={(event) => setCurrentMileage(event.target.value)} />
-                </label>
 
-                {errors.length > 0 && (
-                    <ul style={{ color: "red" }}>
-                        {errors.map((error, index) => (
-                            <li key={index}>{error}</li>
-                        ))}
-                    </ul>
-                )}
+                    {errors.currentMileage && (
+                        <span className="field-error">
+                            {errors.currentMileage}
+                        </span>
+                    )}
+                </label>
 
                 <div className="form-buttons">
                     <button className="form-button" type="button" onClick={handleClickSave}>{editingCarForm ? "Save changes" : "Add car"}</button>

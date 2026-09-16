@@ -112,12 +112,12 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         ServiceHistory lastLatestServiceDate = serviceHistoryRepository.findFirstByCarOrderByServiceDateDesc(car);
 
         // Check if the service mileage is NOT more than the car's current mileage and NOT less than the last service
-        validateMileage(convertToEntity);
-        if (lastLatestServiceMileage != null) {
-            if ((convertToEntity.getMileageAtService() < lastLatestServiceMileage.getMileageAtService())) {
-                throw new InvalidMileageException("New service mileage cannot be lower than the last latest service mileage");
-            }
-        }
+//        validateMileage(convertToEntity);
+//        if (lastLatestServiceMileage != null) {
+//            if ((convertToEntity.getMileageAtService() < lastLatestServiceMileage.getMileageAtService())) {
+//                throw new InvalidMileageException("New service mileage cannot be lower than the last latest service mileage");
+//            }
+//        }
         // Check if the service date is NOT before the car's year model
         if (convertToEntity.getServiceDate().getYear() < car.getYear()) {
             throw new InvalidDateException("Service Date cannot be before the car's year model: " + car.getYear());
@@ -381,11 +381,11 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Methods to help reduce duplicate code:
 
     // Check if the service mileage is NOT more than the car's current mileage
-    private void validateMileage(ServiceHistory serviceHistory) {
-        if (serviceHistory.getMileageAtService() > serviceHistory.getCar().getCurrentMileage()) {
-            throw new InvalidMileageException("Service mileage cannot be higher than Current Mileage");
-        }
-    }
+//    private void validateMileage(ServiceHistory serviceHistory) {
+//        if (serviceHistory.getMileageAtService() > serviceHistory.getCar().getCurrentMileage()) {
+//            throw new InvalidMileageException("Service mileage cannot be higher than Current Mileage");
+//        }
+//    }
 
     // Check if 'Other' service is selected then make use of custom notes for it
     private void validateOtherServiceDescription(ServiceType serviceType, String description) {

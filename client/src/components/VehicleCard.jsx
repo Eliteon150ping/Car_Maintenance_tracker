@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import "../styles/VehicleCard.css"
@@ -7,20 +7,6 @@ function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete 
 
     const [showConfirmationCard, setShowConfirmationCard] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-
-    useEffect(() => {
-
-        function handleClickOutside(event) {
-            if (!event.target.closest(".vehicle-menu")) {
-                setShowMenu(false);
-            }
-        }
-        document.addEventListener("click", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("click", handleClickOutside);
-        };
-    }, []);
 
     return (
         <div>
@@ -33,7 +19,7 @@ function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete 
                     </div>
                 </Link>
 
-                <div className="vehicle-menu">
+                <div className="vehicle-menu" onMouseLeave={() => setShowMenu(false)}>
                     <button className="vehicle-menu-button"
                         onClick={() => setShowMenu(!showMenu)}
                     >⋮</button>

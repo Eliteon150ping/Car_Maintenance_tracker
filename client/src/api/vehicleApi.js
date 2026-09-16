@@ -74,6 +74,31 @@ export async function editCar(id, carData){
     return updatedCar;
 }
 
+// Validate a car's mileage before updating and showing the confirmation box
+export async function validateMileage(id, mileage){
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`http://localhost:8080/api/my-cars/${id}/mileage`,{
+
+        method: "PUT",
+        body: JSON.stringify({mileage}),
+        headers:{
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    if(!response.ok){
+        const validationError = await response.json();
+        const error = new Error(validationError.message || "Unable to validate mileage");
+
+        error.errors = validationError.errors || [];
+        throw error;
+    }
+}
+
+
 // Delete a car
 export async function deleteCar(id) {
     

@@ -15,5 +15,5 @@ public interface CarService {
     void deleteCar(Long id);
     CarResponseDTO getCarById(Long id);
     List<CarResponseDTO> getAllCarsByBrandAndModelAndYear(String brand,String model, Integer year);
-
+    void validateUpdateMileage(Long id, int updateMileage);
 }
