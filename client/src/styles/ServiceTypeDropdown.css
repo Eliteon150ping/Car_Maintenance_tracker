@@ -1,0 +1,70 @@
+.service-type-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.service-type-button {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid orange;
+    border-radius: 8px;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+.service-type-button:hover {
+    animation: orangeGlow 1.5s ease-in-out infinite;
+    opacity: 0.9;
+}
+
+.service-type-options button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.service-type-selected {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@keyframes orangeGlow {
+    0%,100% {
+        box-shadow: 0 0 12px orange;
+    }
+    50% {
+        box-shadow: 0 0 12px orange;
+    }
+}
+
+.service-type-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 1px solid orange;
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.service-type-options button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: white;
+    text-align: left;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.service-type-options button:hover {
+    background-color: aliceblue;
+}

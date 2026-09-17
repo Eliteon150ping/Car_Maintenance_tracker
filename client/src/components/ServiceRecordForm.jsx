@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { addServiceRecord, editServiceRecord, getServiceTypes } from "../api/vehicleDetailsApi";
-import { formatDate} from "../utils/serviceFormatter";
+import { formatDate, formatServiceType } from "../utils/serviceFormatter";
+import "../styles/ServiceRecordForm.css";
+import ServiceTypeDropdown from "./ServiceTypeDropdown";
 
 // Props come from VehicleDetailsPage
-function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicleMileage, latestServiceMileage, 
-                             latestServiceDate, vehicleYear }) {
+function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicleMileage, latestServiceMileage,
+    latestServiceDate, vehicleYear }) {
 
     const [serviceDate, setServiceDate] = useState("");
     const [mileageAtService, setMileageAtService] = useState("");
@@ -69,7 +71,7 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
             if (serviceType == "OTHER" && description.trim() == "") {
                 validationErrors.push("Service description is required for service type: OTHER");
 
-            }else if(description.length > 500){
+            } else if (description.length > 500) {
                 validationErrors.push("Description cannot be more than 500 characters");
             }
         }
@@ -85,7 +87,7 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
             if (!serviceDate) {
                 validationErrors.push("Please select a date for the service");
 
-            } else if (new Date(serviceDate).getFullYear() < vehicleYear){
+            } else if (new Date(serviceDate).getFullYear() < vehicleYear) {
                 validationErrors.push("Service date cannot be before the car's year model: " + vehicleYear);
 
             } else if (new Date(serviceDate) < new Date(latestServiceDate)) {
@@ -148,61 +150,64 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
 
     return (
 
-        <form onSubmit={handleSubmit}>
+        <form className="service-record-form" onSubmit={handleSubmit}>
 
-            <h2 style={{ color: 'black' }}>{serviceRecord ? "Edit Service Record" : "Add Service Record"}</h2>
+            <div className="service-record-form-container">
 
-            <select value={serviceType}
-                disabled={serviceRecord != null}
-                onChange={(event) => setServiceType(event.target.value)} >
+                <h2 className="service-form-heading" style={{ color: 'black' }}>{serviceRecord ? "Edit Service Record" : "Add Service Record"}</h2>
 
-                <option value="">Select Service</option>
-                {serviceTypes.map(type => (
-                    <option key={type.value} value={type.value}>{type.displayName}</option>
-                ))}
+                <ServiceTypeDropdown
+                    serviceTypes={serviceTypes}
+                    serviceType={formatServiceType(serviceType)}
+                    setServiceType={setServiceType}
+                />
 
-            </select>
+                <label className="form-field">Description
+                    <input type="text"
+                        name="description"
+                        placeholder={serviceType != "OTHER" ? "(Optional) eg. Replaced brake pads" : "(Required) eg. Replaced CV Joints"}
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value)} />
+                </label>
 
-            <label>Description
-                <input type="text"
-                    name="description"
-                    value={description}
-                    onChange={(event) => setDescription(event.target.value)} />
-            </label>
+                <label className="form-field">Service Date
+                    <input type="date"
+                        name="service-date"
+                        value={serviceDate}
+                        disabled={serviceRecord != null}
+                        onChange={(event) => setServiceDate(event.target.value)} />
+                </label>
 
-            <label>Service Date
-                <input type="date"
-                    name="service-date"
-                    value={serviceDate}
-                    disabled={serviceRecord != null}
-                    onChange={(event) => setServiceDate(event.target.value)} />
-            </label>
+                <label className="form-field">Mileage At Service
+                    <input type="number"
+                        name="mileage-at-service"
+                        placeholder="eg. 20,345 km"
+                        value={mileageAtService}
+                        disabled={serviceRecord != null}
+                        onChange={(event) => setMileageAtService(event.target.value)} />
+                </label>
 
-            <label>Mileage At Service
-                <input type="number"
-                    name="mileage-at-service"
-                    value={mileageAtService}
-                    disabled={serviceRecord != null}
-                    onChange={(event) => setMileageAtService(event.target.value)} />
-            </label>
+                <label className="form-field">Cost
+                    <input type="number"
+                        name="cost"
+                        placeholder="eg. R200"
+                        value={cost}
+                        onChange={(event) => setCost(event.target.value)} />
+                </label>
 
-            <label>Cost
-                <input type="number"
-                    name="cost"
-                    value={cost}
-                    onChange={(event) => setCost(event.target.value)} />
-            </label>
+                {errors.length > 0 && (
+                    <ul style={{ color: "red" }}>
+                        {errors.map((error, index) => (
+                            <li key={index}>{error}</li>
+                        ))}
+                    </ul>
+                )}
 
-            {errors.length > 0 && (
-                <ul style={{ color: "red" }}>
-                    {errors.map((error, index) => (
-                        <li key={index}>{error}</li>
-                    ))}
-                </ul>
-            )}
-
-            <button type="submit" >{serviceRecord ? "Save changes" : "Add"}</button>
-            <button type="button" onClick={onCancel}>Cancel</button>
+                <div className="form-buttons">
+                    <button className="form-button" type="submit" >{serviceRecord ? "Save changes" : "Add"}</button>
+                    <button className="form-button cancel" type="button" onClick={onCancel}>Cancel</button>
+                </div>
+            </div>
         </form>
     );
 }
