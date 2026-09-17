@@ -87,7 +87,7 @@ function VehicleDetailsPage() {
             />
 
             {/* DO NOT USE .map() if you're expecting a singular object and not an array of values */}
-            {vehicle && (
+            {!showServiceForm && !showCarForm && vehicle && (
                 <VehicleInformationCard
                     key={vehicle.id}
                     id={vehicle.id}
@@ -122,7 +122,7 @@ function VehicleDetailsPage() {
                 />
             )}
 
-            {showServiceForm ? <ServiceRecordForm
+            {!showCarForm && (showServiceForm ? <ServiceRecordForm
                 // All the props here are passed into serviceRecord form
 
                 vehicleMileage={vehicle.currentMileage}
@@ -154,25 +154,29 @@ function VehicleDetailsPage() {
 
                     // Show the Add button when the form is hidden.
                     // Clicking it clears any editing record and opens a blank form.
-                }} /> : <button className="add-service-record-button" onClick={() => {
-                    setEditingServiceRecord(null),
-                        setShowServiceForm(true)
-                }}>Add service record</button>}
+                }} /> : <button className="add-service-record-button"
+                    onClick={() => {
+                        setEditingServiceRecord(null),
+                            setShowServiceForm(true)
+                    }}>Add service record</button>
+            )}
 
-            <div className="service-record-header">
-                <div>Service Date</div>
-                <div>Mileage</div>
-                <div>Service Type</div>
-                <div>Description</div>
-                <div>Cost</div>
-                <div>Next due mileage</div>
-                <div>Next due date</div>
-                <div>Remaining KM</div>
-                <div>Remaining Days</div>
-                <div>Edit</div>
-            </div>
+            {!showServiceForm && !showCarForm && (
+                <div className="service-record-header">
+                    <div>Service Date</div>
+                    <div>Mileage</div>
+                    <div>Service Type</div>
+                    <div>Description</div>
+                    <div>Cost</div>
+                    <div>Next due mileage</div>
+                    <div>Next due date</div>
+                    <div>Remaining KM</div>
+                    <div>Remaining Days</div>
+                    <div>Edit</div>
+                </div>
+            )}
 
-            {serviceRecords.map(serviceRecord => (
+            {!showServiceForm && !showCarForm && serviceRecords.map(serviceRecord => (
                 <VehicleDetailsCard
                     key={serviceRecord.id}
                     id={serviceRecord.id}

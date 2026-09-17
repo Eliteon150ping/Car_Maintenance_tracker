@@ -29,7 +29,7 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
             </div>
 
             <div className="service-column">
-                <p>{description.trim() == "" ? "N/A" : description}</p>
+                <p>{description.trim() == "" ? "-" : description}</p>
             </div>
 
             <div className="service-column">
@@ -57,6 +57,7 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
                         {formatRemainingKM(remainingKm)}
                     </p> : <p style={{ color: "green" }}>Service done</p>
                 }
+                {serviceType != "OTHER" ? "" : "-"}
             </div>
 
             <div className="service-column">
@@ -68,6 +69,7 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
                         {formatRemainingDays(remainingDays)}
                     </p> : <p style={{ color: "green" }}>Service done</p>
                 }
+                {serviceType != "OTHER" ? "" : "-"}
             </div>
 
             <div className="service-column">
