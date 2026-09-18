@@ -42,7 +42,7 @@ const serviceTypeIcons = {
     OTHER: FaTools
 };
 
-function ServiceTypeDropdown({ serviceTypes, serviceType, setServiceType }) {
+function ServiceTypeDropdown({ serviceRecord,serviceTypes, serviceType, setServiceType, hasError, shake }) {
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -58,7 +58,8 @@ function ServiceTypeDropdown({ serviceTypes, serviceType, setServiceType }) {
 
             <button
                 type="button"
-                className="service-type-button"
+                disabled={serviceRecord != null}
+                className={`service-type-button ${hasError ? (shake ? "input-error input-shake" : "input-error") : ""}`}
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <span className="service-type-selected">

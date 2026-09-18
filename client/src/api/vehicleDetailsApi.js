@@ -72,6 +72,34 @@ export async function addServiceRecord(carId, serviceRecord) {
     return createdServiceRecord;
 }
 
+// Validate duplicate records before the confirmation box shows
+export async function validateDuplicateRecord(carId, serviceType, serviceDate, mileageAtService) {
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `http://localhost:8080/api/service-records/car/${carId}/validate-duplicate?serviceType=${serviceType}&serviceDate=${serviceDate}&mileageAtService=${mileageAtService}`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        const validationError = await response.json();
+
+        const error = new Error(
+            validationError.message || "Unable to validate service record"
+        );
+
+        error.errors = validationError.errors || {};
+
+        throw error;
+    }
+}
+
 // Edit service record
 export async function editServiceRecord(carId, id, serviceRecord){
 

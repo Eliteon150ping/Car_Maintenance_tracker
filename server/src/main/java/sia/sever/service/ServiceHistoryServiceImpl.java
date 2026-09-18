@@ -82,17 +82,16 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         serviceRecord.setServiceType(createServiceRecordDTO.getServiceType());
         serviceRecord.setCost(createServiceRecordDTO.getCost());
         serviceRecord.setDescription(createServiceRecordDTO.getDescription());
-        serviceRecord.setServiceDate(createServiceRecordDTO.getServiceDate());
         return serviceRecord;
     }
 
     // Mapper to apply update DTO changes to an existing managed entity
-    private void updateEntityFromDTO(UpdateServiceRecordDTO updateServiceRecordDTO, ServiceHistory existingServiceRecord){
+    private void updateEntityFromDTO(UpdateServiceRecordDTO updateServiceRecordDTO, ServiceHistory existingServiceRecord) {
 
-        if(updateServiceRecordDTO.getDescription() != null){
+        if (updateServiceRecordDTO.getDescription() != null) {
             existingServiceRecord.setDescription(updateServiceRecordDTO.getDescription());
         }
-        if(updateServiceRecordDTO.getCost() != null){
+        if (updateServiceRecordDTO.getCost() != null) {
             existingServiceRecord.setCost(updateServiceRecordDTO.getCost());
         }
     }
@@ -103,6 +102,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     public ServiceRecordResponseDTO createServiceHistory(CreateServiceRecordDTO serviceHistory, Long carId) {
 
         ServiceHistory convertToEntity = mapToEntity(serviceHistory);
+        Map<String, String> errors = new HashMap<>();
 
         // First retrieve an existing car through its id
         User user = getAuthenticatedUser();
@@ -112,21 +112,26 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         ServiceHistory lastLatestServiceDate = serviceHistoryRepository.findFirstByCarOrderByServiceDateDesc(car);
 
         // Check if the service mileage is NOT more than the car's current mileage and NOT less than the last service
-//        validateMileage(convertToEntity);
-//        if (lastLatestServiceMileage != null) {
-//            if ((convertToEntity.getMileageAtService() < lastLatestServiceMileage.getMileageAtService())) {
-//                throw new InvalidMileageException("New service mileage cannot be lower than the last latest service mileage");
-//            }
-//        }
+        validateMileage(convertToEntity); //
+        if (lastLatestServiceMileage != null) {
+            if (convertToEntity.getMileageAtService() < lastLatestServiceMileage.getMileageAtService()) {
+                errors.put("mileageAtService", "New service mileage cannot be lower than the last latest service mileage //");
+            }
+
+            if (!errors.isEmpty()) {
+                throw new InvalidMileageException("Error", errors);
+            }
+        }
+
         // Check if the service date is NOT before the car's year model
         if (convertToEntity.getServiceDate().getYear() < car.getYear()) {
-            throw new InvalidDateException("Service Date cannot be before the car's year model: " + car.getYear());
+            throw new InvalidDateException("Service Date cannot be before the car's year model: // " + car.getYear());
         }
 
         // Check if the service date is NOT before the service's last service date
         if (lastLatestServiceDate != null) {
             if (convertToEntity.getServiceDate().isBefore(lastLatestServiceDate.getServiceDate())) {
-                throw new InvalidDateException("New service date cannot be before the " + lastLatestServiceDate.getServiceDate());
+                throw new InvalidDateException("New service date cannot be before the // " + lastLatestServiceDate.getServiceDate());
             }
         }
 
@@ -138,7 +143,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         }
 
         // Check if 'Other' service is selected then make use of custom notes for it
-        validateOtherServiceDescription(serviceHistory.getServiceType(), serviceHistory.getDescription());
+        validateOtherServiceDescription(serviceHistory.getServiceType(), serviceHistory.getDescription()); //
 
         // Check if user did a service, give the next change interval/date
         convertToEntity.setNextDueMileage(calculateNextServiceMileage(convertToEntity));
@@ -146,6 +151,29 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
         ServiceHistory savedServiceHistory = serviceHistoryRepository.save(convertToEntity);
         return mapToServiceRecordResponseDTO(savedServiceHistory);
+    }
+
+    // Validate the duplicate service record to display in the frontend immediately before the confirmation
+    // box
+    @Override
+    public void validateDuplicateRecord(Long carId, ServiceType serviceType, LocalDate serviceDate, int mileageAtService) {
+
+        User user = getAuthenticatedUser();
+        Car car = getUserCar(carId, user);
+
+        boolean isExistingRecord =
+                serviceHistoryRepository.existsByCarAndServiceTypeAndServiceDateAndMileageAtService(
+                        car,
+                        serviceType,
+                        serviceDate,
+                        mileageAtService
+                );
+
+        if (isExistingRecord) {
+            throw new InvalidClassException(
+                    "Cannot add duplicate service record for the same service type with same mileage and date"
+            );
+        }
     }
 
     // Get all service records
@@ -381,11 +409,17 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     // Methods to help reduce duplicate code:
 
     // Check if the service mileage is NOT more than the car's current mileage
-//    private void validateMileage(ServiceHistory serviceHistory) {
-//        if (serviceHistory.getMileageAtService() > serviceHistory.getCar().getCurrentMileage()) {
-//            throw new InvalidMileageException("Service mileage cannot be higher than Current Mileage");
-//        }
-//    }
+    private void validateMileage(ServiceHistory serviceHistory) {
+        Map<String, String> errors = new HashMap<>();
+
+        if (serviceHistory.getMileageAtService() > serviceHistory.getCar().getCurrentMileage()) {
+            errors.put("mileageAtService", "Service mileage cannot be higher than Current Mileage");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new InvalidMileageException("Error", errors);
+        }
+    }
 
     // Check if 'Other' service is selected then make use of custom notes for it
     private void validateOtherServiceDescription(ServiceType serviceType, String description) {

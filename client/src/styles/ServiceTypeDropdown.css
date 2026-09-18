@@ -14,10 +14,14 @@
     align-items: center;
     cursor: pointer;
     font-size: 16px;
-    margin-bottom: 16px;
+    
 }
 
-.service-type-button:hover {
+.service-type-button:disabled{
+    cursor: default;
+}
+
+.service-type-button:not(:disabled):hover {
     animation: orangeGlow 1.5s ease-in-out infinite;
     opacity: 0.9;
 }

@@ -67,7 +67,7 @@
   40%, 80% { transform: translateX(6px); }
 }
 
-.form-field input.input-error {
+.form-field .input-error {
    border: 1px solid red;
 }
 

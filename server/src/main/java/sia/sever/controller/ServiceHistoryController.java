@@ -32,6 +32,24 @@ public class ServiceHistoryController {
         return new ResponseEntity<>(createdServiceRecord, HttpStatus.CREATED);
     }
 
+    // Validate duplicate service record before confirmation
+    @PostMapping("/car/{carId}/validate-duplicate")
+    public ResponseEntity<Void> validateDuplicateRecord(
+            @PathVariable Long carId,
+            @RequestParam ServiceType serviceType,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate serviceDate,
+            @RequestParam int mileageAtService) {
+
+        serviceHistoryService.validateDuplicateRecord(
+                carId,
+                serviceType,
+                serviceDate,
+                mileageAtService
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
     // Get all service records
     @GetMapping
     public ResponseEntity<List<ServiceRecordResponseDTO>> getAllServiceRecords(){
