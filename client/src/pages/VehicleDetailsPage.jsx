@@ -9,7 +9,7 @@ import CarForm from "../components/CarForm";
 import { useLocation } from "react-router-dom";
 import "../styles/VehicleDetailsPage.css";
 
-function VehicleDetailsPage() {
+function VehicleDetailsPage({showExtraDetails}) {
 
     // {id} returns a object through destructuring
     const { id } = useParams(); // Reads the dynamic values from the current URL and returns them to your component.
@@ -162,7 +162,7 @@ function VehicleDetailsPage() {
             )}
 
             {!showServiceForm && !showCarForm && (
-                <div className="service-record-header">
+                <div className={`service-record-header ${showExtraDetails ? "with-car" : "without-car"}`}>
                     <div>Service Date</div>
                     <div>Mileage</div>
                     <div>Service Type</div>

@@ -1,0 +1,13 @@
+.service-history-page{
+    width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.vehicle-details-card.with-car{
+    grid-template-columns: 1.2fr 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
+}
+
+.service-record-header.with-car{
+     grid-template-columns:1.2fr 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
+}

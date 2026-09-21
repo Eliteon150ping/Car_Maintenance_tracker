@@ -6,7 +6,6 @@
 
 .service-record-header{
     display: grid;
-    grid-template-columns: 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
     border: 1px solid orange;
     padding: 0;
     gap: 0;
@@ -17,6 +16,10 @@
     background-color: aliceblue;
     border-radius: 5px 5px 0 0;
     box-sizing: border-box;
+}
+
+.service-record-header.without-car{
+    grid-template-columns: 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
 }
 
 .service-record-header > div {

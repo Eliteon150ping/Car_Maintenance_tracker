@@ -4,32 +4,46 @@ import { useNavigate } from "react-router-dom";
 import { getOverdueRecords } from "../api/vehicleDetailsApi";
 import VehicleDetailsCard from "../components/VehicleDetailsCard";
 
-function OverdueServicesPage(){
+function OverdueServicesPage({showExtraDetails}) {
 
     const [serviceRecords, setServiceRecords] = useState([]);
-    const navigate  = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadRecords();
-    },[]);
+    }, []);
 
-    async function loadRecords(){
+    async function loadRecords() {
         const data = await getOverdueRecords();
         setServiceRecords(data)
     }
 
-    return(
-        <div>
+    return (
+        <div className="service-history-page">
 
-            <PageHeader 
-            title="Overdue services"
-            description="Urgent services that need to be done to prevent damage to your cars"
+            <PageHeader
+                title="Overdue services"
+                description="Urgent services that need to be done to prevent damage to your cars"
             />
+
+            <div className={`service-record-header ${showExtraDetails ? "without-car" : "with-car"}`}>
+                <div>Car</div>
+                <div>Service Date</div>
+                <div>Mileage</div>
+                <div>Service Type</div>
+                <div>Description</div>
+                <div>Cost</div>
+                <div>Next due mileage</div>
+                <div>Next due date</div>
+                <div>Remaining KM</div>
+                <div>Remaining Days</div>
+                <div>Edit</div>
+            </div>
 
             {serviceRecords.map(serviceRecord => (
                 <VehicleDetailsCard
                     key={serviceRecord.id}
-                    id={serviceRecord.id}
+                    id={serviceRecord.car.id}
 
                     brand={serviceRecord.car.brand}
                     model={serviceRecord.car.model}
@@ -55,7 +69,7 @@ function OverdueServicesPage(){
                     }}
                 />
             ))}
-            
+
         </div>
     );
 }

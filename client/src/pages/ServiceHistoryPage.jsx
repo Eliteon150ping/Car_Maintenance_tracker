@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import VehicleDetailsCard from "../components/VehicleDetailsCard";
-import { getAllServiceRecords} from "../api/vehicleDetailsApi";
+import { getAllServiceRecords } from "../api/vehicleDetailsApi";
 import { useNavigate } from "react-router-dom";
+import "../styles/ServiceHistoryPage.css";
 
-function ServiceHistoryPage() {
+function ServiceHistoryPage({showExtraDetails}) {
 
     const [serviceRecords, setServiceRecords] = useState([]);
     const navigate = useNavigate();
@@ -22,22 +23,37 @@ function ServiceHistoryPage() {
     const latestRecordsByServiceType = {};
     serviceRecords.forEach(serviceRecord => {
         const key = `${serviceRecord.car.id}-${serviceRecord.serviceType}`;
-        if(!latestRecordsByServiceType[key]){
+        if (!latestRecordsByServiceType[key]) {
             latestRecordsByServiceType[key] = serviceRecord.id
         }
     });
 
     return (
-        <div>
+        <div className="service-history-page">
+
             <PageHeader
                 title="Service History Page"
                 description="View all service records for all your owned cars"
             />
 
+            <div className={`service-record-header ${showExtraDetails ? "without-car" : "with-car"}`}>
+                <div>Car</div>
+                <div>Service Date</div>
+                <div>Mileage</div>
+                <div>Service Type</div>
+                <div>Description</div>
+                <div>Cost</div>
+                <div>Next due mileage</div>
+                <div>Next due date</div>
+                <div>Remaining KM</div>
+                <div>Remaining Days</div>
+                <div>Edit</div>
+            </div>
+
             {serviceRecords.map(serviceRecord => (
                 <VehicleDetailsCard
                     key={serviceRecord.id}
-                    id={serviceRecord.id}
+                    id={serviceRecord.car.id}
 
                     brand={serviceRecord.car.brand}
                     model={serviceRecord.car.model}
@@ -59,7 +75,7 @@ function ServiceHistoryPage() {
 
                     onEdit={() => {
                         navigate(`/vehicles/${serviceRecord.car.id}`, {
-                            state: {editingServiceRecordId : serviceRecord.id}
+                            state: { editingServiceRecordId: serviceRecord.id }
                         });
                     }}
 

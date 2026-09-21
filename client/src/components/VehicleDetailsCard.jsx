@@ -1,18 +1,22 @@
 import { formatRemainingKM, formatRemainingDays, formatDate, formatServiceType } from "../utils/serviceFormatter";
 import "../styles/VehicleServiceHistoryCard.css";
+import { Link } from "react-router-dom";
+
 
 function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nextDueDate, serviceType, cost,
     description, remainingKm, remainingDays, onEdit, showExtraDetails, brand, model, year, highlightRemaining,
-    isLatestRecord }) {
-
+    isLatestRecord, id }) {
 
     return (
 
-        <div className="vehicle-details-card">
+        <div className={`vehicle-details-card ${showExtraDetails ? "with-car" : "without-car"}`}>
+
 
             {showExtraDetails && (
-                <div>
-                    <h2 style={{ color: "black" }}>{year} {brand} {model}</h2>
+                <div className="service-column">
+                    <Link className="vehicle-link" to={`/vehicles/${id}`}>
+                        <p>{year} {brand} {model}</p>
+                    </Link>
                 </div>
             )}
 
