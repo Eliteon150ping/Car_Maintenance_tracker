@@ -28,6 +28,7 @@
     font-size: 15px;
     color: black;
     transition: all 0.25s ease;
+    background-color: aliceblue;
 }
 
 .add-button:hover{

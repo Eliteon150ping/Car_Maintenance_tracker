@@ -1,8 +1,8 @@
 .summary-card{
-    background-color: orange;
+    background-color: aliceblue;
     padding: 20px;
     border-radius: 10px;        /* How rounded the corners are */
-    border: 1px solid white;   /* border thickness, border style, border colour */
+    border: 1px solid orange;   /* border thickness, border style, border colour */
     text-align: center;
     transition: all 0.25s ease;
 }
@@ -13,9 +13,10 @@
                                     Negative values move upward.
                                     Positive values move downward.
                                     This creates the "pop out" effect.                                          */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.124);
     cursor: pointer;
+    animation: colourGlow 1.5s ease-in-out infinite;
 }
+
 
 /* 
 

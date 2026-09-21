@@ -1,9 +1,9 @@
 import "../styles/SummaryCard.css"
 
-function SummaryCard({ title, value, onClick }) {
+function SummaryCard({ title, value, onClick, className }) {
 
     return (
-        <div className="summary-card" onClick={onClick}>
+        <div className={`summary-card ${className || ""}`} onClick={onClick}>
             <h3 className="summary-title">{title}</h3>
             <p className="summary-value">{value}</p>
         </div>

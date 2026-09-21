@@ -1,4 +1,11 @@
-.summary-grid{      /* The dot(.) tells the browser to look through your HTML file and select only the elements that
+.dashboard-page {
+    width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.summary-grid {
+    /* The dot(.) tells the browser to look through your HTML file and select only the elements that
                        have a matching class="..." attribute.
 
                        Without the dot, the browser would look for a raw HTML tag named <summary-grid>, which does 
@@ -7,13 +14,93 @@
                        The text immediately following the dot is the custom name given to that class(summary-grid in
                        this case).                                                                               */
 
-    display: grid;  /* Place contents in a grid position */
-    grid-template-columns: repeat(2, 250px); /* Create 2 columns, each exactly 250 pixels wide                   */
+    display: grid;
+    /* Place contents in a grid position */
+    grid-template-columns: repeat(2, 250px);
+    /* Create 2 columns, each exactly 250 pixels wide                   */
     gap: 20px;
     justify-content: center;
 
 }
 
-.summary-overdue{
-    background-color: red;
+.summary-vehicles {
+    border: 1px solid orange;
+    color: orange;
+}
+
+.summary-vehicles:hover {
+    animation: colourGlow 1.5s ease-in-out infinite;
+}
+
+.summary-done {
+    border: 1px solid #07dd05;
+    color: green;
+}
+
+.summary-done:hover {
+    animation: colourGlow 1.5s ease-in-out infinite;
+}
+
+.summary-upcoming {
+    border: 1px solid darkorange;
+    color: orange;
+}
+
+.summary-upcoming:hover {
+    animation: colourGlow 1.5s ease-in-out infinite;
+}
+
+.summary-overdue {
+    border: 1px solid red;
+    color: red;
+}
+
+.summary-overdue:hover {
+    animation: colourGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes colourGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 3px currentColor;
+    }
+
+    50% {
+        box-shadow: 0 0 12px currentColor;
+    }
+}
+
+.dashboard-info {
+    width: 100vw;
+    margin-top: 20px;
+    margin-left: calc(50% - 50vw);
+    padding: 40px 10%;
+    box-sizing: border-box;
+    background-color: #f7f7f7;
+    text-align: center;
+}
+
+.dashboard-info-section {
+    max-width: 1000px;
+    margin: 0 auto 40px;
+    border: 1px solid orange;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+.dashboard-info-section:last-child {
+    margin-bottom: 0;
+}
+
+.dashboard-info-section h2 {
+    color: black;
+    margin-bottom: 10px;
+}
+
+.dashboard-info-section p {
+    color: #555;
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 0;
 }

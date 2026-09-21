@@ -38,7 +38,8 @@ function DashboardPage() {
     }
 
     return (
-        <div>
+        <div className="dashboard-page">
+
             <PageHeader
                 title="Dashboard"
                 description="Welcome to the Car Maintenance Tracker App"
@@ -46,25 +47,30 @@ function DashboardPage() {
 
             <div className="summary-grid">
 
-                <SummaryCard 
+                <SummaryCard
+                    className="summary-vehicles"
                     title="Vehicles"
                     value={vehicleCount}
                     onClick={() => navigate("/vehicles")}
                 />
 
                 <SummaryCard
+                    className="summary-done"
                     title="Services done"
                     value={serviceRecordCount}
                     onClick={() => navigate("/service-history")}
                 />
 
+
                 <SummaryCard
+                    className="summary-upcoming"
                     title="Upcoming"
                     value={upcomingCount}
                     onClick={() => navigate("/upcoming-services")}
                 />
 
-                <SummaryCard className="summary-grid summary-overdue"
+                <SummaryCard
+                    className="summary-overdue"
                     title="Overdue"
                     value={overdueCount}
                     onClick={() => navigate("/overdue-services")}
@@ -72,6 +78,34 @@ function DashboardPage() {
 
             </div>
 
+            <div className="dashboard-info">
+
+    <div className="dashboard-info-section">
+        <h2>Your vehicle maintenance at a glance</h2>
+        <p>
+            Keep track of your vehicles, service history, upcoming maintenance,
+            and overdue services from one convenient place.
+        </p>
+    </div>
+
+    <div className="dashboard-info-section">
+        <h2>Stay on top of maintenance</h2>
+        <p>
+            Regular maintenance can help keep your vehicles reliable and make
+            it easier to keep track of important services over time.
+        </p>
+    </div>
+
+    <div className="dashboard-info-section">
+        <h2>Keep your service history organised</h2>
+        <p>
+            Record completed services with the service date, mileage, cost,
+            and other relevant details to keep your vehicle's maintenance
+            history organised.
+        </p>
+    </div>
+
+</div>
         </div>
     );
 }
