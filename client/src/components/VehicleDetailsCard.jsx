@@ -15,7 +15,7 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
             {showExtraDetails && (
                 <div className="service-column">
                     <Link className="vehicle-link" to={`/vehicles/${id}`}>
-                        <p>{year} {brand} {model}</p>
+                        <p className="vehicle-paragraph">{year} {brand} {model}</p>
                     </Link>
                 </div>
             )}

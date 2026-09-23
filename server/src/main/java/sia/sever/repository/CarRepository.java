@@ -7,7 +7,7 @@ import sia.sever.entity.User;
 import java.util.List;
 import java.util.Optional;
 
-public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificationExecutor {
+public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificationExecutor<Car> {
 
   /*   Methods like this are defined automatically by JPA:
        save()

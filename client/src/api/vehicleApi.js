@@ -1,29 +1,29 @@
 // Get all cars tied to a specific user
 export async function getAllVehicles() { // Async functions performs work that takes time to prevent JS from blocking
-    
+
     const token = localStorage.getItem("token");
 
     const response = await fetch("http://localhost:8080/api/my-cars", { // Await means Pause this function until the 
-                                                                        // backend replies with the JSON response body.
+        // backend replies with the JSON response body.
 
         method: "GET",
         headers: {
             Authorization: `Bearer ${token}`
         }
-    }); 
+    });
 
-    if(!response.ok){
+    if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
     }
-    
+
     const vehicles = await response.json(); // Take the JSON body from the response and convert it into a normal 
-                                            // JavaScript object/array that React can use.
+    // JavaScript object/array that React can use.
     return vehicles;
 }
 
 // Add a new car
 export async function addCar(carData) {
-    
+
     const token = localStorage.getItem("token");
     const jsonCarData = JSON.stringify(carData);
 
@@ -31,13 +31,13 @@ export async function addCar(carData) {
 
         method: "POST",
         body: jsonCarData,
-        headers:{
+        headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type" : "application/json"
+            "Content-Type": "application/json"
         }
     });
 
-    if(!response.ok){
+    if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
     }
 
@@ -46,7 +46,7 @@ export async function addCar(carData) {
 }
 
 // Edit a car
-export async function editCar(id, carData){
+export async function editCar(id, carData) {
 
     const token = localStorage.getItem("token");
     const jsonCarData = JSON.stringify(carData);
@@ -57,39 +57,39 @@ export async function editCar(id, carData){
         body: jsonCarData,
         headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type" : "application/json"
+            "Content-Type": "application/json"
         }
     });
 
     const updatedCar = await response.json();
 
-    if(!response.ok){
-       const error = new Error(updatedCar.message || "Unable to save car details, please try again later");
+    if (!response.ok) {
+        const error = new Error(updatedCar.message || "Unable to save car details, please try again later");
 
-       error.errors = updatedCar.errors || [];
+        error.errors = updatedCar.errors || [];
 
-       throw error;
+        throw error;
     }
 
     return updatedCar;
 }
 
 // Validate a car's mileage before updating and showing the confirmation box
-export async function validateMileage(id, mileage){
+export async function validateMileage(id, mileage) {
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:8080/api/my-cars/${id}/mileage`,{
+    const response = await fetch(`http://localhost:8080/api/my-cars/${id}/mileage`, {
 
         method: "PUT",
-        body: JSON.stringify({mileage}),
-        headers:{
+        body: JSON.stringify({ mileage }),
+        headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
         }
     });
 
-    if(!response.ok){
+    if (!response.ok) {
         const validationError = await response.json();
         const error = new Error(validationError.message || "Unable to validate mileage");
 
@@ -101,7 +101,7 @@ export async function validateMileage(id, mileage){
 
 // Delete a car
 export async function deleteCar(id) {
-    
+
     const token = localStorage.getItem("token");
 
     const response = await fetch(`http://localhost:8080/api/my-cars/${id}`, {
@@ -109,13 +109,43 @@ export async function deleteCar(id) {
         method: "DELETE",
         headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type" : "application/json"
+            "Content-Type": "application/json"
         }
     });
 
-    if(!response.ok){
+    if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
     }
+}
+
+// Search cars by brand, model or year
+export async function searchVehicles(search) {
+
+    const token = localStorage.getItem("token");
+
+    const params = new URLSearchParams();
+
+    if (search) {
+        params.append("search", search);
+    }
+
+    const response = await fetch(
+        `http://localhost:8080/api/my-cars/search?${params.toString()}`,
+        {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    const vehicles = await response.json();
+
+    return vehicles;
 }
 
 /*

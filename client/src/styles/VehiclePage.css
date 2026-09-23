@@ -2,6 +2,41 @@
     width: 500px;
     margin: 40px auto;
     padding: 20px;
+    box-sizing: border-box;
+}
+
+.vehicle-search{
+    width: 100vw;
+    display: flex;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    padding-right: 213px;
+    margin-left: calc((500px - 100vw) / 2);
+    margin-bottom: 10px;
+}
+
+.vehicle-search input{
+    width: 400px;
+    padding: 5px 15px;
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.vehicle-search input:focus{
+    border: 1px solid deepskyblue;
+    animation: colourGlowSearch 1.5s ease-in-out infinite;
+}
+
+@keyframes colourGlowSearch {
+    0%,100%{
+        box-shadow: 0 0 3px deepskyblue;
+    }
+    50%{
+        box-shadow: 0 0 12px deepskyblue;
+    }
 }
 
 .card-flow{

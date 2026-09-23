@@ -44,11 +44,29 @@ public class CarController {
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
     }
 
+    // Filter by brand/model/year
+    @GetMapping("/filter")
+    public ResponseEntity<List<CarResponseDTO>> filterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
+                                                                       @RequestParam(value = "model", required = false) String model,
+                                                                       @RequestParam(value = "year", required = false)  Integer year)
+    {
+        List<CarResponseDTO> carsByBrandModelYear = carService.getAllCarsByBrandAndModelAndYear(brand, model, year);
+        return new ResponseEntity<>(carsByBrandModelYear, HttpStatus.OK);
+    }
+
     // Get all cars
     @GetMapping
     public ResponseEntity<List<CarResponseDTO>> getAllCars(){
         List<CarResponseDTO> allCars = carService.getAllCars();
         return ResponseEntity.ok(allCars);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CarResponseDTO>> searchCars(
+            @RequestParam(value = "search", required = false) String search){
+
+        List<CarResponseDTO> searchedCars = carService.searchCars(search);
+        return ResponseEntity.ok(searchedCars);
     }
 
     // Get car by id
@@ -77,15 +95,5 @@ public class CarController {
     public ResponseEntity<Void> deleteCarById(@PathVariable Long id){
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();
-    }
-
-    // Filter by brand/model/year
-    @GetMapping("/filter")
-    public ResponseEntity<List<CarResponseDTO>> filterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
-                                                                       @RequestParam(value = "model", required = false) String model,
-                                                                       @RequestParam(value = "year", required = false)  Integer year)
-    {
-        List<CarResponseDTO> carsByBrandModelYear = carService.getAllCarsByBrandAndModelAndYear(brand, model, year);
-        return new ResponseEntity<>(carsByBrandModelYear, HttpStatus.OK);
     }
 }

@@ -8,6 +8,16 @@
     grid-template-columns: 1.2fr 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
 }
 
+.vehicle-paragraph{
+    font-size: 15px;
+    transition: all 0.25s ease;
+}
+
+.vehicle-paragraph:hover{
+    color: darkgoldenrod;
+    transform: translateY(-2px);
+}
+
 .service-record-header.with-car{
      grid-template-columns:1.2fr 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
 }

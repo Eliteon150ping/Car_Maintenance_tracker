@@ -161,6 +161,20 @@ public class CarServiceImpl implements CarService {
         return filterCars.stream().map(this::mapToCarResponseDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public List<CarResponseDTO> searchCars(String search){
+        User user = getAuthenticatedUser();
+        Specification<Car> spec = Specification
+                .where(CarSpecification.search(search))
+                .and(CarSpecification.hasUser(user));
+
+        List<Car> filteredCars = carRepository.findAll(spec);
+
+        return filteredCars.stream()
+                .map(this::mapToCarResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     // Get authenticated user helper method
     private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

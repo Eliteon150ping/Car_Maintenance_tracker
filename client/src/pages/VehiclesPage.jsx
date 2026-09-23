@@ -1,7 +1,7 @@
 import PageHeader from "../components/PageHeader";
 import VehicleCard from "../components/VehicleCard";
 import { useState, useEffect } from "react";
-import { getAllVehicles } from "../api/vehicleApi.js";
+import { getAllVehicles, searchVehicles } from "../api/vehicleApi.js";
 import CarForm from "../components/CarForm.jsx";
 import { useNavigate } from "react-router-dom";
 import { deleteCar } from "../api/vehicleApi.js";
@@ -13,6 +13,8 @@ function VehiclesPage() {
     // coming through the VehicleApi.js can change while the app is
     // runing, in this case we're expecting an array of vehicle
     // objects to come in
+
+    const [search, setSearch] = useState("");
 
     const [showCarForm, setShowCarForm] = useState(false);
     const [editingCarForm, setEditingCarForm] = useState(null);
@@ -47,6 +49,13 @@ function VehiclesPage() {
 
     }
 
+    async function handleSearch(value){
+        setSearch(value);
+
+        const data = await searchVehicles(value);
+        setVehicles(data);
+    }
+
     async function handleDeleteCar(id) {
         try {
             await deleteCar(id);
@@ -64,6 +73,15 @@ function VehiclesPage() {
                 title="My Garage"
                 description="View your entire vehicle catalogue here"
             />
+
+            <div className="vehicle-search">
+                <input
+                type="text"
+                placeholder="🔎 Search your garage..."
+                value={search}
+                onChange={(e) => handleSearch(e.target.value)}
+                />
+            </div>
 
             <div className="card-flow">
 
