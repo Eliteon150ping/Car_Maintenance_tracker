@@ -4,6 +4,62 @@
     padding: 20px;
 }
 
+.service-record-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.service-filter-button {
+    padding: 8px 15px;
+    border: 1px solid deepskyblue;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.service-filter-panel {
+    width: 400px;
+    margin-left: auto;
+    margin-bottom: 15px;
+    padding: 20px;
+    border: 1px solid deepskyblue;
+    border-radius: 8px;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.service-filter-section {
+    margin-bottom: 20px;
+}
+
+.service-filter-section h4 {
+    margin-bottom: 10px;
+}
+
+.service-filter-section label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.service-filter-section input {
+    margin-right: 8px;
+}
+
+.service-filter-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.service-filter-actions button {
+    padding: 8px 12px;
+    border: 1px solid deepskyblue;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+}
+
 .service-record-header{
     display: grid;
     border: 1px solid orange;

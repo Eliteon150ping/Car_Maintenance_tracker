@@ -49,7 +49,7 @@ function VehiclesPage() {
 
     }
 
-    async function handleSearch(value){
+    async function handleSearch(value) {
         setSearch(value);
 
         const data = await searchVehicles(value);
@@ -74,14 +74,16 @@ function VehiclesPage() {
                 description="View your entire vehicle catalogue here"
             />
 
-            <div className="vehicle-search">
-                <input
-                type="text"
-                placeholder="🔎 Search your garage..."
-                value={search}
-                onChange={(e) => handleSearch(e.target.value)}
-                />
-            </div>
+            {!showCarForm && (
+                <div className="vehicle-search">
+                    <input
+                        type="text"
+                        placeholder="🔎 Search your garage..."
+                        value={search}
+                        onChange={(e) => handleSearch(e.target.value)}
+                    />
+                </div>
+            )}
 
             <div className="card-flow">
 

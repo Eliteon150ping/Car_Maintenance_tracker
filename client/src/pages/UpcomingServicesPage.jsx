@@ -28,7 +28,7 @@ function UpcomingServicesPage({showExtraDetails}) {
             <div className={`service-record-header ${showExtraDetails ? "without-car" : "with-car"}`}>
                 <div>Car</div>
                 <div>Service Date</div>
-                <div>Mileage</div>
+                <div>Mileage at service</div>
                 <div>Service Type</div>
                 <div>Description</div>
                 <div>Cost</div>
