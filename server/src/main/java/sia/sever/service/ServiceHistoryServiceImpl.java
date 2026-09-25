@@ -39,7 +39,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
 
-    private static final int UPCOMING_DAYS_THRESHOLD = 40;
+    private static final int UPCOMING_DAYS_THRESHOLD = 30;
     private static final int UPCOMING_KM_THRESHOLD = 1500;
 
     @Autowired

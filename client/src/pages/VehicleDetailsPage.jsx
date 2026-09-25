@@ -9,6 +9,7 @@ import CarForm from "../components/CarForm";
 import { useLocation } from "react-router-dom";
 import "../styles/VehicleDetailsPage.css";
 import { FaFilter } from "react-icons/fa";
+import ServiceRecordFilter from "../components/ServiceRecordFilter";
 
 function VehicleDetailsPage({ showExtraDetails }) {
 
@@ -129,6 +130,12 @@ function VehicleDetailsPage({ showExtraDetails }) {
                 )
             );
         }
+    }
+
+    function clearFilters() {
+        setSelectedServiceTypes([]);
+        setSelectedServiceCategories([]);
+        setFilteredServiceRecords(serviceRecords);
     }
 
     function applyFilters() {
@@ -255,75 +262,24 @@ function VehicleDetailsPage({ showExtraDetails }) {
                         className="service-filter-button"
                         onClick={() => setShowFilters(!showFilters)}
                     >
-                        <FaFilter/>
+                        <FaFilter />
                     </button>
                 )}
             </div>
 
-            {!showServiceForm && !showCarForm && showFilters && (
-                <div className="service-filter-panel">
-
-                    <h3>Filter Service Records</h3>
-
-                    <div className="service-filter-section">
-                        <h4>Service Type</h4>
-
-                        {serviceTypeOptions.map(option => (
-                            <label key={option.value}>
-                                <input type="checkbox"
-                                    value={option.value}
-                                    onChange={(e) => handleFilterChange(
-                                        e,
-                                        selectedServiceTypes,
-                                        setSelectedServiceTypes
-                                    )}
-                                    checked={selectedServiceTypes.includes(option.value)}
-                                />
-                                {option.label}
-                            </label>
-                        ))}
-
-                    </div>
-
-                    <div className="service-filter-section">
-                        <h4>Service Category</h4>
-
-                        {serviceCategoryOptions.map(option => (
-                            <label key={option.value}>
-                                <input type="checkbox"
-                                    value={option.value}
-                                    onChange={(e) => handleFilterChange(
-                                        e,
-                                        selectedServiceCategories,
-                                        setSelectedServiceCategories
-                                    )}
-                                    checked={selectedServiceCategories.includes(option.value)}
-                                />
-                                {option.label}
-                            </label>
-                        ))}
-
-                    </div>
-
-                    <div className="service-filter-actions">
-                        <button type="button"
-                            onClick={() => {
-                                setSelectedServiceTypes([]);
-                                setSelectedServiceCategories([]);
-                                setFilteredServiceRecords(serviceRecords);
-                            }}
-                        >
-                            Clear
-                        </button>
-
-                        <button type="button"
-                            onClick={applyFilters}
-                        >
-                            Apply Filters
-                        </button>
-                    </div>
-
-                </div>
+            {!showServiceForm && !showCarForm && (
+                <ServiceRecordFilter
+                    serviceTypeOptions={serviceTypeOptions}
+                    serviceCategoryOptions={serviceCategoryOptions}
+                    selectedServiceTypes={selectedServiceTypes}
+                    setSelectedServiceTypes={setSelectedServiceTypes}
+                    selectedServiceCategories={selectedServiceCategories}
+                    setSelectedServiceCategories={setSelectedServiceCategories}
+                    handleFilterChange={handleFilterChange}
+                    clearFilters={clearFilters}
+                    applyFilters={applyFilters}
+                    showFilters={showFilters}
+                />
             )}
 
             {!showServiceForm && !showCarForm && (

@@ -1,23 +1,37 @@
-.service-history-page{
+.service-history-page {
     width: 500px;
     margin: 40px auto;
     padding: 20px;
+    position: relative;
 }
 
-.vehicle-details-card.with-car{
+.service-history-page .service-filter-panel {
+    position: absolute;
+    top: 190px;
+    right: -370px;
+}
+
+.service-history-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    margin-top: -40px;
+}
+
+.vehicle-details-card.with-car {
     grid-template-columns: 1.2fr 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
 }
 
-.vehicle-paragraph{
+.vehicle-paragraph {
     font-size: 15px;
     transition: all 0.25s ease;
 }
 
-.vehicle-paragraph:hover{
+.vehicle-paragraph:hover {
     color: darkgoldenrod;
     transform: translateY(-2px);
 }
 
-.service-record-header.with-car{
-     grid-template-columns:1.2fr 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
+.service-record-header.with-car {
+    grid-template-columns: 1.2fr 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
 }
