@@ -1,32 +1,61 @@
-.vehicle-details-page{
+.vehicle-details-page {
     width: 500px;
     margin: 40px auto;
     padding: 20px;
+    position: relative;
 }
 
 .service-record-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-bottom: 10px;
 }
 
 .service-filter-button {
-    padding: 8px 15px;
+    width: 50px;
+    padding: 10px;
     border: 1px solid deepskyblue;
     border-radius: 5px;
     background-color: white;
     cursor: pointer;
+    margin-top: 45px;
+    margin-right: -390px;
+}
+
+.service-filter-button:hover {
+    animation: deepskyblueGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes deepskyblueGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 3px deepskyblue;
+    }
+
+    50% {
+        box-shadow: 0 0 12px deepskyblue;
+    }
+
 }
 
 .service-filter-panel {
+    position: absolute;
+    top: 480px;
+    right: -370px;
     width: 400px;
-    margin-left: auto;
+    margin-left: 450px;
     margin-bottom: 15px;
     padding: 20px;
     border: 1px solid deepskyblue;
     border-radius: 8px;
     background-color: white;
     box-sizing: border-box;
+    animation: deepskyblueGlow 1.5s ease-in-out infinite;
+}
+
+.service-filter-panel h3{
+    text-align: center;
 }
 
 .service-filter-section {
@@ -35,6 +64,11 @@
 
 .service-filter-section h4 {
     margin-bottom: 10px;
+    margin-top: 15px;
+    border: 1px solid deepskyblue;
+    border-radius: 5px;
+    text-align: center;
+    padding: 5px;
 }
 
 .service-filter-section label {
@@ -58,9 +92,15 @@
     border-radius: 5px;
     background-color: white;
     cursor: pointer;
+    transition: all 0.25s ease;
 }
 
-.service-record-header{
+.service-filter-actions button:hover{
+    opacity: 0.9;
+    transform: translateY(-6px);
+}
+
+.service-record-header {
     display: grid;
     border: 1px solid orange;
     padding: 0;
@@ -74,16 +114,16 @@
     box-sizing: border-box;
 }
 
-.service-record-header.without-car{
+.service-record-header.without-car {
     grid-template-columns: 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
 }
 
-.service-record-header > div {
+.service-record-header>div {
     border-right: 1px solid orange;
     padding: 15px 10px;
     box-sizing: border-box;
 }
 
-.service-record-header > div:last-child {
+.service-record-header>div:last-child {
     border-right: none;
 }

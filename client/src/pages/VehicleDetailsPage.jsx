@@ -8,6 +8,7 @@ import ServiceRecordForm from "../components/ServiceRecordForm";
 import CarForm from "../components/CarForm";
 import { useLocation } from "react-router-dom";
 import "../styles/VehicleDetailsPage.css";
+import { FaFilter } from "react-icons/fa";
 
 function VehicleDetailsPage({ showExtraDetails }) {
 
@@ -114,12 +115,14 @@ function VehicleDetailsPage({ showExtraDetails }) {
     function handleFilterChange(e, selectedValues, setSelectedValues) {
         const value = e.target.value;
 
+        // Take the existing selected checkbox values and spread them into a new array, then add the newly 
+        // selected value.
         if (e.target.checked) {
             setSelectedValues([
                 ...selectedValues,
                 value
             ]);
-        } else {
+        } else { // If the checkbox is unchecked, remove its value from the selected values array.
             setSelectedValues(
                 selectedValues.filter(
                     selectedValue => selectedValue !== value
@@ -205,56 +208,57 @@ function VehicleDetailsPage({ showExtraDetails }) {
                 />
             )}
 
-            {!showCarForm && (showServiceForm ? <ServiceRecordForm
-                // All the props here are passed into serviceRecord form
+            <div className="service-record-actions">
 
-                vehicleMileage={vehicle.currentMileage}
-                latestServiceMileage={serviceRecords[0]?.mileageAtService}
-                latestServiceDate={serviceRecords[0]?.serviceDate}
-                vehicleYear={vehicle.year}
-                // If editingServiceRecord is null, the form is being used to add a new record.
-                // If it contains a service record object, the form switches to edit mode.
-                serviceRecord={editingServiceRecord}
-                carId={id}
+                {!showCarForm && (showServiceForm ? <ServiceRecordForm
+                    // All the props here are passed into serviceRecord form
 
-                // use the service record's Id when editing
-                id={editingServiceRecord?.id}
+                    vehicleMileage={vehicle.currentMileage}
+                    latestServiceMileage={serviceRecords[0]?.mileageAtService}
+                    latestServiceDate={serviceRecords[0]?.serviceDate}
+                    vehicleYear={vehicle.year}
+                    // If editingServiceRecord is null, the form is being used to add a new record.
+                    // If it contains a service record object, the form switches to edit mode.
+                    serviceRecord={editingServiceRecord}
+                    carId={id}
 
-                // Cancel clears the current editing record and hides the form.
-                onCancel={() => {
-                    setEditingServiceRecord(null),
-                        setShowServiceForm(false)
-                }}
+                    // use the service record's Id when editing
+                    id={editingServiceRecord?.id}
 
-                // After saving:
-                // 1. Reload the latest service records.
-                // 2. Clear the editing record.
-                // 3. Close the form.
-                onSave={() => {
-                    loadServiceRecords();
-                    setEditingServiceRecord(null);
-                    setShowServiceForm(false);
-
-                    // Show the Add button when the form is hidden.
-                    // Clicking it clears any editing record and opens a blank form.
-                }} /> : <button className="add-service-record-button"
-                    onClick={() => {
+                    // Cancel clears the current editing record and hides the form.
+                    onCancel={() => {
                         setEditingServiceRecord(null),
-                            setShowServiceForm(true)
-                    }}>Add service record</button>
-            )}
+                            setShowServiceForm(false)
+                    }}
 
-            {!showServiceForm && !showCarForm && (
-                <div className="service-record-actions">
+                    // After saving:
+                    // 1. Reload the latest service records.
+                    // 2. Clear the editing record.
+                    // 3. Close the form.
+                    onSave={() => {
+                        loadServiceRecords();
+                        setEditingServiceRecord(null);
+                        setShowServiceForm(false);
+
+                        // Show the Add button when the form is hidden.
+                        // Clicking it clears any editing record and opens a blank form.
+                    }} /> : <button className="add-service-record-button"
+                        onClick={() => {
+                            setEditingServiceRecord(null),
+                                setShowServiceForm(true)
+                        }}>Add service record</button>
+                )}
+
+                {!showServiceForm && !showCarForm && (
                     <button
                         type="button"
                         className="service-filter-button"
                         onClick={() => setShowFilters(!showFilters)}
                     >
-                        Filter
+                        <FaFilter/>
                     </button>
-                </div>
-            )}
+                )}
+            </div>
 
             {!showServiceForm && !showCarForm && showFilters && (
                 <div className="service-filter-panel">
