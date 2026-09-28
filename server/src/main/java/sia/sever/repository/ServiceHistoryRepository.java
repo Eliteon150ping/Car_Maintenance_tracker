@@ -40,10 +40,11 @@ public interface ServiceHistoryRepository extends JpaRepository<ServiceHistory, 
 
     // Pagination methods
     Page<ServiceHistory> findByCarAndServiceDate(Car car, LocalDate serviceDate, Pageable pageable);
-    Page<ServiceHistory> findByCar(Car car, Pageable pageable);
+    Page<ServiceHistory> findByCarOrderByServiceDateDescMileageAtServiceDesc(Car car, Pageable pageable);
     Page<ServiceHistory> findByCarAndServiceType(Car car, ServiceType serviceType, Pageable pageable);
     Page<ServiceHistory> findByCarAndServiceTypeIn(Car car, List<ServiceType> filteredServiceTypes, Pageable pageable);
     Page<ServiceHistory> findByCarUserAndServiceType(User user, ServiceType serviceType, Pageable pageable);
     Page<ServiceHistory> findByCarUserAndServiceTypeIn(User user, List<ServiceType> filteredServiceTypes, Pageable pageable);
+    Page<ServiceHistory> findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(User user, Pageable pageable);
 
 }

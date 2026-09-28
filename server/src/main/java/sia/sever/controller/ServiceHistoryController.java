@@ -127,7 +127,7 @@ public class ServiceHistoryController {
     // Filter and show only Overdue services
     @GetMapping("/overdue")
     public ResponseEntity<List<ServiceRecordResponseDTO>> getOverdueServiceRecords(){
-        List<ServiceRecordResponseDTO> getAllOverdueRecords = serviceHistoryService.getOverDueServiceRecords();
+        List<ServiceRecordResponseDTO> getAllOverdueRecords = serviceHistoryService.getOverdueServiceRecords();
         return ResponseEntity.ok(getAllOverdueRecords);
     }
 
@@ -181,5 +181,34 @@ public class ServiceHistoryController {
         ServiceCategory categoryType = ServiceCategory.valueOf(serviceCategory.toUpperCase());
         Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory = serviceHistoryService.getServiceHistoryByCarAndCategory(carId ,categoryType,  page, size);
         return ResponseEntity.ok(getServiceHistoryByCarAndCategory);
+    }
+
+    // Get all service records for all user owned cars
+    @GetMapping("/page")
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getAllServiceRecords(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+
+        return ResponseEntity.ok(serviceHistoryService.getAllServiceRecords(page, size));
+    }
+
+    @GetMapping("/upcoming/page")
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getUpcomingServiceRecords(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(
+                serviceHistoryService.getUpcomingServiceRecords(page, size)
+        );
+    }
+
+    @GetMapping("/overdue/page")
+    public ResponseEntity<Page<ServiceRecordResponseDTO>> getOverdueServiceRecords(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(
+                serviceHistoryService.getOverdueServiceRecords(page, size)
+        );
     }
 }

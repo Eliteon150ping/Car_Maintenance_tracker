@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import sia.sever.dto.serviceRecord.CreateServiceRecordDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
 import sia.sever.dto.serviceRecord.UpdateServiceRecordDTO;
-import sia.sever.entity.Car;
 import sia.sever.enums.ServiceCategory;
 import sia.sever.enums.ServiceType;
 import java.time.LocalDate;
@@ -14,6 +13,7 @@ public interface ServiceHistoryService {
 
     // These methods must be defined in the class that uses this interface(eg. ServiceHistoryImpl)
     ServiceRecordResponseDTO createServiceHistory(CreateServiceRecordDTO serviceHistory, Long carId);
+
     List<ServiceRecordResponseDTO> getAllServiceRecords();
     ServiceRecordResponseDTO getServiceHistoryById(Long id);
     ServiceRecordResponseDTO updateServiceHistory(Long id, UpdateServiceRecordDTO serviceHistory, Long carId);
@@ -24,7 +24,7 @@ public interface ServiceHistoryService {
     List<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType);
     List<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory);
     List<ServiceRecordResponseDTO> getUpcomingServiceRecords();
-    List<ServiceRecordResponseDTO> getOverDueServiceRecords();
+    List<ServiceRecordResponseDTO> getOverdueServiceRecords();
     void validateDuplicateRecord(Long carId, ServiceType serviceType, LocalDate serviceDate, int mileageAtService);
 
     // Pagination methods(optional but helps the frontend load data quicker)
@@ -34,4 +34,8 @@ public interface ServiceHistoryService {
     Page<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory, int page, int size);
     Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType, int page, int size);
     Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory, int page, int size);
+    Page<ServiceRecordResponseDTO> getAllServiceRecords(int page, int size);
+    Page<ServiceRecordResponseDTO> getUpcomingServiceRecords(int page, int size);
+    Page<ServiceRecordResponseDTO> getOverdueServiceRecords(int page, int size);
+
 }

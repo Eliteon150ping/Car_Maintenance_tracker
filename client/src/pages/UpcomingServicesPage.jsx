@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
-import { getUpcomingRecords, getServiceTypes } from "../api/vehicleDetailsApi";
+import { getUpcomingRecordsPaginated, getServiceTypes } from "../api/vehicleDetailsApi";
 import VehicleDetailsCard from "../components/VehicleDetailsCard";
 import { useNavigate } from "react-router-dom";
 import { FaFilter } from "react-icons/fa";
@@ -14,6 +14,9 @@ function UpcomingServicesPage({ showExtraDetails }) {
     const [selectedServiceCategories, setSelectedServiceCategories] = useState([]);
     const [filteredServiceRecords, setFilteredServiceRecords] = useState([]);
     const [serviceTypes, setServiceTypes] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [pageSize] = useState(6);
     const navigate = useNavigate();
 
     const serviceTypeOptions = [
@@ -45,14 +48,18 @@ function UpcomingServicesPage({ showExtraDetails }) {
     ];
 
     useEffect(() => {
-        loadServiceRecords();
         loadServiceTypes();
     }, []);
 
+    useEffect(() => {
+        loadServiceRecords();
+    }, [currentPage]);
+
     async function loadServiceRecords() {
-        const data = await getUpcomingRecords();
-        setServiceRecords(data);
-        setFilteredServiceRecords(data);
+        const data = await getUpcomingRecordsPaginated(currentPage, pageSize);
+        setServiceRecords(data.content);
+        setFilteredServiceRecords(data.content);
+        setTotalPages(data.totalPages);
     }
 
     async function loadServiceTypes() {
@@ -181,6 +188,25 @@ function UpcomingServicesPage({ showExtraDetails }) {
                     }}
                 />
             ))}
+
+            {serviceRecords.length > 0 && (
+                <div className="pagination-controls">
+
+                    <button
+                        type="button"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 0}
+                    >Previous</button>
+
+                    <p>Page {currentPage + 1} of {totalPages}</p>
+
+                    <button
+                        type="button"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={(currentPage === totalPages - 1)}
+                    >Next</button>
+                </div>
+            )}
 
         </div>
     );

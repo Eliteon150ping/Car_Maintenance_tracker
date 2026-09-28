@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import { useNavigate, useParams } from "react-router-dom";
 import VehicleDetailsCard from "../components/VehicleDetailsCard";
-import { getServiceRecordsByCarId, getCarById, getServiceTypes } from "../api/vehicleDetailsApi";
+import { getServiceRecordsByCarIdPaginated, getCarById, getServiceTypes } from "../api/vehicleDetailsApi";
 import VehicleInformationCard from "../components/VehicleInformationCard";
 import ServiceRecordForm from "../components/ServiceRecordForm";
 import CarForm from "../components/CarForm";
@@ -27,6 +27,9 @@ function VehicleDetailsPage({ showExtraDetails }) {
     const [showFilters, setShowFilters] = useState(false);
     const [selectedServiceTypes, setSelectedServiceTypes] = useState([]);
     const [selectedServiceCategories, setSelectedServiceCategories] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [pageSize] = useState(6);
     const editingServiceRecordId = location.state?.editingServiceRecordId;
 
     const serviceTypeOptions = [
@@ -58,12 +61,14 @@ function VehicleDetailsPage({ showExtraDetails }) {
     ];
 
     useEffect(() => {
-
         loadCar();
-        loadServiceRecords();
         loadServiceTypes();
-
     }, [id])
+
+
+    useEffect(() => {
+        loadServiceRecords();
+    }, [currentPage])
 
     async function loadCar() {
 
@@ -83,13 +88,14 @@ function VehicleDetailsPage({ showExtraDetails }) {
 
     async function loadServiceRecords() {
 
-        const data = await getServiceRecordsByCarId(id);
-        setServiceRecords(data);
-        setFilteredServiceRecords(data);
+        const data = await getServiceRecordsByCarIdPaginated(id, currentPage, pageSize);
+        setServiceRecords(data.content);
+        setFilteredServiceRecords(data.content);
+        setTotalPages(data.totalPages);
 
         if (editingServiceRecordId) {
 
-            const recordToEdit = data.find(   // .find() loops through the array and returns the first object
+            const recordToEdit = data.content.find(   // .find() loops through the array and returns the first object
                 // for which the condition evaluates to true. If it can't find
                 // anything that satisfies the condition, it returns undefined
                 // instead of false.
@@ -321,6 +327,26 @@ function VehicleDetailsPage({ showExtraDetails }) {
                     }}
                 />
             ))}
+
+            {serviceRecords.length > 0 && !showServiceForm && !showCarForm && (
+                <div className="pagination-controls">
+                    <button
+                        type="button"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 0}
+                    >Previous</button>
+
+                    <p>Page {currentPage + 1} of {totalPages}</p>
+
+                    <button
+                        type="button"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === totalPages - 1}
+                    >
+                        next
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

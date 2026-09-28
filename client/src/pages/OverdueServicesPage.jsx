@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import { useNavigate } from "react-router-dom";
-import { getOverdueRecords, getServiceTypes } from "../api/vehicleDetailsApi";
+import { getOverdueRecordsPaginated, getServiceTypes } from "../api/vehicleDetailsApi";
 import VehicleDetailsCard from "../components/VehicleDetailsCard";
 import { FaFilter } from "react-icons/fa";
 import ServiceRecordFilter from "../components/ServiceRecordFilter";
 import "../styles/OverdueServicesPage.css";
 
-function OverdueServicesPage({showExtraDetails}) {
+function OverdueServicesPage({ showExtraDetails }) {
 
     const [serviceRecords, setServiceRecords] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
@@ -15,6 +15,9 @@ function OverdueServicesPage({showExtraDetails}) {
     const [selectedServiceCategories, setSelectedServiceCategories] = useState([]);
     const [filteredServiceRecords, setFilteredServiceRecords] = useState([]);
     const [serviceTypes, setServiceTypes] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [pageSize] = useState(6);
     const navigate = useNavigate();
 
     const serviceTypeOptions = [
@@ -46,14 +49,18 @@ function OverdueServicesPage({showExtraDetails}) {
     ];
 
     useEffect(() => {
-        loadRecords();
         loadServiceTypes();
     }, []);
 
+    useEffect(() => {
+        loadRecords();
+    }, [currentPage]);
+
     async function loadRecords() {
-        const data = await getOverdueRecords();
-        setServiceRecords(data);
-        setFilteredServiceRecords(data);
+        const data = await getOverdueRecordsPaginated(currentPage, pageSize);
+        setServiceRecords(data.content);
+        setFilteredServiceRecords(data.content);
+        setTotalPages(data.totalPages);
     }
 
     async function loadServiceTypes() {
@@ -183,6 +190,25 @@ function OverdueServicesPage({showExtraDetails}) {
                     }}
                 />
             ))}
+
+            {serviceRecords.length > 0 && (
+                <div className="pagination-controls">
+
+                    <button
+                        type="button"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 0}
+                    >Previous</button>
+
+                    <p>Page {currentPage + 1} of {totalPages}</p>
+
+                    <button
+                        type="button"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={(currentPage === totalPages - 1)}
+                    >Next</button>
+                </div>
+            )}
 
         </div>
     );

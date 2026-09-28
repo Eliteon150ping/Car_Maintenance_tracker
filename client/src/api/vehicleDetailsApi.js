@@ -43,6 +43,27 @@ export async function getServiceRecordsByCarId(id) {
     return serviceRecords;
 }
 
+// Get all services records for a car(paginated)
+export async function getServiceRecordsByCarIdPaginated(id, page = 0, size = 6){
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`http://localhost:8080/api/service-records/car/${id}/page?page=${page}&size=${size}`, {
+
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if(!response.ok){
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    const serviceRecords = await response.json();
+    return serviceRecords;
+}
+
 // Add service record
 export async function addServiceRecord(carId, serviceRecord) {
 
@@ -146,6 +167,27 @@ export async function getAllServiceRecords() {
     return gotAllServiceRecords;
 }
 
+// Get All service records for every car(pagination)
+export async function getAllServiceRecordsPaginated(page = 0, size = 6) {
+    
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`http://localhost:8080/api/service-records/page?page=${page}&size=${size}`,
+        {
+            method: "GET",
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    if(!response.ok){
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    return await response.json();
+}
+
 // Get Enum service type list
 export async function getServiceTypes(){
 
@@ -190,6 +232,28 @@ export async function getUpcomingRecords(){
     return upcomingServices;
 }
 
+// Get all upcoming services(paginated)
+export async function getUpcomingRecordsPaginated(page = 0, size = 6) {
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `http://localhost:8080/api/service-records/upcoming/page?page=${page}&size=${size}`,
+        {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    return await response.json();
+}
+
 // Get all overdue services
 export async function getOverdueRecords(){
 
@@ -210,4 +274,26 @@ export async function getOverdueRecords(){
     const overdueServices = await response.json();
 
     return overdueServices;
+}
+
+// Get all overdue services(paginated)
+export async function getOverdueRecordsPaginated(page = 0, size = 6) {
+    
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `http://localhost:8080/api/service-records/overdue/page?page=${page}&size=${size}`,
+        {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    return await response.json();
 }
