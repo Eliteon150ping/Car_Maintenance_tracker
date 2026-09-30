@@ -74,6 +74,18 @@
     transform: translateY(-6px);
 }
 
-.confirm {
+.save-confirm {
+    background-color: deepskyblue;
+}
+
+.save-cancel {
     background-color: red;
+}
+
+.cancel-confirm {
+    background-color: red;
+}
+
+.cancel-cancel {
+    background-color: deepskyblue;
 }

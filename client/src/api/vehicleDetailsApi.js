@@ -44,11 +44,23 @@ export async function getServiceRecordsByCarId(id) {
 }
 
 // Get all services records for a car(paginated)
-export async function getServiceRecordsByCarIdPaginated(id, page = 0, size = 6){
+export async function getServiceRecordsByCarIdPaginated(id, page = 0, size = 6, serviceTypes = [], serviceCategories = []){
 
     const token = localStorage.getItem("token");
+    const params = new URLSearchParams();
 
-    const response = await fetch(`http://localhost:8080/api/service-records/car/${id}/page?page=${page}&size=${size}`, {
+    params.append("page", page);
+    params.append("size", size);
+
+    serviceTypes.forEach(serviceType => {
+        params.append("serviceTypes", serviceType);
+    });
+
+    serviceCategories.forEach(serviceCategory => {
+        params.append("serviceCategories", serviceCategory);
+    });
+
+    const response = await fetch(`http://localhost:8080/api/service-records/car/${id}/page?${params.toString()}`, {
 
         method: "GET",
         headers: {
@@ -62,6 +74,30 @@ export async function getServiceRecordsByCarIdPaginated(id, page = 0, size = 6){
 
     const serviceRecords = await response.json();
     return serviceRecords;
+}
+
+// Get latest service information for a car
+export async function getLatestServiceInfo(carId) {
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `http://localhost:8080/api/service-records/car/${carId}/latest-info`,
+        {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    const latestServiceInfo = await response.json();
+
+    return latestServiceInfo;
 }
 
 // Add service record
@@ -168,11 +204,23 @@ export async function getAllServiceRecords() {
 }
 
 // Get All service records for every car(pagination)
-export async function getAllServiceRecordsPaginated(page = 0, size = 6) {
+export async function getAllServiceRecordsPaginated(page = 0, size = 6, serviceTypes = [], serviceCategories = []) {
     
     const token = localStorage.getItem("token");
+    const params = new URLSearchParams();
 
-    const response = await fetch(`http://localhost:8080/api/service-records/page?page=${page}&size=${size}`,
+    params.append("page", page);
+    params.append("size", size);
+
+    serviceTypes.forEach(serviceType => {
+        params.append("serviceTypes", serviceType);
+    });
+
+    serviceCategories.forEach(serviceCategory => {
+        params.append("serviceCategories", serviceCategory);
+    });
+
+    const response = await fetch(`http://localhost:8080/api/service-records/page?${params.toString()}`,
         {
             method: "GET",
             headers:{
@@ -233,12 +281,24 @@ export async function getUpcomingRecords(){
 }
 
 // Get all upcoming services(paginated)
-export async function getUpcomingRecordsPaginated(page = 0, size = 6) {
+export async function getUpcomingRecordsPaginated(page = 0, size = 6, serviceTypes = [], serviceCategories = []) {
 
     const token = localStorage.getItem("token");
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("size", size);
+
+    serviceTypes.forEach(serviceType => {
+        params.append("serviceTypes", serviceType);
+    });
+
+    serviceCategories.forEach(serviceCategory => {
+        params.append("serviceCategories", serviceCategory);
+    });
 
     const response = await fetch(
-        `http://localhost:8080/api/service-records/upcoming/page?page=${page}&size=${size}`,
+        `http://localhost:8080/api/service-records/upcoming/page?${params.toString()}`,
         {
             method: "GET",
             headers: {
@@ -277,12 +337,24 @@ export async function getOverdueRecords(){
 }
 
 // Get all overdue services(paginated)
-export async function getOverdueRecordsPaginated(page = 0, size = 6) {
+export async function getOverdueRecordsPaginated(page = 0, size = 6, serviceTypes = [], serviceCategories = []) {
     
     const token = localStorage.getItem("token");
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("size", size);
+
+    serviceTypes.forEach(serviceType => {
+        params.append("serviceTypes", serviceType);
+    });
+
+    serviceCategories.forEach(serviceCategory => {
+        params.append("serviceCategories", serviceCategory);
+    });
 
     const response = await fetch(
-        `http://localhost:8080/api/service-records/overdue/page?page=${page}&size=${size}`,
+        `http://localhost:8080/api/service-records/overdue/page?${params.toString()}`,
         {
             method: "GET",
             headers: {

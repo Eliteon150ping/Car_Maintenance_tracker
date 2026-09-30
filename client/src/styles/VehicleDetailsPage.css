@@ -127,3 +127,31 @@
 .service-record-header>div:last-child {
     border-right: none;
 }
+
+.pagination-controls{
+    display: flex;
+    padding: 10px;
+    justify-content: end;
+    margin-right: -390px;
+    color: black;
+}
+
+.pagination-info{
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 10px;
+}
+
+.pagination-button{
+    padding: 8px;
+    background-color: deepskyblue;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    width: 70px;
+}
+
+.pagination-button:not(:disabled):hover{
+    animation: deepskyblueGlow 1.5s ease-in-out infinite;
+    cursor: pointer;
+}

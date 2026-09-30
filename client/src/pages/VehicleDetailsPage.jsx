@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import { useNavigate, useParams } from "react-router-dom";
 import VehicleDetailsCard from "../components/VehicleDetailsCard";
-import { getServiceRecordsByCarIdPaginated, getCarById, getServiceTypes } from "../api/vehicleDetailsApi";
+import { getServiceRecordsByCarIdPaginated, getCarById, getLatestServiceInfo } from "../api/vehicleDetailsApi";
 import VehicleInformationCard from "../components/VehicleInformationCard";
 import ServiceRecordForm from "../components/ServiceRecordForm";
 import CarForm from "../components/CarForm";
@@ -19,8 +19,9 @@ function VehicleDetailsPage({ showExtraDetails }) {
     const navigate = useNavigate();
     const [vehicle, setVehicle] = useState(null);
     const [serviceRecords, setServiceRecords] = useState([]);
-    const [serviceTypes, setServiceTypes] = useState([]);
-    const [filteredServiceRecords, setFilteredServiceRecords] = useState([]);
+    const [latestServiceInfo, setLatestServiceInfo] = useState(null);
+    const [appliedServiceTypes, setAppliedServiceTypes] = useState([]);
+    const [appliedServiceCategories, setAppliedServiceCategories] = useState([]);
     const [showServiceForm, setShowServiceForm] = useState(false);
     const [editingServiceRecord, setEditingServiceRecord] = useState(null);
     const [showCarForm, setShowCarForm] = useState(location.state?.editing === true);
@@ -62,13 +63,13 @@ function VehicleDetailsPage({ showExtraDetails }) {
 
     useEffect(() => {
         loadCar();
-        loadServiceTypes();
+        loadLatestServiceInfo();
     }, [id])
 
 
     useEffect(() => {
         loadServiceRecords();
-    }, [currentPage])
+    }, [currentPage, appliedServiceTypes, appliedServiceCategories])
 
     async function loadCar() {
 
@@ -86,11 +87,16 @@ function VehicleDetailsPage({ showExtraDetails }) {
 
     }
 
+    async function loadLatestServiceInfo() {
+
+        const latestInfo = await getLatestServiceInfo(id);
+        setLatestServiceInfo(latestInfo);
+    }
+
     async function loadServiceRecords() {
 
-        const data = await getServiceRecordsByCarIdPaginated(id, currentPage, pageSize);
+        const data = await getServiceRecordsByCarIdPaginated(id, currentPage, pageSize, appliedServiceTypes, appliedServiceCategories);
         setServiceRecords(data.content);
-        setFilteredServiceRecords(data.content);
         setTotalPages(data.totalPages);
 
         if (editingServiceRecordId) {
@@ -111,12 +117,6 @@ function VehicleDetailsPage({ showExtraDetails }) {
                 replace: true, state: null
             });
         }
-    }
-
-    async function loadServiceTypes() {
-
-        const data = await getServiceTypes();
-        setServiceTypes(data);
     }
 
     function handleFilterChange(e, selectedValues, setSelectedValues) {
@@ -141,42 +141,17 @@ function VehicleDetailsPage({ showExtraDetails }) {
     function clearFilters() {
         setSelectedServiceTypes([]);
         setSelectedServiceCategories([]);
-        setFilteredServiceRecords(serviceRecords);
+        setAppliedServiceTypes([]);
+        setAppliedServiceCategories([]);
+        setCurrentPage(0);
     }
 
     function applyFilters() {
-        let filteredRecords = serviceRecords;
-
-        // Filter by service type
-        if (selectedServiceTypes.length > 0) {
-            filteredRecords = filteredRecords.filter(serviceRecord =>
-                selectedServiceTypes.includes(serviceRecord.serviceType)
-            );
-        }
-
-        // Filter by service category
-        if (selectedServiceCategories.length > 0) {
-            filteredRecords = filteredRecords.filter(serviceRecord => {
-                const serviceType = serviceTypes.find(
-                    type => type.value === serviceRecord.serviceType
-                );
-
-                return serviceType && selectedServiceCategories.includes(serviceType.serviceCategory)
-            });
-        }
-
-        setFilteredServiceRecords(filteredRecords);
+        setAppliedServiceTypes(selectedServiceTypes);
+        setAppliedServiceCategories(selectedServiceCategories);
+        setCurrentPage(0);
         setShowFilters(false);
     }
-
-    // Find the latest record of each service type by comparing the id of the record and storing it if it
-    // doesn't exist else ignore it
-    const latestRecordsByServiceType = {};
-    serviceRecords.forEach(serviceRecord => {
-        if (!latestRecordsByServiceType[serviceRecord.serviceType]) {
-            latestRecordsByServiceType[serviceRecord.serviceType] = serviceRecord.id
-        }
-    });
 
     return (
         <div className="vehicle-details-page">
@@ -227,8 +202,8 @@ function VehicleDetailsPage({ showExtraDetails }) {
                     // All the props here are passed into serviceRecord form
 
                     vehicleMileage={vehicle.currentMileage}
-                    latestServiceMileage={serviceRecords[0]?.mileageAtService}
-                    latestServiceDate={serviceRecords[0]?.serviceDate}
+                    latestServiceMileage={latestServiceInfo?.latestServiceMileage}
+                    latestServiceDate={latestServiceInfo?.latestServiceDate}
                     vehicleYear={vehicle.year}
                     // If editingServiceRecord is null, the form is being used to add a new record.
                     // If it contains a service record object, the form switches to edit mode.
@@ -250,6 +225,7 @@ function VehicleDetailsPage({ showExtraDetails }) {
                     // 3. Close the form.
                     onSave={() => {
                         loadServiceRecords();
+                        loadLatestServiceInfo();
                         setEditingServiceRecord(null);
                         setShowServiceForm(false);
 
@@ -303,7 +279,7 @@ function VehicleDetailsPage({ showExtraDetails }) {
                 </div>
             )}
 
-            {!showServiceForm && !showCarForm && filteredServiceRecords.map(serviceRecord => (
+            {!showServiceForm && !showCarForm && serviceRecords.map(serviceRecord => (
                 <VehicleDetailsCard
                     key={serviceRecord.id}
                     id={serviceRecord.id}
@@ -312,7 +288,7 @@ function VehicleDetailsPage({ showExtraDetails }) {
                     nextDueMileage={serviceRecord.nextDueMileage}
                     nextDueDate={serviceRecord.nextDueDate}
                     serviceType={serviceRecord.serviceType}
-                    isLatestRecord={latestRecordsByServiceType[serviceRecord.serviceType] === serviceRecord.id}
+                    isLatestRecord={serviceRecord.latestRecord}
                     cost={serviceRecord.cost}
                     description={serviceRecord.description}
                     remainingKm={serviceRecord.remainingKm}
@@ -331,14 +307,16 @@ function VehicleDetailsPage({ showExtraDetails }) {
             {serviceRecords.length > 0 && !showServiceForm && !showCarForm && (
                 <div className="pagination-controls">
                     <button
+                        className="pagination-button"
                         type="button"
                         onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 0}
                     >Previous</button>
 
-                    <p>Page {currentPage + 1} of {totalPages}</p>
+                    <p className="pagination-info">Page {currentPage + 1} of {totalPages}</p>
 
                     <button
+                        className="pagination-button"
                         type="button"
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={currentPage === totalPages - 1}

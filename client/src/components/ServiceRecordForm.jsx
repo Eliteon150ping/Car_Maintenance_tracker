@@ -91,10 +91,10 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                 validationErrors.serviceDate = "Please select a date for the service";
 
             } else if (new Date(serviceDate).getFullYear() < vehicleYear) {
-                validationErrors.serviceDate = "Service date cannot be before the car's year model: // " + vehicleYear;
+                validationErrors.serviceDate = "Service date cannot be before the car's year model: " + vehicleYear;
 
-            } else if (new Date(serviceDate) < new Date(latestServiceDate)) {
-                validationErrors.serviceDate = "Service date cannot be before the latest service date: // " + formatDate(latestServiceDate);
+            } else if (latestServiceDate && new Date(serviceDate) < new Date(latestServiceDate)) {
+                validationErrors.serviceDate = "Service date cannot be before the latest service date: " + formatDate(latestServiceDate);
 
             } else if (new Date(serviceDate) > new Date()) {
                 validationErrors.serviceDate = "Service date cannot be after the present day: " + formatDate(new Date());
@@ -110,11 +110,11 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
             } else if (Number(mileageAtService) <= 0) {
                 validationErrors.mileageAtService = "Mileage at service cannot be less than 0";
 
-            } else if (Number(mileageAtService) < Number(latestServiceMileage)) {
-                validationErrors.mileageAtService = `Mileage cannot be lower than the last latest service mileage: // ${latestServiceMileage.toLocaleString()} km`;
+            } else if (latestServiceMileage !== null && latestServiceMileage !== undefined && Number(mileageAtService) < Number(latestServiceMileage)) {
+                validationErrors.mileageAtService = `Mileage cannot be lower than the last latest service mileage: ${latestServiceMileage.toLocaleString()} km`;
 
             } else if (Number(mileageAtService) > vehicleMileage) {
-                validationErrors.mileageAtService = `New service mileage cannot be higher than the vehicle's current mileage // : ${vehicleMileage.toLocaleString()} km. Please update the vehicle's mileage first`;
+                validationErrors.mileageAtService = `New service mileage cannot be higher than the vehicle's current mileage: ${vehicleMileage.toLocaleString()} km. Please update the vehicle's mileage first`;
             }
         }
 
@@ -280,6 +280,7 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                     message="Are you sure you want to save your new changes?"
                     confirmText="Yes"
                     cancelText="No"
+                    variant="save"
                     onConfirm={saveChanges}
                     onCancel={() => setShowSaveConfirmation(false)}
                 />
@@ -291,6 +292,7 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                     message="Are you sure you want to cancel your unsaved changes?"
                     confirmText="Yes"
                     cancelText="No"
+                    variant="cancel"
                     onConfirm={() => onCancel()}
                     onCancel={() => setShowUnsavedConfirmation(false)}
                 />

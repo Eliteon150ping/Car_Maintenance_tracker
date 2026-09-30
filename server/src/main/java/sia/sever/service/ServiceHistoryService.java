@@ -2,6 +2,7 @@ package sia.sever.service;
 
 import org.springframework.data.domain.Page;
 import sia.sever.dto.serviceRecord.CreateServiceRecordDTO;
+import sia.sever.dto.serviceRecord.LatestServiceInfoDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
 import sia.sever.dto.serviceRecord.UpdateServiceRecordDTO;
 import sia.sever.enums.ServiceCategory;
@@ -26,6 +27,7 @@ public interface ServiceHistoryService {
     List<ServiceRecordResponseDTO> getUpcomingServiceRecords();
     List<ServiceRecordResponseDTO> getOverdueServiceRecords();
     void validateDuplicateRecord(Long carId, ServiceType serviceType, LocalDate serviceDate, int mileageAtService);
+    LatestServiceInfoDTO getLatestServiceInfo(Long carId);
 
     // Pagination methods(optional but helps the frontend load data quicker)
     Page<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId, int page, int size);
@@ -37,5 +39,8 @@ public interface ServiceHistoryService {
     Page<ServiceRecordResponseDTO> getAllServiceRecords(int page, int size);
     Page<ServiceRecordResponseDTO> getUpcomingServiceRecords(int page, int size);
     Page<ServiceRecordResponseDTO> getOverdueServiceRecords(int page, int size);
-
+    Page<ServiceRecordResponseDTO> getAllServiceRecords(List<ServiceType> serviceTypes, List<ServiceCategory> serviceCategories, int page, int size);
+    Page<ServiceRecordResponseDTO> getUpcomingServiceRecords(List<ServiceType> serviceTypes, List<ServiceCategory> serviceCategories, int page, int size);
+    Page<ServiceRecordResponseDTO> getOverdueServiceRecords(List<ServiceType> serviceTypes, List<ServiceCategory> serviceCategories, int page, int size);
+    Page<ServiceRecordResponseDTO> getServiceHistoryByCar(List<ServiceType> serviceTypes, List<ServiceCategory> serviceCategories, Long carId, int page, int size);
 }

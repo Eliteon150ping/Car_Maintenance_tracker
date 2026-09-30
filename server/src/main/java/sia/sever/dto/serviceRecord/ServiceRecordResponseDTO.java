@@ -2,6 +2,7 @@ package sia.sever.dto.serviceRecord;
 
 import sia.sever.dto.car.CarSummaryDTO;
 import sia.sever.enums.ServiceType;
+
 import java.time.LocalDate;
 
 public class ServiceRecordResponseDTO {
@@ -18,12 +19,21 @@ public class ServiceRecordResponseDTO {
     private Integer remainingKm;
     private Integer remainingDays;
     private CarSummaryDTO car;
+    private boolean isLatestRecord;
 
     // Constructor
-    public ServiceRecordResponseDTO(Long id, LocalDate serviceDate, int mileageAtService, Integer nextDueMileage
-                                    , LocalDate nextDueDate, ServiceType serviceType, double cost,
-                                      String description, Integer remainingKm, Integer remainingDays, CarSummaryDTO car)
-    {
+    public ServiceRecordResponseDTO(Long id, LocalDate serviceDate,
+                                    int mileageAtService,
+                                    Integer nextDueMileage,
+                                    LocalDate nextDueDate,
+                                    ServiceType serviceType,
+                                    double cost,
+                                    String description,
+                                    Integer remainingKm,
+                                    Integer remainingDays,
+                                    CarSummaryDTO car,
+                                    boolean isLatestRecord) {
+
         this.id = id;
         this.serviceDate = serviceDate;
         this.mileageAtService = mileageAtService;
@@ -35,50 +45,56 @@ public class ServiceRecordResponseDTO {
         this.remainingKm = remainingKm;
         this.remainingDays = remainingDays;
         this.car = car;
+        this.isLatestRecord = isLatestRecord;
     }
 
     // Getters
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 
-    public LocalDate getServiceDate(){
+    public LocalDate getServiceDate() {
         return serviceDate;
     }
 
-    public int getMileageAtService(){
+    public int getMileageAtService() {
         return mileageAtService;
     }
 
-    public Integer getNextDueMileage(){
+    public Integer getNextDueMileage() {
         return nextDueMileage;
     }
 
-    public LocalDate getNextDueDate(){
+    public LocalDate getNextDueDate() {
         return nextDueDate;
     }
 
-    public ServiceType getServiceType(){
+    public ServiceType getServiceType() {
         return serviceType;
     }
 
-    public double getCost(){
+    public double getCost() {
         return cost;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
-    public Integer getRemainingKm(){
+    public Integer getRemainingKm() {
         return remainingKm;
     }
 
-    public Integer getRemainingDays(){
+    public Integer getRemainingDays() {
         return remainingDays;
     }
 
-    public CarSummaryDTO getCar(){
+    public CarSummaryDTO getCar() {
         return car;
     }
+
+    public boolean isLatestRecord(){
+        return isLatestRecord;
+    }
 }
+

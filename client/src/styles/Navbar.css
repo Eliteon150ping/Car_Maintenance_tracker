@@ -29,6 +29,19 @@ ul{
   display: block;
 }
 
+.link:hover{
+  animation: whiteGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes whiteGlow{
+  0%,100%{
+   text-shadow: 0 0 3px aliceblue;
+  }
+  50%{
+    text-shadow: 0 0 12px aliceblue;
+  }
+}
+
 /*
 ===========================================
 Padding

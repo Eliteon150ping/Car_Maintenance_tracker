@@ -142,6 +142,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
                     message="Are you sure you want to save your new changes?"
                     confirmText="Yes"
                     cancelText="No"
+                    variant="save"
                     onConfirm={saveChanges}
                     onCancel={() => setShowSaveConfirmation(false)}
                 />
@@ -153,6 +154,7 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
                     message="Are you sure you want to cancel any unsaved changes?"
                     confirmText="Yes"
                     cancelText="No"
+                    variant="cancel"
                     onConfirm={() => onCancel()}
                     onCancel={() => setShowUnsavedConfirmation(false)}
                 />

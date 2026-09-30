@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import { useNavigate } from "react-router-dom";
-import { getOverdueRecordsPaginated, getServiceTypes } from "../api/vehicleDetailsApi";
+import { getOverdueRecordsPaginated } from "../api/vehicleDetailsApi";
 import VehicleDetailsCard from "../components/VehicleDetailsCard";
 import { FaFilter } from "react-icons/fa";
 import ServiceRecordFilter from "../components/ServiceRecordFilter";
@@ -13,8 +13,8 @@ function OverdueServicesPage({ showExtraDetails }) {
     const [showFilters, setShowFilters] = useState(false);
     const [selectedServiceTypes, setSelectedServiceTypes] = useState([]);
     const [selectedServiceCategories, setSelectedServiceCategories] = useState([]);
-    const [filteredServiceRecords, setFilteredServiceRecords] = useState([]);
-    const [serviceTypes, setServiceTypes] = useState([]);
+    const [appliedServiceTypes, setAppliedServiceTypes] = useState([]);
+    const [appliedServiceCategories, setAppliedServiceCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [pageSize] = useState(6);
@@ -49,23 +49,13 @@ function OverdueServicesPage({ showExtraDetails }) {
     ];
 
     useEffect(() => {
-        loadServiceTypes();
-    }, []);
-
-    useEffect(() => {
         loadRecords();
-    }, [currentPage]);
+    }, [currentPage, appliedServiceTypes, appliedServiceCategories]);
 
     async function loadRecords() {
-        const data = await getOverdueRecordsPaginated(currentPage, pageSize);
+        const data = await getOverdueRecordsPaginated(currentPage, pageSize, appliedServiceTypes, appliedServiceCategories);
         setServiceRecords(data.content);
-        setFilteredServiceRecords(data.content);
         setTotalPages(data.totalPages);
-    }
-
-    async function loadServiceTypes() {
-        const data = await getServiceTypes();
-        setServiceTypes(data);
     }
 
     function handleFilterChange(e, selectedValues, setSelectedValues) {
@@ -88,31 +78,15 @@ function OverdueServicesPage({ showExtraDetails }) {
     function clearFilters() {
         setSelectedServiceTypes([]);
         setSelectedServiceCategories([]);
+        setAppliedServiceTypes([]);
+        setAppliedServiceCategories([]);
+        setCurrentPage(0);
     }
 
     function applyFilters() {
-        let filteredRecords = serviceRecords;
-
-        // Filter by service type
-        if (selectedServiceTypes.length > 0) {
-            filteredRecords = filteredRecords.filter(serviceRecord =>
-                selectedServiceTypes.includes(serviceRecord.serviceType)
-            );
-        }
-
-        // Filter by service category
-        if (selectedServiceCategories.length > 0) {
-            filteredRecords = filteredRecords.filter(serviceRecord => {
-                const serviceType = serviceTypes.find(
-                    type => type.value === serviceRecord.serviceType
-                );
-
-                return serviceType &&
-                    selectedServiceCategories.includes(serviceType.serviceCategory);
-            });
-        }
-
-        setFilteredServiceRecords(filteredRecords);
+        setAppliedServiceTypes(selectedServiceTypes);
+        setAppliedServiceCategories(selectedServiceCategories);
+        setCurrentPage(0);
         setShowFilters(false);
     }
 
@@ -161,7 +135,7 @@ function OverdueServicesPage({ showExtraDetails }) {
                 <div>Edit</div>
             </div>
 
-            {filteredServiceRecords.map(serviceRecord => (
+            {serviceRecords.map(serviceRecord => (
                 <VehicleDetailsCard
                     key={serviceRecord.id}
                     id={serviceRecord.car.id}
@@ -175,7 +149,7 @@ function OverdueServicesPage({ showExtraDetails }) {
                     nextDueMileage={serviceRecord.nextDueMileage}
                     nextDueDate={serviceRecord.nextDueDate}
                     serviceType={serviceRecord.serviceType}
-                    isLatestRecord={true}
+                    isLatestRecord={serviceRecord.latestRecord}
                     cost={serviceRecord.cost}
                     description={serviceRecord.description}
                     remainingKm={serviceRecord.remainingKm}
@@ -195,14 +169,16 @@ function OverdueServicesPage({ showExtraDetails }) {
                 <div className="pagination-controls">
 
                     <button
+                        className="pagination-button"
                         type="button"
                         onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 0}
                     >Previous</button>
 
-                    <p>Page {currentPage + 1} of {totalPages}</p>
+                    <p className="pagination-info">Page {currentPage + 1} of {totalPages}</p>
 
                     <button
+                        className="pagination-button"
                         type="button"
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={(currentPage === totalPages - 1)}

@@ -26,6 +26,7 @@
     opacity: 0.9;
     box-shadow: 0 0 12px orange;
     transform: translateY(-6px);
+    z-index: 2;
     
 }
 

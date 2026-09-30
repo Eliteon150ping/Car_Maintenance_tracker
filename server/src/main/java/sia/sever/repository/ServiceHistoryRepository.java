@@ -7,6 +7,7 @@ import sia.sever.entity.Car;
 import sia.sever.entity.ServiceHistory;
 import sia.sever.entity.User;
 import sia.sever.enums.ServiceType;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -23,28 +24,53 @@ public interface ServiceHistoryRepository extends JpaRepository<ServiceHistory, 
 
     // So if you want custom methods for filtering, make them here:
     Optional<ServiceHistory> findByIdAndCar(Long id, Car car);
+
     Optional<ServiceHistory> findByIdAndCarUser(Long id, User user);
+
     List<ServiceHistory> findByCarAndServiceDate(Car car, LocalDate serviceDate);
+
     List<ServiceHistory> findByCarUserAndServiceType(User user, ServiceType serviceType);
+
     List<ServiceHistory> findByCarUserAndServiceTypeIn(User user, List<ServiceType> filteredServiceTypes);
+
     List<ServiceHistory> findByCarOrderByServiceDateDescMileageAtServiceDesc(Car car);
+
     List<ServiceHistory> findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(User user);
+
     List<ServiceHistory> findByCarAndServiceType(Car car, ServiceType serviceType);
-    List<ServiceHistory> findByCarAndServiceTypeIn(Car car, List<ServiceType> serviceType);
+
+    List<ServiceHistory> findByCarAndServiceTypeInOrderByServiceDateDescMileageAtServiceDesc(Car car, List<ServiceType> serviceType);
+
     ServiceHistory findFirstByCarOrderByMileageAtServiceDesc(Car car);
+
     ServiceHistory findFirstByCarOrderByServiceDateDesc(Car car);
-    boolean existsByCarAndServiceTypeAndServiceDateAndMileageAtService(Car car,
-                                                                       ServiceType serviceType,
-                                                                       LocalDate serviceDate,
-                                                                       int mileageAtService);
+
+    boolean existsByCarAndServiceTypeAndServiceDateAndMileageAtService(
+            Car car,
+            ServiceType serviceType,
+            LocalDate serviceDate,
+            int mileageAtService);
+
+    ServiceHistory findFirstByCarAndServiceTypeOrderByServiceDateDescMileageAtServiceDesc(
+            Car car,
+            ServiceType serviceType
+    );
 
     // Pagination methods
     Page<ServiceHistory> findByCarAndServiceDate(Car car, LocalDate serviceDate, Pageable pageable);
+
     Page<ServiceHistory> findByCarOrderByServiceDateDescMileageAtServiceDesc(Car car, Pageable pageable);
+
     Page<ServiceHistory> findByCarAndServiceType(Car car, ServiceType serviceType, Pageable pageable);
-    Page<ServiceHistory> findByCarAndServiceTypeIn(Car car, List<ServiceType> filteredServiceTypes, Pageable pageable);
+
+    Page<ServiceHistory> findByCarAndServiceTypeInOrderByServiceDateDescMileageAtServiceDesc(Car car, List<ServiceType> filteredServiceTypes, Pageable pageable);
+
     Page<ServiceHistory> findByCarUserAndServiceType(User user, ServiceType serviceType, Pageable pageable);
+
     Page<ServiceHistory> findByCarUserAndServiceTypeIn(User user, List<ServiceType> filteredServiceTypes, Pageable pageable);
+
     Page<ServiceHistory> findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(User user, Pageable pageable);
 
+    Page<ServiceHistory> findByCarUserAndServiceTypeInOrderByServiceDateDescMileageAtServiceDesc(User user, List<ServiceType> filteredServiceTypes, Pageable pageable
+    );
 }
