@@ -12,8 +12,8 @@
     box-sizing: border-box;
 }
 
-.vehicle-details-card.without-car{
-    grid-template-columns:1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
+.vehicle-details-card.without-car {
+    grid-template-columns: 1.2fr 1.2fr 1.2fr 2fr 1fr 1.3fr 1.2fr 1.2fr 1.2fr 0.8fr;
 }
 
 .service-column {
@@ -23,8 +23,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 0;
 }
-
 
 .service-column:last-child {
     border-right: none;
@@ -38,7 +38,7 @@
     margin: 0;
 }
 
-.add-service-record-button{
+.add-service-record-button {
     width: 200px;
     padding: 10px;
     margin-top: 45px;
@@ -52,7 +52,7 @@
     transition: all 0.25s ease;
 }
 
-.add-service-record-button:hover{
+.add-service-record-button:hover {
     animation: deepskyblueGlow ease-in-out 1.5s infinite;
     opacity: 0.9;
     transform: translateY(-6px);
@@ -61,17 +61,30 @@
 
 @keyframes deepskyblueGlow {
 
-    0%, 100%{
+    0%,
+    100% {
         box-shadow: 0 0 3px deepskyblue;
     }
 
-    50%{
+    50% {
         box-shadow: 0 0 12px deepskyblue;
     }
-    
+
 }
 
-.service-column-button{
+.service-description {
+    max-height: 60px;
+    overflow: hidden;
+    cursor: pointer;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.service-description.expanded {
+    max-height: none;
+}
+
+.service-column-button {
     background-color: deepskyblue;
     color: white;
     border: none;
@@ -80,7 +93,7 @@
     cursor: pointer;
 }
 
-.service-column-button:hover{
+.service-column-button:hover {
     animation: deepskyblueGlow ease-in-out 1.5s infinite;
     opacity: 0.9;
     box-shadow: 0 0 12px deepskyblue;

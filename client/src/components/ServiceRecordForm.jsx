@@ -207,7 +207,12 @@ function ServiceRecordForm({ id, carId, onCancel, onSave, serviceRecord, vehicle
                         name="description"
                         placeholder={serviceType != "OTHER" ? "(Optional) eg. Replaced brake pads" : "(Required) eg. Replaced CV Joints"}
                         value={description}
+                        maxLength={500}
                         onChange={(event) => setDescription(event.target.value)} />
+
+                    <span className="character-counter">
+                        {description.length}/500
+                    </span>
 
                     {errors.description && (
                         <span className="field-error">

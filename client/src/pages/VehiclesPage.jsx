@@ -67,6 +67,7 @@ function VehiclesPage() {
     }
 
     return (
+
         <div className="vehicle-page">
 
             <PageHeader
@@ -85,10 +86,9 @@ function VehiclesPage() {
                 </div>
             )}
 
-            <div className="card-flow">
+            {showCarForm ? (
 
-                {showCarForm ? <CarForm
-
+                <CarForm
                     editingCarForm={editingCarForm}
                     carId={editingCarForm?.id}
 
@@ -101,37 +101,47 @@ function VehiclesPage() {
                         setEditingCarForm(null);
                         setShowCarForm(false);
                     }}
+                />
+            ) : (
+                <div className="card-flow">
 
-                /> : <button className="add-button" onClick={() => {
-                    setEditingCarForm(null);
-                    setShowCarForm(true);
-                }}><img className="vehicle-image" src="/images/generic_car.png" alt="Generic car" />Add Car</button>}
+                    <button
+                        className="add-button"
+                        onClick={() => {
+                            setEditingCarForm(null);
+                            setShowCarForm(true);
+                        }}
+                    >
+                        <img className="vehicle-image"
+                            src="/images/generic_car.png"
+                            alt="Generic car" />Add Car</button>
 
-                {!showCarForm && (
-                    vehicles.map(vehicle => (
-                        <VehicleCard
-                            key={vehicle.id}
-                            id={vehicle.id}
-                            brand={vehicle.brand}
-                            model={vehicle.model}
-                            year={vehicle.year}
-                            colour={vehicle.colour}
-                            currentMileage={vehicle.currentMileage}
-                            carImageUrl={vehicle.carImageUrl}
-                            onEdit={() => {
-                                navigate(`/vehicles/${vehicle.id}`, {
-                                    state: { editing: true }
-                                });
-                            }}
+                    {!showCarForm && (
+                        vehicles.map(vehicle => (
+                            <VehicleCard
+                                key={vehicle.id}
+                                id={vehicle.id}
+                                brand={vehicle.brand}
+                                model={vehicle.model}
+                                year={vehicle.year}
+                                colour={vehicle.colour}
+                                currentMileage={vehicle.currentMileage}
+                                carImageUrl={vehicle.carImageUrl}
+                                onEdit={() => {
+                                    navigate(`/vehicles/${vehicle.id}`, {
+                                        state: { editing: true }
+                                    });
+                                }}
 
-                            onDelete={() => {
-                                handleDeleteCar(vehicle.id)
-                            }}
-                        />
-                    ))
-                )}
+                                onDelete={() => {
+                                    handleDeleteCar(vehicle.id)
+                                }}
+                            />
+                        ))
+                    )}
 
-            </div>
+                </div>
+            )}
 
             {errors.length > 0 && (
                 <ul style={{ color: "red" }}>

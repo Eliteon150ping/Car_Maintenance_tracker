@@ -3,11 +3,12 @@
     min-height: 55vh;
     justify-content: center;
     align-items: flex-start;
-    grid-column: 1/-1;
+    width: 900px;
+    margin-left: -50%;
 }
 
 .form-container {
-    width: 500px;
+    width: 850px;
     margin: -20px auto;
     padding: 20px;
     background-color: white;
@@ -31,7 +32,8 @@
 }
 
 .form-button {
-    flex-grow: 1; /* flex-grow → how much space each button gets */
+    flex-grow: 1;
+    /* flex-grow → how much space each button gets */
     cursor: pointer;
     border: none;
     color: aliceblue;
@@ -42,7 +44,7 @@
     transition: all 0.25s ease;
 }
 
-.form-button:hover{
+.form-button:hover {
     opacity: 0.9;
     transform: translateY(-6px);
 }
@@ -51,11 +53,97 @@
     background-color: red;
 }
 
+.image-label {
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.choose-picture {
+    display: inline-block;
+    width: fit-content;
+    padding: 10px;
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 2px;
+    margin-bottom: 10px;
+    border: 1px solid deepskyblue;
+}
+
+.choose-picture:hover {
+    animation: deepskyblueGlow 1.5s ease-in-out infinite;
+}
+
+.choose-picture input[type="file"] {
+    display: none;
+}
+
 .current-car-image {
     display: block;
-    width: 250px;
-    height: 150px;
+    width: 100%;
+    height: 250px;
     object-fit: cover;
-    margin: 10px auto;
     border-radius: 6px;
+}
+
+.car-form-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.car-details-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.car-image-section {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.remove-picture {
+    align-self: flex-start;
+    padding: 5px;
+    margin-top: 5px;
+    border: none;
+    background-color: deepskyblue;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.remove-picture:hover {
+    animation: deepskyblueGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes deepskyblueGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 3px deepskyblue;
+    }
+
+    50% {
+        box-shadow: 0 0 12px deepskyblue;
+    }
+}
+
+.picture-selection {
+    display: grid;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.image-name {
+    color: #555;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

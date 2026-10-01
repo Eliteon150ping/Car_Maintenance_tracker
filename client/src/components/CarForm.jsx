@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { addCar, editCar, validateMileage } from "../api/vehicleApi";
 import "../styles/CarForm.css";
 import ConfirmationModal from "./ConfirmationModal";
@@ -13,10 +13,12 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
     const [image, setImage] = useState(null);
     const [removeImage, setRemoveImage] = useState(false);
     const [imagePreview, setImagePreview] = useState("/images/generic_car.png");
+    const [imageName, setImageName] = useState("");
     const [showSaveConfrimation, setShowSaveConfirmation] = useState(false);
     const [showUnsavedConfirmation, setShowUnsavedConfirmation] = useState(false);
     const [errors, setErrors] = useState({});
     const [shake, setShake] = useState(false);
+    const imagePreviewUrl = useRef(null);
 
     useEffect(() => {
 
@@ -28,6 +30,7 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
             setCurrentMileage(editingCarForm.currentMileage);
             setImage(null);
             setRemoveImage(false);
+            setImageName("");
 
             if (editingCarForm.carImageUrl) {
                 setImagePreview(`http://localhost:8080${editingCarForm.carImageUrl}`);
@@ -44,9 +47,22 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
             setImage(null);
             setRemoveImage(false);
             setImagePreview("/images/generic_car.png");
+            setImageName("");
         }
 
     }, [editingCarForm])
+
+    useEffect(() => {
+
+        return () => {
+
+            // Clean up the temporary image preview URL.
+            if (imagePreviewUrl.current) {
+                URL.revokeObjectURL(imagePreviewUrl.current);
+            }
+        };
+
+    }, []);
 
     async function handleClickSave() {
         const validationErrors = {};
@@ -174,125 +190,156 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
 
                 <h2 className="car-form-heading" style={{ color: "black" }}>{editingCarForm ? "Edit your car" : "Add a new car"}</h2>
 
-                <label className="form-field">Brand
-                    <input type="text"
-                        className={errors.brand ? (shake ? `input-error input-shake` : "input-error") : ""}
-                        placeholder="eg. Toyota"
-                        name="brand"
-                        disabled={editingCarForm != null}
-                        value={brand}
-                        onChange={(event) => setBrand(event.target.value)} />
+                <div className="car-form-content">
 
-                    {errors.brand && (
-                        <span className="field-error">
-                            {errors.brand}
-                        </span>
-                    )}
-                </label>
+                    <div className="car-details-fields">
 
-                <label className="form-field">Model
-                    <input type="text"
-                        className={errors.model ? (shake ? `input-error input-shake` : "input-error") : ""}
-                        placeholder="eg. Corolla"
-                        name="model"
-                        disabled={editingCarForm != null}
-                        value={model}
-                        onChange={(event) => setModel(event.target.value)} />
+                        <label className="form-field">Brand
+                            <input type="text"
+                                className={errors.brand ? (shake ? `input-error input-shake` : "input-error") : ""}
+                                placeholder="eg. Toyota"
+                                name="brand"
+                                disabled={editingCarForm != null}
+                                value={brand}
+                                onChange={(event) => setBrand(event.target.value)} />
 
-                    {errors.model && (
-                        <span className="field-error">
-                            {errors.model}
-                        </span>
-                    )}
+                            {errors.brand && (
+                                <span className="field-error">
+                                    {errors.brand}
+                                </span>
+                            )}
+                        </label>
 
-                </label>
+                        <label className="form-field">Model
+                            <input type="text"
+                                className={errors.model ? (shake ? `input-error input-shake` : "input-error") : ""}
+                                placeholder="eg. Corolla"
+                                name="model"
+                                disabled={editingCarForm != null}
+                                value={model}
+                                onChange={(event) => setModel(event.target.value)} />
 
-                <label className="form-field">Year
-                    <input type="number"
-                        className={errors.year ? (shake ? `input-error input-shake` : "input-error") : ""}
-                        placeholder="eg. 2020"
-                        name="year"
-                        min="1886"
-                        max="2099"
-                        disabled={editingCarForm != null}
-                        value={year}
-                        onChange={(event) => setYear(event.target.value)} />
+                            {errors.model && (
+                                <span className="field-error">
+                                    {errors.model}
+                                </span>
+                            )}
 
-                    {errors.year && (
-                        <span className="field-error">
-                            {errors.year}
-                        </span>
-                    )}
-                </label>
+                        </label>
 
-                <label className="form-field">Colour
-                    <input type="text"
-                        className={errors.colour ? (shake ? `input-error input-shake` : "input-error") : ""}
-                        placeholder="eg. White"
-                        name="colour"
-                        value={colour}
-                        onChange={(event) => setColour(event.target.value)} />
+                        <label className="form-field">Year
+                            <input type="number"
+                                className={errors.year ? (shake ? `input-error input-shake` : "input-error") : ""}
+                                placeholder="eg. 2020"
+                                name="year"
+                                min="1886"
+                                max="2099"
+                                disabled={editingCarForm != null}
+                                value={year}
+                                onChange={(event) => setYear(event.target.value)} />
 
-                    {errors.colour && (
-                        <span className="field-error">
-                            {errors.colour}
-                        </span>
-                    )}
-                </label>
+                            {errors.year && (
+                                <span className="field-error">
+                                    {errors.year}
+                                </span>
+                            )}
+                        </label>
 
-                <label className="form-field">Current Mileage
-                    <input type="number"
-                        className={errors.currentMileage ? (shake ? `input-error input-shake` : "input-error") : ""}
-                        placeholder="eg. 20,345"
-                        name="currentMileage"
-                        min="1"
-                        value={currentMileage}
-                        onChange={(event) => setCurrentMileage(event.target.value)} />
+                        <label className="form-field">Colour
+                            <input type="text"
+                                className={errors.colour ? (shake ? `input-error input-shake` : "input-error") : ""}
+                                placeholder="eg. White"
+                                name="colour"
+                                value={colour}
+                                onChange={(event) => setColour(event.target.value)} />
 
-                    {errors.currentMileage && (
-                        <span className="field-error">
-                            {errors.currentMileage}
-                        </span>
-                    )}
-                </label>
+                            {errors.colour && (
+                                <span className="field-error">
+                                    {errors.colour}
+                                </span>
+                            )}
+                        </label>
 
+                        <label className="form-field">Current Mileage
+                            <input type="number"
+                                className={errors.currentMileage ? (shake ? `input-error input-shake` : "input-error") : ""}
+                                placeholder="eg. 20,345"
+                                name="currentMileage"
+                                min="1"
+                                value={currentMileage}
+                                onChange={(event) => setCurrentMileage(event.target.value)} />
 
-                <>
-                    <label className="form-field">Car Image
-                        <input
-                            type="file"
-                            name="image"
-                            accept="image/*"
-                            onChange={(event) => {
-                                const selectedImage = event.target.files[0];
+                            {errors.currentMileage && (
+                                <span className="field-error">
+                                    {errors.currentMileage}
+                                </span>
+                            )}
+                        </label>
+                    </div>
 
-                                if (selectedImage) {
-                                    setImage(selectedImage);
-                                    setImagePreview(URL.createObjectURL(selectedImage));
-                                    setRemoveImage(false);
-                                }
-                            }}
+                    <div className="car-image-section">
+
+                        <span className="image-label">Car Image</span>
+
+                        <div className="picture-selection">
+
+                            <label className="choose-picture">
+                                Choose picture (Optional)
+                                <input
+                                    type="file"
+                                    name="image"
+                                    accept="image/*"
+                                    onChange={(event) => {
+                                        const selectedImage = event.target.files[0];
+
+                                        if (selectedImage) {
+
+                                            // Clean up the previous temporary preview URL.
+                                            if (imagePreviewUrl.current) {
+                                                URL.revokeObjectURL(imagePreviewUrl.current);
+                                            }
+
+                                            // Create a temporary URL for the newly selected image.
+                                            const previewUrl = URL.createObjectURL(selectedImage);
+
+                                            imagePreviewUrl.current = previewUrl;
+
+                                            setImage(selectedImage);
+                                            setImageName(selectedImage.name);
+                                            setImagePreview(previewUrl);
+                                            setRemoveImage(false);
+                                        }
+                                    }}
+                                />
+                            </label>
+
+                            <span className="image-name">
+                                {imageName || (editingCarForm?.carImageUrl ? "Current image" : "No image selected")}
+                            </span>
+
+                        </div>
+
+                        <img
+                            src={imagePreview}
+                            alt="Current car"
+                            className="current-car-image"
                         />
-                    </label>
-
-                    <img
-                        src={imagePreview}
-                        alt="Current car"
-                        className="current-car-image"
-                    />
-
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setImage(null);
-                            setRemoveImage(true);
-                            setImagePreview("/images/generic_car.png");
-                        }}
-                    >
-                        Remove image
-                    </button>
-
-                </>
+                        {(editingCarForm?.carImageUrl || image) && !removeImage && (
+                            <button
+                                className="remove-picture"
+                                type="button"
+                                onClick={() => {
+                                    setImage(null);
+                                    setRemoveImage(true);
+                                    setImagePreview("/images/generic_car.png");
+                                    setImageName("");
+                                }}
+                            >
+                                Remove image
+                            </button>
+                        )}
+                    </div>
+                </div>
 
                 <div className="form-buttons">
                     <button className="form-button" type="button" onClick={handleClickSave}>{editingCarForm ? "Save changes" : "Add car"}</button>

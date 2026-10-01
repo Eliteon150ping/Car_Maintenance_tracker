@@ -1,11 +1,13 @@
 import { formatRemainingKM, formatRemainingDays, formatDate, formatServiceType } from "../utils/serviceFormatter";
 import "../styles/VehicleServiceHistoryCard.css";
 import { Link } from "react-router-dom";
-
+import { useState } from "react";
 
 function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nextDueDate, serviceType, cost,
     description, remainingKm, remainingDays, onEdit, showExtraDetails, brand, model, year, highlightRemaining,
     isLatestRecord, id }) {
+
+    const [expanded, setExpanded] = useState(false);
 
     return (
 
@@ -33,7 +35,10 @@ function VehicleDetailsCard({ serviceDate, mileageAtService, nextDueMileage, nex
             </div>
 
             <div className="service-column">
-                <p>{description.trim() == "" ? "-" : description}</p>
+                <p
+                    className={`service-description ${expanded ? "expanded" : ""}`}
+                    onClick={() => setExpanded(!expanded)}
+                >{description.trim() === "" ? "-" : description}</p>
             </div>
 
             <div className="service-column">
