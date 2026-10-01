@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import "../styles/VehicleCard.css"
 
-function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete }) {
+function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete, carImageUrl }) {
 
     const [showConfirmationCard, setShowConfirmationCard] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
@@ -13,7 +13,11 @@ function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete 
             <div className="main-vehicle-card">
                 <Link className="vehicle-link" to={`/vehicles/${id}`}>
                     <div className="vehicle-card">
-                        <img className="vehicle-image" src="/images/generic_car.png" alt="Generic car" />
+                        <img
+                            className="vehicle-image"
+                            src={carImageUrl ? `http://localhost:8080${carImageUrl}` : "/images/generic_car.png"}
+                            alt={`${year} ${brand} ${model}`}
+                        />
                         <h3 className="vehicle-name">{year} {brand} {model}</h3>
                         <p className="vehicle-mileage">Mileage: {currentMileage.toLocaleString()} km</p>
                     </div>
@@ -36,17 +40,17 @@ function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete 
 
                 </div>
             </div>
-            
+
             {showConfirmationCard && (
-                    <ConfirmationModal
-                        title="Delete Car"
-                        message="Sold your car? You can delete it from your garage"
-                        confirmText="Delete Car"
-                        cancelText="Cancel"
-                        onConfirm={onDelete}
-                        onCancel={() => setShowConfirmationCard(false)}
-                    />
-                )}
+                <ConfirmationModal
+                    title="Delete Car"
+                    message="Sold your car? You can delete it from your garage"
+                    confirmText="Delete Car"
+                    cancelText="Cancel"
+                    onConfirm={onDelete}
+                    onCancel={() => setShowConfirmationCard(false)}
+                />
+            )}
         </div>
     );
 }

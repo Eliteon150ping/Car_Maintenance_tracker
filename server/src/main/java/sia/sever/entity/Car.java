@@ -28,6 +28,9 @@ public class Car {
     @Column(nullable = false)
     private int currentMileage;
 
+    @Column(nullable = true)
+    private String carImageUrl;
+
     // Many cars belong to one user
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -49,12 +52,20 @@ public class Car {
 
     //Constructor
     public Car(){}
-    public Car(String brand, String model, int year, String colour, int currentMileage, User user) {
+    public Car(String brand,
+               String model,
+               int year,
+               String colour,
+               int currentMileage,
+               String carImageUrl,
+               User user) {
+
         this.brand = brand;
         this.model = model;
         this.year = year;
         this.colour = colour;
         this.currentMileage = currentMileage;
+        this.carImageUrl = carImageUrl;
         this.user = user;
     }
 
@@ -83,6 +94,10 @@ public class Car {
         return currentMileage;
     }
 
+    public String getCarImageUrl(){
+        return carImageUrl;
+    }
+
     public User getUser() {
         return user;
     }
@@ -106,6 +121,10 @@ public class Car {
 
     public void setCurrentMileage(int currentMileage){
         this.currentMileage = currentMileage;
+    }
+
+    public void setCarImageUrl(String carImageUrl){
+        this.carImageUrl = carImageUrl;
     }
 
     public void setUser(User user) {

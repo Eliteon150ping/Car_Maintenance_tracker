@@ -25,15 +25,13 @@ export async function getAllVehicles() { // Async functions performs work that t
 export async function addCar(carData) {
 
     const token = localStorage.getItem("token");
-    const jsonCarData = JSON.stringify(carData);
 
     const response = await fetch("http://localhost:8080/api/my-cars", {
 
         method: "POST",
-        body: jsonCarData,
+        body: carData,
         headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
+            Authorization: `Bearer ${token}`
         }
     });
 
@@ -49,15 +47,13 @@ export async function addCar(carData) {
 export async function editCar(id, carData) {
 
     const token = localStorage.getItem("token");
-    const jsonCarData = JSON.stringify(carData);
 
     const response = await fetch(`http://localhost:8080/api/my-cars/${id}`, {
 
         method: "PUT",
-        body: jsonCarData,
+        body: carData,
         headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
+            Authorization: `Bearer ${token}`
         }
     });
 

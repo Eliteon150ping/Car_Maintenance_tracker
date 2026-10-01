@@ -10,18 +10,13 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
     const [year, setYear] = useState("");
     const [colour, setColour] = useState("");
     const [currentMileage, setCurrentMileage] = useState("");
+    const [image, setImage] = useState(null);
+    const [removeImage, setRemoveImage] = useState(false);
+    const [imagePreview, setImagePreview] = useState("/images/generic_car.png");
     const [showSaveConfrimation, setShowSaveConfirmation] = useState(false);
     const [showUnsavedConfirmation, setShowUnsavedConfirmation] = useState(false);
     const [errors, setErrors] = useState({});
     const [shake, setShake] = useState(false);
-
-    const formData = {
-        brand,
-        model,
-        year,
-        colour,
-        currentMileage
-    };
 
     useEffect(() => {
 
@@ -31,12 +26,24 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
             setYear(editingCarForm.year);
             setColour(editingCarForm.colour);
             setCurrentMileage(editingCarForm.currentMileage);
+            setImage(null);
+            setRemoveImage(false);
+
+            if (editingCarForm.carImageUrl) {
+                setImagePreview(`http://localhost:8080${editingCarForm.carImageUrl}`);
+            } else {
+                setImagePreview("/images/generic_car.png");
+            }
+
         } else {
             setBrand("");
             setModel("");
             setYear("");
             setColour("");
             setCurrentMileage("");
+            setImage(null);
+            setRemoveImage(false);
+            setImagePreview("/images/generic_car.png");
         }
 
     }, [editingCarForm])
@@ -95,7 +102,7 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
         }
 
         try {
-            if(editingCarForm != null){
+            if (editingCarForm != null) {
                 await validateMileage(carId, currentMileage);
             }
             setShowSaveConfirmation(true);
@@ -117,11 +124,42 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
         setErrors({});
         try {
             if (editingCarForm != null) {
-                await editCar(carId, formData);
+
+                const carFormData = new FormData();
+                carFormData.append("colour", colour);
+                carFormData.append("currentMileage", currentMileage);
+
+                if (image) {
+                    carFormData.append("image", image);
+                }
+
+                if (removeImage) {
+                    carFormData.append("removeImage", "true");
+                }
+
+                await editCar(carId, carFormData);
+
             } else {
-                await addCar(formData);
+
+                const carFormData = new FormData();
+                carFormData.append("brand", brand);
+                carFormData.append("model", model);
+                carFormData.append("year", year);
+                carFormData.append("colour", colour);
+                carFormData.append("currentMileage", currentMileage);
+
+                if (image) {
+                    carFormData.append("image", image);
+                }
+
+                if (removeImage) {
+                    carFormData.append("removeImage", "true");
+                }
+
+                await addCar(carFormData);
             }
             onSave();
+
         } catch (error) {
             console.error("Error caught: " + error.message);
             setErrors(error.errors ? error.errors : { general: error.message });
@@ -217,6 +255,44 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
                         </span>
                     )}
                 </label>
+
+
+                <>
+                    <label className="form-field">Car Image
+                        <input
+                            type="file"
+                            name="image"
+                            accept="image/*"
+                            onChange={(event) => {
+                                const selectedImage = event.target.files[0];
+
+                                if (selectedImage) {
+                                    setImage(selectedImage);
+                                    setImagePreview(URL.createObjectURL(selectedImage));
+                                    setRemoveImage(false);
+                                }
+                            }}
+                        />
+                    </label>
+
+                    <img
+                        src={imagePreview}
+                        alt="Current car"
+                        className="current-car-image"
+                    />
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setImage(null);
+                            setRemoveImage(true);
+                            setImagePreview("/images/generic_car.png");
+                        }}
+                    >
+                        Remove image
+                    </button>
+
+                </>
 
                 <div className="form-buttons">
                     <button className="form-button" type="button" onClick={handleClickSave}>{editingCarForm ? "Save changes" : "Add car"}</button>

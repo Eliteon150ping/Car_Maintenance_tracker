@@ -5,6 +5,7 @@ public class UpdateCarDTO {
     // Fields to be sent to the frontend
     private String colour;
     private Integer currentMileage;
+    private Boolean removeImage;
 
     // Constructor
     public UpdateCarDTO(){}
@@ -19,6 +20,10 @@ public class UpdateCarDTO {
 
     public Integer getCurrentMileage(){return currentMileage;}
 
+    public Boolean getRemoveImage() {
+        return removeImage;
+    }
+
     // Setters
     public void setColour(String colour){
         this.colour = colour;
@@ -26,5 +31,9 @@ public class UpdateCarDTO {
 
     public void setCurrentMileage(Integer currentMileage){
         this.currentMileage = currentMileage;
+    }
+
+    public void setRemoveImage(Boolean removeImage) {
+        this.removeImage = removeImage;
     }
 }

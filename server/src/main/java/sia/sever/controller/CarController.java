@@ -2,13 +2,17 @@ package sia.sever.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import sia.sever.dto.car.CreateCarDTO;
 import sia.sever.dto.car.MileageValidationDTO;
 import sia.sever.dto.car.UpdateCarDTO;
 import sia.sever.service.CarService;
 import sia.sever.dto.car.CarResponseDTO;
+
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -38,9 +42,12 @@ public class CarController {
     }
 
     // Create car
-    @PostMapping
-    public ResponseEntity<CarResponseDTO> createCar(@Valid @RequestBody CreateCarDTO car) {
-        CarResponseDTO createdCar = carService.createCar(car);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CarResponseDTO> createCar(
+            @Valid @ModelAttribute CreateCarDTO car,
+            @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
+
+        CarResponseDTO createdCar = carService.createCar(car, image);
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
     }
 
@@ -48,22 +55,21 @@ public class CarController {
     @GetMapping("/filter")
     public ResponseEntity<List<CarResponseDTO>> filterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
                                                                        @RequestParam(value = "model", required = false) String model,
-                                                                       @RequestParam(value = "year", required = false)  Integer year)
-    {
+                                                                       @RequestParam(value = "year", required = false) Integer year) {
         List<CarResponseDTO> carsByBrandModelYear = carService.getAllCarsByBrandAndModelAndYear(brand, model, year);
         return new ResponseEntity<>(carsByBrandModelYear, HttpStatus.OK);
     }
 
     // Get all cars
     @GetMapping
-    public ResponseEntity<List<CarResponseDTO>> getAllCars(){
+    public ResponseEntity<List<CarResponseDTO>> getAllCars() {
         List<CarResponseDTO> allCars = carService.getAllCars();
         return ResponseEntity.ok(allCars);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<CarResponseDTO>> searchCars(
-            @RequestParam(value = "search", required = false) String search){
+            @RequestParam(value = "search", required = false) String search) {
 
         List<CarResponseDTO> searchedCars = carService.searchCars(search);
         return ResponseEntity.ok(searchedCars);
@@ -71,28 +77,32 @@ public class CarController {
 
     // Get car by id
     @GetMapping("/{id}")
-    public ResponseEntity<CarResponseDTO> getCarById(@PathVariable Long id){
+    public ResponseEntity<CarResponseDTO> getCarById(@PathVariable Long id) {
         CarResponseDTO getCarById = carService.getCarById(id);
         return ResponseEntity.ok(getCarById);
     }
 
     // Update car by id
-    @PutMapping("/{id}")
-    public ResponseEntity<CarResponseDTO> updateCarById(@PathVariable Long id, @Valid @RequestBody UpdateCarDTO car){
-        CarResponseDTO updatedCar = carService.updateCar(id, car);
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CarResponseDTO> updateCarById(
+            @PathVariable Long id,
+            @Valid @ModelAttribute UpdateCarDTO car,
+            @RequestParam(value = "image", required = false) MultipartFile image) throws IOException{
+
+        CarResponseDTO updatedCar = carService.updateCar(id, car, image);
         return ResponseEntity.ok(updatedCar);
     }
 
     // Check the mileage before showing the confirmation box(insane how all this needs to be done for that)
     @PutMapping("/{id}/mileage")
-    public ResponseEntity<Void> validateMileage(@PathVariable Long id, @RequestBody MileageValidationDTO mileage){
+    public ResponseEntity<Void> validateMileage(@PathVariable Long id, @RequestBody MileageValidationDTO mileage) {
         carService.validateUpdateMileage(id, mileage.getMileage());
         return ResponseEntity.noContent().build();
     }
 
     // Delete car by id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCarById(@PathVariable Long id){
+    public ResponseEntity<Void> deleteCarById(@PathVariable Long id) throws IOException{
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();
     }

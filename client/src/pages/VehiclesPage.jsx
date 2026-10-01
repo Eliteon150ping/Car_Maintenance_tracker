@@ -117,6 +117,7 @@ function VehiclesPage() {
                             year={vehicle.year}
                             colour={vehicle.colour}
                             currentMileage={vehicle.currentMileage}
+                            carImageUrl={vehicle.carImageUrl}
                             onEdit={() => {
                                 navigate(`/vehicles/${vehicle.id}`, {
                                     state: { editing: true }

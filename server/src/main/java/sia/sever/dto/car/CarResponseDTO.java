@@ -12,15 +12,17 @@ public class CarResponseDTO {
     private int year;
     private String colour;
     private int currentMileage;
+    private String carImageUrl;
 
     // Constructor
-    public CarResponseDTO(Long id, String brand, String model, int year, String colour, int currentMileage){
+    public CarResponseDTO(Long id, String brand, String model, int year, String colour, int currentMileage, String carImageUrl){
         this.id  = id;
         this.brand = brand;
         this.model = model;
         this.year = year;
         this.colour = colour;
         this.currentMileage = currentMileage;
+        this.carImageUrl = carImageUrl;
     }
 
     // Getters only as you don't want someone else to set info the backend gives
@@ -42,6 +44,10 @@ public class CarResponseDTO {
 
     public String getColour(){
         return colour;
+    }
+
+    public String getCarImageUrl() {
+        return carImageUrl;
     }
 
     public int getCurrentMileage(){

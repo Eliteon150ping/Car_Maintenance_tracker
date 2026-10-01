@@ -104,6 +104,7 @@ function ProfilePage() {
                     message="Are you sure you want to logout? You will be redirected to the login page."
                     confirmText="Logout"
                     cancelText="Cancel"
+                    variant="save"
                     onConfirm={() => { logout(), navigate("/login") }}
                     onCancel={() => setShowLogoutConfirmation(false)}
                 />
@@ -115,6 +116,7 @@ function ProfilePage() {
                     message="Are you sure you want to delete your account? This will erase all associated data with your account and it cannot be undone."
                     confirmText="Delete Account"
                     cancelText="Cancel"
+                    variant="cancel"
                     onConfirm={handleDeleteAccount}
                     onCancel={() => setShowDeleteConfirmation(false)}
                 />

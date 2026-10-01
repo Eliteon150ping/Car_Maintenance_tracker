@@ -1,6 +1,6 @@
 import "../styles/VehicleInfomationCard.css";
 
-function VehicleInformationCard({ brand, model, year, colour, currentMileage, onEdit }) {
+function VehicleInformationCard({ brand, model, year, colour, currentMileage, onEdit, carImageUrl }) {
 
     return (
         <div className="vehicle-information">
@@ -12,7 +12,11 @@ function VehicleInformationCard({ brand, model, year, colour, currentMileage, on
                 <button className="vehicle-info-edit" type="button" onClick={onEdit}>Edit</button>
             </div>
 
-            <img className="vehicle-info-image" src="/images/generic_car.png" alt="Generic car" />
+            <img 
+            className="vehicle-info-image" 
+            src={carImageUrl ? `http://localhost:8080${carImageUrl}` : "/images/generic_car.png"} 
+            alt={`${year} ${brand} ${year}`}
+            />
 
         </div>
     );

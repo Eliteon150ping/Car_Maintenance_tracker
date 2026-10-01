@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints (no auth needed)
-                        .requestMatchers("/api/users/auth/login", "/api/users/auth/register").permitAll()
+                        .requestMatchers("/api/users/auth/login", "/api/users/auth/register", "/uploads/**").permitAll()
                         // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
