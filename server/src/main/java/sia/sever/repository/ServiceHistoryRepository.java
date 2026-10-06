@@ -25,21 +25,9 @@ public interface ServiceHistoryRepository extends JpaRepository<ServiceHistory, 
     // So if you want custom methods for filtering, make them here:
     Optional<ServiceHistory> findByIdAndCar(Long id, Car car);
 
-    Optional<ServiceHistory> findByIdAndCarUser(Long id, User user);
-
-    List<ServiceHistory> findByCarAndServiceDate(Car car, LocalDate serviceDate);
-
-    List<ServiceHistory> findByCarUserAndServiceType(User user, ServiceType serviceType);
-
-    List<ServiceHistory> findByCarUserAndServiceTypeIn(User user, List<ServiceType> filteredServiceTypes);
-
     List<ServiceHistory> findByCarOrderByServiceDateDescMileageAtServiceDesc(Car car);
 
     List<ServiceHistory> findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(User user);
-
-    List<ServiceHistory> findByCarAndServiceType(Car car, ServiceType serviceType);
-
-    List<ServiceHistory> findByCarAndServiceTypeInOrderByServiceDateDescMileageAtServiceDesc(Car car, List<ServiceType> serviceType);
 
     ServiceHistory findFirstByCarOrderByMileageAtServiceDesc(Car car);
 
@@ -57,18 +45,6 @@ public interface ServiceHistoryRepository extends JpaRepository<ServiceHistory, 
     );
 
     // Pagination methods
-    Page<ServiceHistory> findByCarAndServiceDate(Car car, LocalDate serviceDate, Pageable pageable);
-
-    Page<ServiceHistory> findByCarOrderByServiceDateDescMileageAtServiceDesc(Car car, Pageable pageable);
-
-    Page<ServiceHistory> findByCarAndServiceType(Car car, ServiceType serviceType, Pageable pageable);
-
-    Page<ServiceHistory> findByCarAndServiceTypeInOrderByServiceDateDescMileageAtServiceDesc(Car car, List<ServiceType> filteredServiceTypes, Pageable pageable);
-
-    Page<ServiceHistory> findByCarUserAndServiceType(User user, ServiceType serviceType, Pageable pageable);
-
-    Page<ServiceHistory> findByCarUserAndServiceTypeIn(User user, List<ServiceType> filteredServiceTypes, Pageable pageable);
-
     Page<ServiceHistory> findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(User user, Pageable pageable);
 
     Page<ServiceHistory> findByCarUserAndServiceTypeInOrderByServiceDateDescMileageAtServiceDesc(User user, List<ServiceType> filteredServiceTypes, Pageable pageable

@@ -223,15 +223,6 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 .collect(Collectors.toList());
     }
 
-    // Find the service record by id
-    @Override
-    public ServiceRecordResponseDTO getServiceHistoryById(Long id) {
-        User user = getAuthenticatedUser();
-        ServiceHistory findById = serviceHistoryRepository.findByIdAndCarUser(id, user)
-                .orElseThrow(() -> new ResourceNotFoundException("No record found with id: " + id));
-        return mapToServiceRecordResponseDTO(findById);
-    }
-
     // Update the service record
     @Override
     public ServiceRecordResponseDTO updateServiceHistory(Long id, UpdateServiceRecordDTO updatedServiceHistory, Long carId) {
@@ -313,60 +304,6 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 .collect(Collectors.toList());
     }
 
-    // Filter different Service categories
-    @Override
-    public List<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory) {
-        User user = getAuthenticatedUser();
-        List<ServiceType> filterServiceCategories = filterServiceTypesByCategory(serviceCategory);
-
-        List<ServiceHistory> filteredServiceCategories = serviceHistoryRepository.findByCarUserAndServiceTypeIn(user, filterServiceCategories);
-        return filteredServiceCategories.stream()
-                .map(this::mapToServiceRecordResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Filter different Service types
-    @Override
-    public List<ServiceRecordResponseDTO> getServiceHistoryByServiceType(ServiceType serviceType) {
-        User user = getAuthenticatedUser();
-        List<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarUserAndServiceType(user, serviceType);
-        return findByServiceType.stream()
-                .map(this::mapToServiceRecordResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Filter different Service categories for a car
-    @Override
-    public List<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory) {
-        User user = getAuthenticatedUser();
-        List<ServiceType> filterServiceCategories = filterServiceTypesByCategory(serviceCategory);
-
-        List<ServiceHistory> filteredServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeInOrderByServiceDateDescMileageAtServiceDesc(getUserCar(carId, user), filterServiceCategories);
-        return filteredServiceCategories.stream()
-                .map(this::mapToServiceRecordResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Filter different Service types for a car
-    @Override
-    public List<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType) {
-        User user = getAuthenticatedUser();
-        List<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarAndServiceType(getUserCar(carId, user), serviceType);
-        return findByServiceType.stream()
-                .map(this::mapToServiceRecordResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Filter different Services by dates
-    @Override
-    public List<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate) {
-        User user = getAuthenticatedUser();
-        List<ServiceHistory> findByCarAndServiceDate = serviceHistoryRepository.findByCarAndServiceDate(getUserCar(carId, user), serviceDate);
-        return findByCarAndServiceDate.stream()
-                .map(this::mapToServiceRecordResponseDTO)
-                .collect(Collectors.toList());
-    }
-
     // Filter all Service records for a car
     @Override
     public List<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId) {
@@ -378,57 +315,9 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     }
 
 
-    // Pagination versions(keep original also for best of both worlds/for frontend logic)
+    // Pagination methods used by the frontend
 
-    // Filter different Services by dates
-    @Override
-    public Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate, int page, int size) {
-        User user = getAuthenticatedUser();
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<ServiceHistory> findByCarAndServiceDate = serviceHistoryRepository.findByCarAndServiceDate(getUserCar(carId, user), serviceDate, pageable);
-        return findByCarAndServiceDate.map(this::mapToServiceRecordResponseDTO);
-    }
-
-    // Filter different Service types
-    @Override
-    public Page<ServiceRecordResponseDTO> getServiceHistoryByServiceType(ServiceType serviceType, int page, int size) {
-        User user = getAuthenticatedUser();
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarUserAndServiceType(user, serviceType, pageable);
-        return findByServiceType.map(this::mapToServiceRecordResponseDTO);
-    }
-
-    // Filter different Service categories
-    @Override
-    public Page<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory, int page, int size) {
-        User user = getAuthenticatedUser();
-        List<ServiceType> filterServiceCategories = filterServiceTypesByCategory(serviceCategory);
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<ServiceHistory> filteredServiceCategories = serviceHistoryRepository.findByCarUserAndServiceTypeIn(user, filterServiceCategories, pageable);
-        return filteredServiceCategories.map(this::mapToServiceRecordResponseDTO);
-    }
-
-    // Filter all Service records for a car
-    @Override
-    public Page<ServiceRecordResponseDTO> getServiceHistoryByCar(
-            Long carId,
-            int page,
-            int size) {
-
-        User user = getAuthenticatedUser();
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<ServiceHistory> findByCar = serviceHistoryRepository
-                .findByCarOrderByServiceDateDescMileageAtServiceDesc(
-                        getUserCar(carId, user),
-                        pageable
-                );
-        return findByCar.map(this::mapToServiceRecordResponseDTO);
-    }
-
+    // Get service history for car pageable
     @Override
     public Page<ServiceRecordResponseDTO> getServiceHistoryByCar(
             List<ServiceType> serviceTypes,
@@ -490,37 +379,6 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                 pageable,
                 filteredRecords.size()
         );
-    }
-
-    // Filter different Service categories for a car
-    @Override
-    public Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory, int page, int size) {
-        User user = getAuthenticatedUser();
-        List<ServiceType> filterServiceCategories = filterServiceTypesByCategory(serviceCategory);
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<ServiceHistory> filteredServiceCategories = serviceHistoryRepository.findByCarAndServiceTypeInOrderByServiceDateDescMileageAtServiceDesc(getUserCar(carId, user), filterServiceCategories, pageable);
-        return filteredServiceCategories.map(this::mapToServiceRecordResponseDTO);
-    }
-
-    // Filter different Service types for a car
-    @Override
-    public Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType, int page, int size) {
-        User user = getAuthenticatedUser();
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<ServiceHistory> findByServiceType = serviceHistoryRepository.findByCarAndServiceType(getUserCar(carId, user), serviceType, pageable);
-        return findByServiceType.map(this::mapToServiceRecordResponseDTO);
-    }
-
-    // Get all service records for all cars owned by user for pageable view
-    @Override
-    public Page<ServiceRecordResponseDTO> getAllServiceRecords(int page, int size) {
-        User user = getAuthenticatedUser();
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<ServiceHistory> getAllServiceRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(user, pageable);
-        return getAllServiceRecords.map(this::mapToServiceRecordResponseDTO);
     }
 
     @Override
@@ -588,63 +446,6 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     }
 
     // Get all upcoming services for pageable
-    @Override
-    public Page<ServiceRecordResponseDTO> getUpcomingServiceRecords(int page, int size) {
-        User user = getAuthenticatedUser();
-        List<ServiceHistory> getAllUpcomingServiceRecords =
-                serviceHistoryRepository.findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(user);
-
-        Collection<ServiceHistory> latestRecords = getAllUpcomingServiceRecords.stream()
-                .collect(Collectors.groupingBy(
-                        record -> Arrays.asList(record.getCar().getId(), record.getServiceType()),
-                        Collectors.collectingAndThen(
-                                Collectors.maxBy(Comparator.comparing(ServiceHistory::getServiceDate)
-                                        .thenComparing(ServiceHistory::getMileageAtService)),
-                                Optional::get
-                        )
-                )).values();
-
-        List<ServiceHistory> upcomingRecords = latestRecords.stream()
-                .filter(serviceHistory -> {
-
-                    if (serviceHistory.getServiceType() == ServiceType.OTHER) {
-                        return false;
-                    }
-
-                    int remainingKm = calculateRemainingKm(serviceHistory);
-                    int remainingDays = calculateRemainingDays(serviceHistory);
-
-                    return (remainingKm > 0 && remainingKm <= UPCOMING_KM_THRESHOLD) ||
-                            (remainingDays > 0 && remainingDays <= UPCOMING_DAYS_THRESHOLD);
-                })
-                .collect(Collectors.toList());
-
-        // Calculate which records belong on this page
-        int start = page * size;
-        int end = Math.min(start + size, upcomingRecords.size());
-
-        // Get those records
-        List<ServiceHistory> paginatedRecords;
-
-        if (start < upcomingRecords.size()) {
-            paginatedRecords = upcomingRecords.subList(start, end);
-        } else {
-            paginatedRecords = Collections.emptyList();
-        }
-
-        // Convert them to DTOs
-        List<ServiceRecordResponseDTO> upcomingDTOs = paginatedRecords.stream()
-                .map(this::mapToServiceRecordResponseDTO)
-                .collect(Collectors.toList());
-
-        // Finally, return the Page
-        return new PageImpl<>(
-                upcomingDTOs,
-                PageRequest.of(page, size),
-                upcomingRecords.size()
-        );
-    }
-
     @Override
     public Page<ServiceRecordResponseDTO> getUpcomingServiceRecords(
             List<ServiceType> serviceTypes,
@@ -730,60 +531,6 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     }
 
     // Get all overdue services for pageable
-    @Override
-    public Page<ServiceRecordResponseDTO> getOverdueServiceRecords(int page, int size) {
-        User user = getAuthenticatedUser();
-        List<ServiceHistory> getAllOverdueServiceRecords = serviceHistoryRepository.findAllByCarUserOrderByServiceDateDescMileageAtServiceDesc(user);
-        Collection<ServiceHistory> latestRecords = getAllOverdueServiceRecords.stream()
-                .collect(Collectors.groupingBy(
-                        record -> Arrays.asList(record.getCar().getId(), record.getServiceType()),
-                        Collectors.collectingAndThen(
-                                Collectors.maxBy(Comparator.comparing(ServiceHistory::getServiceDate)
-                                        .thenComparing(ServiceHistory::getMileageAtService)),
-                                Optional::get
-                        )
-                )).values();
-
-        List<ServiceHistory> overdueRecords = latestRecords.stream()
-                .filter(serviceHistory -> {
-
-                    if (serviceHistory.getServiceType() == ServiceType.OTHER) {
-                        return false;
-                    }
-
-                    int remainingKm = calculateRemainingKm(serviceHistory);
-                    int remainingDays = calculateRemainingDays(serviceHistory);
-
-                    return (remainingKm < 0) || (remainingDays < 0);
-                })
-                .collect(Collectors.toList());
-
-        // Calculate which records belong on this page
-        int start = page * size;
-        int end = Math.min(start + size, overdueRecords.size());
-
-        // Get those records
-        List<ServiceHistory> paginatedRecords;
-
-        if (start < overdueRecords.size()) {
-            paginatedRecords = overdueRecords.subList(start, end);
-        } else {
-            paginatedRecords = Collections.emptyList();
-        }
-
-        // Convert them to DTOs
-        List<ServiceRecordResponseDTO> overdueDTOs = paginatedRecords.stream()
-                .map(this::mapToServiceRecordResponseDTO)
-                .collect(Collectors.toList());
-
-        // Finally, return the Page
-        return new PageImpl<>(
-                overdueDTOs,
-                PageRequest.of(page, size),
-                overdueRecords.size()
-        );
-    }
-
     @Override
     public Page<ServiceRecordResponseDTO> getOverdueServiceRecords(
             List<ServiceType> serviceTypes,
@@ -949,7 +696,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         return matchingServiceTypes;
     }
 
-    // find the latest record for different services types specifically for pagination
+    // Find the latest record for this service type on this car
     private boolean isLatestServiceRecord(ServiceHistory serviceHistory) {
 
         ServiceHistory latestRecord =

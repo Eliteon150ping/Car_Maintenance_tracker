@@ -16,29 +16,14 @@ public interface ServiceHistoryService {
     ServiceRecordResponseDTO createServiceHistory(CreateServiceRecordDTO serviceHistory, Long carId);
 
     List<ServiceRecordResponseDTO> getAllServiceRecords();
-    ServiceRecordResponseDTO getServiceHistoryById(Long id);
     ServiceRecordResponseDTO updateServiceHistory(Long id, UpdateServiceRecordDTO serviceHistory, Long carId);
     List<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId);
-    List<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate);
-    List<ServiceRecordResponseDTO> getServiceHistoryByServiceType(ServiceType serviceType);
-    List<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory);
-    List<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType);
-    List<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory);
     List<ServiceRecordResponseDTO> getUpcomingServiceRecords();
     List<ServiceRecordResponseDTO> getOverdueServiceRecords();
     void validateDuplicateRecord(Long carId, ServiceType serviceType, LocalDate serviceDate, int mileageAtService);
     LatestServiceInfoDTO getLatestServiceInfo(Long carId);
 
     // Pagination methods(optional but helps the frontend load data quicker)
-    Page<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId, int page, int size);
-    Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndDate(Long carId, LocalDate serviceDate, int page, int size);
-    Page<ServiceRecordResponseDTO> getServiceHistoryByServiceType(ServiceType serviceType, int page, int size);
-    Page<ServiceRecordResponseDTO> getServiceHistoryByCategory(ServiceCategory serviceCategory, int page, int size);
-    Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndServiceType(Long carId, ServiceType serviceType, int page, int size);
-    Page<ServiceRecordResponseDTO> getServiceHistoryByCarAndCategory(Long carId, ServiceCategory serviceCategory, int page, int size);
-    Page<ServiceRecordResponseDTO> getAllServiceRecords(int page, int size);
-    Page<ServiceRecordResponseDTO> getUpcomingServiceRecords(int page, int size);
-    Page<ServiceRecordResponseDTO> getOverdueServiceRecords(int page, int size);
     Page<ServiceRecordResponseDTO> getAllServiceRecords(List<ServiceType> serviceTypes, List<ServiceCategory> serviceCategories, int page, int size);
     Page<ServiceRecordResponseDTO> getUpcomingServiceRecords(List<ServiceType> serviceTypes, List<ServiceCategory> serviceCategories, int page, int size);
     Page<ServiceRecordResponseDTO> getOverdueServiceRecords(List<ServiceType> serviceTypes, List<ServiceCategory> serviceCategories, int page, int size);
