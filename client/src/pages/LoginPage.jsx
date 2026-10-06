@@ -3,12 +3,13 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/AuthPage.css";
+import PasswordInput from "../components/PasswordInput";
 
 function LoginPage() {
 
     const [email, setEmail] = useState("");        // these hooks will store the email and password when needed for
     const [password, setPassword] = useState("");  // submitting the form
-    const { login } = useAuth();                     // Use the login function that AuthContext is sharing
+    const { login } = useAuth();                   // Use the login function that AuthContext is sharing
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
     const [shake, setShake] = useState(false);
@@ -81,7 +82,7 @@ function LoginPage() {
                 </label>
 
                 <label className="form-field">Password
-                    <input type="password"
+                    <PasswordInput
                         className={errors.password ? (shake ? `input-error input-shake` : `input-error`) : ""}
                         placeholder="Enter your password"
                         value={password}

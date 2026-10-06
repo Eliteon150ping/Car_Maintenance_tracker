@@ -3,6 +3,7 @@ import PageHeader from "../components/PageHeader";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/AuthPage.css";
+import PasswordInput from "../components/PasswordInput";
 
 function RegisterPage() {
 
@@ -109,7 +110,7 @@ function RegisterPage() {
                 </label>
 
                 <label className="form-field">Password
-                    <input type="password"
+                    <PasswordInput
                         className={errors.password ? (shake ? `input-error input-shake` : `input-error`) : ""}
                         placeholder="eg. JohnDoe123456"
                         value={password}

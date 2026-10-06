@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { validateUserName, updateUserDetails } from "../api/authApi";
 import "../styles/UpdateProfileForm.css";
 import ConfirmationModal from "../components/ConfirmationModal";
+import PasswordInput from "../components/PasswordInput";
 
 function UpdateProfileForm({ profile, onSave, onCancel }) {
 
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [errors, setErrors] = useState({});
     const [shake, setShake] = useState(false);
     const [showUnsavedConfirmation, setShowUnsavedConfirmation] = useState(false);
@@ -43,7 +45,14 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
         function validatePassword() {
             if (password !== "" && password.length < 8) {
                 validationErrors.password = "Password must be atleast 8 characters long";
-            }
+
+            }else if(!(password.trim() == "")  && confirmPassword.trim() == ""){
+                validationErrors.confirmPassword = "Please confirm your new password";
+
+            } else if(confirmPassword != password){
+                validationErrors.confirmPassword = "Password does not match";
+
+            }    
         }
         validatePassword();
 
@@ -117,8 +126,8 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
                 )}
             </label>
 
-            <label className="update-field">Password
-                <input type="password"
+            <label className="update-field">Enter a New Password
+                <PasswordInput
                     className={errors.password ? (shake ? `input-error input-shake` : `input-error`) : ""}
                     placeholder="(Optional) Enter a new password"
                     value={password}
@@ -130,6 +139,20 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
                     </span>
                 )}
             </label>
+
+            <label className="update-field">Confirm New Password
+                <PasswordInput
+                    className={errors.confirmPassword ? (shake ? `input-error input-shake` : `input-error`) : ""}
+                    placeholder="Confirm your new password before saving"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)} />
+
+                {errors.confirmPassword && (
+                    <span className="field-error">
+                        {errors.confirmPassword}
+                    </span>
+                )}
+            </label> 
 
             <div className="update-profile-buttons">
                 <button className="update-profile-button" type="button" onClick={handleClickSave}>Save changes</button>
