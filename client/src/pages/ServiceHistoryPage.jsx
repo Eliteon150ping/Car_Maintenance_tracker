@@ -137,6 +137,10 @@ function ServiceHistoryPage({ showExtraDetails }) {
                 <div>Edit</div>
             </div>
 
+            {serviceRecords.length === 0 && (
+                <p className="not-available">No recorded service records yet...</p>
+            )}
+
             {serviceRecords.map(serviceRecord => (
                 <VehicleDetailsCard
                     key={serviceRecord.id}

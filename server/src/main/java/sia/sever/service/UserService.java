@@ -9,7 +9,6 @@ public interface UserService {
     AuthResponseDTO loginUser(LoginDTO user);
     UserResponseDTO editProfile(UpdateUserDTO user);
     void deleteProfile();
-    List<UserResponseDTO> getAllUsers();
     UserResponseDTO getCurrentUserLogged();
     void validateUserName(String userName);
 }

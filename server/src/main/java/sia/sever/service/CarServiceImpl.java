@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Sort;
 import sia.sever.dto.car.CreateCarDTO;
 import sia.sever.dto.car.CarResponseDTO;
 import sia.sever.dto.car.UpdateCarDTO;
@@ -242,19 +243,7 @@ public class CarServiceImpl implements CarService {
         return mapToCarResponseDTO(findCarById);
     }
 
-    // Dynamic filtering method for getting cars by its brand, model or year
-    @Override
-    public List<CarResponseDTO> getAllCarsByBrandAndModelAndYear(String brand, String model, Integer year) {
-        User user = getAuthenticatedUser();
-        Specification<Car> spec = Specification.where(CarSpecification.hasBrand(brand))
-                .and(CarSpecification.hasModel(model))
-                .and(CarSpecification.hasYear(year))
-                .and(CarSpecification.hasUser(user));
-
-        List<Car> filterCars = carRepository.findAll(spec);
-        return filterCars.stream().map(this::mapToCarResponseDTO).collect(Collectors.toList());
-    }
-
+    // Search cars for filtering
     @Override
     public List<CarResponseDTO> searchCars(String search) {
         User user = getAuthenticatedUser();
@@ -262,7 +251,7 @@ public class CarServiceImpl implements CarService {
                 .where(CarSpecification.search(search))
                 .and(CarSpecification.hasUser(user));
 
-        List<Car> filteredCars = carRepository.findAll(spec);
+        List<Car> filteredCars = carRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "id"));
 
         return filteredCars.stream()
                 .map(this::mapToCarResponseDTO)

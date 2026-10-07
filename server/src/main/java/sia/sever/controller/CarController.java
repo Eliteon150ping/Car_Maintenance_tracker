@@ -1,5 +1,6 @@
 package sia.sever.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,6 +43,11 @@ public class CarController {
     }
 
     // Create car
+    @Operation(
+            summary = "Create car",
+            description = "Create a new car and save it too an authenticated user",
+            tags = {"Cars"}
+    )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CarResponseDTO> createCar(
             @Valid @ModelAttribute CreateCarDTO car,
@@ -51,22 +57,23 @@ public class CarController {
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
     }
 
-    // Filter by brand/model/year
-    @GetMapping("/filter")
-    public ResponseEntity<List<CarResponseDTO>> filterByBrandModelYear(@RequestParam(value = "brand", required = false) String brand,
-                                                                       @RequestParam(value = "model", required = false) String model,
-                                                                       @RequestParam(value = "year", required = false) Integer year) {
-        List<CarResponseDTO> carsByBrandModelYear = carService.getAllCarsByBrandAndModelAndYear(brand, model, year);
-        return new ResponseEntity<>(carsByBrandModelYear, HttpStatus.OK);
-    }
-
     // Get all cars
+    @Operation(
+            summary = "Get all cars",
+            description = "Get all cars for an authenticated user",
+            tags = {"Cars"}
+    )
     @GetMapping
     public ResponseEntity<List<CarResponseDTO>> getAllCars() {
         List<CarResponseDTO> allCars = carService.getAllCars();
         return ResponseEntity.ok(allCars);
     }
 
+    @Operation(
+            summary = "Search for a car",
+            description = "Search for an authenticated user",
+            tags = {"Cars"}
+    )
     @GetMapping("/search")
     public ResponseEntity<List<CarResponseDTO>> searchCars(
             @RequestParam(value = "search", required = false) String search) {
@@ -76,6 +83,11 @@ public class CarController {
     }
 
     // Get car by id
+    @Operation(
+            summary = "Get car by its ID",
+            description = "Get car by its ID for an authenticated user",
+            tags = {"Cars"}
+    )
     @GetMapping("/{id}")
     public ResponseEntity<CarResponseDTO> getCarById(@PathVariable Long id) {
         CarResponseDTO getCarById = carService.getCarById(id);
@@ -83,6 +95,11 @@ public class CarController {
     }
 
     // Update car by id
+    @Operation(
+            summary = "Update car by its ID",
+            description = "Update car by its ID for an authenticated user",
+            tags = {"Cars"}
+    )
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CarResponseDTO> updateCarById(
             @PathVariable Long id,
@@ -94,6 +111,11 @@ public class CarController {
     }
 
     // Check the mileage before showing the confirmation box(insane how all this needs to be done for that)
+    @Operation(
+            summary = "Check car's mileage before showing the confirmation box",
+            description = "Check car's mileage before showing the confirmation box for an authenticated user",
+            tags = {"Cars"}
+    )
     @PutMapping("/{id}/mileage")
     public ResponseEntity<Void> validateMileage(@PathVariable Long id, @RequestBody MileageValidationDTO mileage) {
         carService.validateUpdateMileage(id, mileage.getMileage());
@@ -101,6 +123,11 @@ public class CarController {
     }
 
     // Delete car by id
+    @Operation(
+            summary = "Delete car by its id",
+            description = "Delete car by its id for an authenticated user",
+            tags = {"Cars"}
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCarById(@PathVariable Long id) throws IOException{
         carService.deleteCar(id);

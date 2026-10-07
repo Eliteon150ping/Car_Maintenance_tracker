@@ -21,7 +21,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService userService;
     private final JwtUtility jwtUtility;
 
-    public SecurityConfig(CustomUserDetailsService userService, JwtUtility jwtUtility){
+    public SecurityConfig(CustomUserDetailsService userService, JwtUtility jwtUtility) {
         this.userService = userService;
         this.jwtUtility = jwtUtility;
     }
@@ -31,10 +31,19 @@ public class SecurityConfig {
 
         // Disable CSRF (stateless API)
         http.csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .cors(cors -> {
+                })
                 .authorizeHttpRequests(auth -> auth
+
                         // Public endpoints (no auth needed)
-                        .requestMatchers("/api/users/auth/login", "/api/users/auth/register", "/uploads/**").permitAll()
+                        .requestMatchers(
+                                "/api/users/auth/login",
+                                "/api/users/auth/register",
+                                "/uploads/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html")
+                        .permitAll()
                         // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
@@ -46,26 +55,26 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
+    public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Trusted frontend URL to
-                                                                              // accept requests
+        // accept requests
         // For get, post, put etc.
         configuration.setAllowedMethods(List.of("POST", "GET", "PUT", "DELETE", "OPTIONS"));
         // These HTTP methods are allowed. Options is a preflight request your browser sends before the
         // actual POST. Without it, login still wouldn't work.
 
         configuration.setAllowedHeaders(List.of("*")); // Accept any request headers.Later, when you're
-                                                          // sending JWTs, your browser will include:
-                                                          // Authorization: Bearer eyJhbGci...
-                                                          // This line allows that.
+        // sending JWTs, your browser will include:
+        // Authorization: Bearer eyJhbGci...
+        // This line allows that.
 
         // This creates the object that Spring Security is expecting.
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Use these CORS rules for every
-                                                                       // endpoint.
+        // endpoint.
         return source;
     }
 }

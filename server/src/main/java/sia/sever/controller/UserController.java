@@ -1,5 +1,6 @@
 package sia.sever.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,11 @@ public class UserController {
     // backend knows the user from the jwt token
 
     // Register User
+    @Operation(
+            summary = "Register a new user",
+            description = "Register a new account",
+            tags = {"Users"}
+    )
     @PostMapping("/auth/register")
     public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody RegisterDTO user) {
         UserResponseDTO registeredUser = userService.registerUser(user);
@@ -29,6 +35,11 @@ public class UserController {
     }
 
     // Login User
+    @Operation(
+            summary = "Log in a user",
+            description = "Log into your account",
+            tags = {"Users"}
+    )
     @PostMapping("/auth/login")
     public ResponseEntity<AuthResponseDTO> loginUser(@Valid @RequestBody LoginDTO user) {
         AuthResponseDTO loggedInUser = userService.loginUser(user);
@@ -36,6 +47,11 @@ public class UserController {
     }
 
     // Edit profile
+    @Operation(
+            summary = "Update the current user's profile",
+            description = "Edit your profile details",
+            tags = {"Users"}
+    )
     @PutMapping("/profile")
     public ResponseEntity<UserResponseDTO> editProfile(@Valid @RequestBody UpdateUserDTO user){
         UserResponseDTO editedProfile = userService.editProfile(user);
@@ -43,6 +59,11 @@ public class UserController {
     }
 
     // Check the username before showing the confirmation box(insane how all this needs to be done for that)
+    @Operation(
+            summary = "Validate username",
+            description = "Checks whether the requested username is available before updating the user's profile.",
+            tags = {"Users"}
+    )
     @PutMapping("/profile/username")
     public ResponseEntity<Void> validateUserName(@RequestBody UsernameValidationDTO userName){
         userService.validateUserName(userName.getUserName());
@@ -50,20 +71,23 @@ public class UserController {
     }
 
     // Delete profile
+    @Operation(
+            summary = "Delete the current user's account",
+            description = "Delete your account",
+            tags = {"Users"}
+    )
     @DeleteMapping("/profile")
     public ResponseEntity<Void> deleteProfile(){
         userService.deleteProfile();
         return ResponseEntity.noContent().build();
     }
 
-    // Get all users
-    @GetMapping("/all")
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers(){
-        List<UserResponseDTO> allUsers = userService.getAllUsers();
-        return ResponseEntity.ok(allUsers);
-    }
-
     // Get current User's JWT checked if already logged in on the frontend when refreshing(F5)
+    @Operation(
+            summary = "Get current user",
+            description = "Gets the profile details of the currently authenticated user.",
+            tags = {"Users"}
+    )
     @GetMapping("/profile")
     public ResponseEntity<UserResponseDTO> getCurrentUser(){
         UserResponseDTO getCurrentUser = userService.getCurrentUserLogged();

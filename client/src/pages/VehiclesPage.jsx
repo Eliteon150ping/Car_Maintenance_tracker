@@ -116,6 +116,10 @@ function VehiclesPage() {
                             src="/images/generic_car.png"
                             alt="Generic car" />Add Car</button>
 
+                    {vehicles.length === 0 && (
+                        <p className="not-available">No added cars yet...</p>
+                    )}
+
                     {!showCarForm && (
                         vehicles.map(vehicle => (
                             <VehicleCard

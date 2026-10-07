@@ -16,7 +16,6 @@ public interface CarService {
     CarResponseDTO updateCar(Long id, UpdateCarDTO car, MultipartFile image) throws IOException;
     void deleteCar(Long id) throws IOException;
     CarResponseDTO getCarById(Long id);
-    List<CarResponseDTO> getAllCarsByBrandAndModelAndYear(String brand,String model, Integer year);
     List<CarResponseDTO> searchCars(String search);
     void validateUpdateMileage(Long id, int updateMileage);
 }

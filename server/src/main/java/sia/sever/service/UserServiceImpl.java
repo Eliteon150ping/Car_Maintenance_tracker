@@ -158,15 +158,6 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(existingUser.getId());
     }
 
-    // Get all users
-    @Override
-    public List<UserResponseDTO> getAllUsers() {
-        List<User> getAllUsers = userRepository.findAll();
-        return getAllUsers.stream()
-                .map(this::mapToUserResponseDTO)
-                .collect(Collectors.toList());
-    }
-
     // Get a user by id
     @Override
     public UserResponseDTO getCurrentUserLogged() {

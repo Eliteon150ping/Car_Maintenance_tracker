@@ -280,6 +280,10 @@ function VehicleDetailsPage({ showExtraDetails }) {
                 </div>
             )}
 
+            {!showServiceForm && serviceRecords.length === 0 && (
+                <p className="not-available">No service records exist for this car yet...</p>
+            )}
+
             {!showServiceForm && !showCarForm && serviceRecords.map(serviceRecord => (
                 <VehicleDetailsCard
                     key={serviceRecord.id}

@@ -135,6 +135,10 @@ function OverdueServicesPage({ showExtraDetails }) {
                 <div>Edit</div>
             </div>
 
+            {serviceRecords.length === 0 && (
+                <p className="not-available">No overdue services yet...</p>
+            )}
+
             {serviceRecords.map(serviceRecord => (
                 <VehicleDetailsCard
                     key={serviceRecord.id}
