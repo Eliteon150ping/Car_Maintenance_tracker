@@ -48,7 +48,7 @@ public class ServiceHistoryImplTest {
     private ServiceHistoryServiceImpl serviceHistoryService;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(
                         "test@example.com",
@@ -59,7 +59,7 @@ public class ServiceHistoryImplTest {
     }
 
     @AfterEach
-    void tearDown(){
+    void tearDown() {
         SecurityContextHolder.clearContext();
     }
 
@@ -82,9 +82,6 @@ public class ServiceHistoryImplTest {
         when(carRepository.findByIdAndUser(1L, user))
                 .thenReturn(Optional.of(car));
 
-//        when(carRepository.save(any(Car.class)))
-//                .thenAnswer(invocation -> invocation.getArgument(0));
-
         CreateServiceRecordDTO serviceRecordDTO = new CreateServiceRecordDTO(
                 LocalDate.of(2026, 1, 2),
                 150000,
@@ -93,25 +90,19 @@ public class ServiceHistoryImplTest {
                 "Replaced CV Joints"
         );
 
-//        when(serviceHistoryRepository.save(any(ServiceHistory.class)))
-//                .thenAnswer(invocation -> invocation.getArgument(0));
+        ServiceHistory[] savedRecord = new ServiceHistory[1];
 
         when(serviceHistoryRepository.save(any(ServiceHistory.class)))
                 .thenAnswer(invocation -> {
-                    ServiceHistory record = invocation.getArgument(0);
-                    record.setId(1L);
-                    return record;
+                    savedRecord[0] = invocation.getArgument(0);
+                    return savedRecord[0];
                 });
 
         when(serviceHistoryRepository
                 .findFirstByCarAndServiceTypeOrderByServiceDateDescMileageAtServiceDesc(
                         any(Car.class),
                         eq(OTHER)))
-                .thenAnswer(invocation -> {
-                    ServiceHistory record = new ServiceHistory();
-                    record.setId(1L);
-                    return record;
-                });
+                .thenAnswer(invocation -> savedRecord[0]);
 
         ServiceRecordResponseDTO result = serviceHistoryService.createServiceHistory(
                 serviceRecordDTO,
@@ -128,9 +119,9 @@ public class ServiceHistoryImplTest {
 
         verify(serviceHistoryRepository).save(serviceHistoryCaptor.capture());
 
-        ServiceHistory savedRecord = serviceHistoryCaptor.getValue();
+        ServiceHistory savedServiceRecord = serviceHistoryCaptor.getValue();
 
-        assertEquals(car, savedRecord.getCar());
+        assertEquals(car, savedServiceRecord.getCar());
     }
 }
 

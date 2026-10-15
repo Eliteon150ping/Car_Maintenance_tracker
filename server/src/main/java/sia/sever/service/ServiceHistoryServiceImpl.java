@@ -706,6 +706,15 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
                                 serviceHistory.getServiceType()
                         );
 
-        return latestRecord.getId().equals(serviceHistory.getId());
+        if (latestRecord == null) {
+            return false;
+        }
+
+        if (latestRecord == serviceHistory) {
+            return true;
+        }
+
+        return latestRecord.getId() != null
+                && latestRecord.getId().equals(serviceHistory.getId());
     }
 }
