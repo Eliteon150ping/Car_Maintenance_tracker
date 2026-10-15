@@ -14,7 +14,6 @@ public interface ServiceHistoryService {
 
     // These methods must be defined in the class that uses this interface(eg. ServiceHistoryImpl)
     ServiceRecordResponseDTO createServiceHistory(CreateServiceRecordDTO serviceHistory, Long carId);
-
     List<ServiceRecordResponseDTO> getAllServiceRecords();
     ServiceRecordResponseDTO updateServiceHistory(Long id, UpdateServiceRecordDTO serviceHistory, Long carId);
     List<ServiceRecordResponseDTO> getServiceHistoryByCar(Long carId);

@@ -121,7 +121,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         ServiceHistory lastLatestServiceDate = serviceHistoryRepository.findFirstByCarOrderByServiceDateDesc(car);
 
         // Check if the service mileage is NOT more than the car's current mileage and NOT less than the last service
-        validateMileage(convertToEntity); //
+        validateMileage(convertToEntity);
         if (lastLatestServiceMileage != null) {
             if (convertToEntity.getMileageAtService() < lastLatestServiceMileage.getMileageAtService()) {
                 errors.put("mileageAtService", "New service mileage cannot be lower than the last latest service mileage //");
@@ -134,13 +134,13 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
         // Check if the service date is NOT before the car's year model
         if (convertToEntity.getServiceDate().getYear() < car.getYear()) {
-            throw new InvalidDateException("Service Date cannot be before the car's year model: // " + car.getYear());
+            throw new InvalidDateException("Service Date cannot be before the car's year model: " + car.getYear());
         }
 
         // Check if the service date is NOT before the service's last service date
         if (lastLatestServiceDate != null) {
             if (convertToEntity.getServiceDate().isBefore(lastLatestServiceDate.getServiceDate())) {
-                throw new InvalidDateException("New service date cannot be before the // " + lastLatestServiceDate.getServiceDate());
+                throw new InvalidDateException("New service date cannot be before the " + lastLatestServiceDate.getServiceDate());
             }
         }
 
@@ -152,7 +152,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         }
 
         // Check if 'Other' service is selected then make use of custom notes for it
-        validateOtherServiceDescription(serviceHistory.getServiceType(), serviceHistory.getDescription()); //
+        validateOtherServiceDescription(serviceHistory.getServiceType(), serviceHistory.getDescription());
 
         // Check if user did a service, give the next change interval/date
         convertToEntity.setNextDueMileage(calculateNextServiceMileage(convertToEntity));

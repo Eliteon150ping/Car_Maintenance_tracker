@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
-import sia.sever.specification.CarSpecification;
 
 @ExtendWith(MockitoExtension.class) // Enables Mockito
 class CarServiceImplTest {
@@ -286,7 +285,6 @@ class CarServiceImplTest {
                 () -> carService.getCarById(1L)
         );
     }
-
 
     @Test
     void createCar_shouldSaveCarForAuthenticatedUser() throws IOException {
@@ -583,7 +581,7 @@ class CarServiceImplTest {
     }
 
     @Test
-    void updateCar_shouldThrowExceptionWhenUserIsNotAuthenticated(){
+    void updateCar_shouldThrowExceptionWhenUserIsNotAuthenticated() {
 
         SecurityContextHolder.clearContext();
 
@@ -594,7 +592,7 @@ class CarServiceImplTest {
 
         assertThrows(
                 UnauthorizedException.class,
-                () -> carService.updateCar(1L ,carDTO, null)
+                () -> carService.updateCar(1L, carDTO, null)
         );
 
         verify(carRepository, never()).save(any(Car.class));
@@ -626,7 +624,7 @@ class CarServiceImplTest {
 
         assertThrows(
                 InvalidMileageException.class,
-                () -> carService.updateCar(1L ,carDTO, null)
+                () -> carService.updateCar(1L, carDTO, null)
         );
 
         verify(carRepository, never()).save(any(Car.class));
@@ -718,7 +716,7 @@ class CarServiceImplTest {
     }
 
     @Test
-    void deleteCar_shouldThrowExceptionWhenUserIsNotAuthenticated(){
+    void deleteCar_shouldThrowExceptionWhenUserIsNotAuthenticated() {
 
         SecurityContextHolder.clearContext();
 
@@ -731,7 +729,7 @@ class CarServiceImplTest {
     }
 
     @Test
-    void searchCars_shouldReturnMatchingCars(){
+    void searchCars_shouldReturnMatchingCars() {
 
         User user = new User();
 
@@ -777,7 +775,7 @@ class CarServiceImplTest {
     }
 
     @Test
-    void searchCars_shouldReturnEmptyListWhenNoCarsMatch(){
+    void searchCars_shouldReturnEmptyListWhenNoCarsMatch() {
 
         User user = new User();
 
@@ -823,7 +821,7 @@ class CarServiceImplTest {
     }
 
     @Test
-    void searchCars_shouldThrowExceptionWhenUserIsNotAuthenticated(){
+    void searchCars_shouldThrowExceptionWhenUserIsNotAuthenticated() {
 
         SecurityContextHolder.clearContext();
 
