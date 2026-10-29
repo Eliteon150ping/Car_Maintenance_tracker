@@ -110,7 +110,7 @@ public class CarController {
         return ResponseEntity.ok(updatedCar);
     }
 
-    // Check the mileage before showing the confirmation box(insane how all this needs to be done for that)
+    // Check the mileage before showing the confirmation box
     @Operation(
             summary = "Check car's mileage before showing the confirmation box",
             description = "Check car's mileage before showing the confirmation box for an authenticated user",

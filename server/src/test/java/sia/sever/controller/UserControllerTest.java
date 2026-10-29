@@ -8,14 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import sia.sever.dto.user.*;
-import sia.sever.exception.ErrorResponse;
-import sia.sever.exception.InvalidClassException;
 import sia.sever.exception.ValidationException;
 import sia.sever.service.UserService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -318,6 +314,3 @@ public class UserControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 }
-
-//Get current user — 2 tests
-//- [ ] getCurrentUser_shouldReturnInternalServerErrorWhenServiceThrowsException
