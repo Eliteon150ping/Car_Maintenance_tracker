@@ -124,7 +124,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         validateMileage(convertToEntity);
         if (lastLatestServiceMileage != null) {
             if (convertToEntity.getMileageAtService() < lastLatestServiceMileage.getMileageAtService()) {
-                errors.put("mileageAtService", "New service mileage cannot be lower than the last latest service mileage //");
+                errors.put("mileageAtService", "New service mileage cannot be lower than the last latest service mileage");
             }
 
             if (!errors.isEmpty()) {
