@@ -8,8 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import sia.sever.dto.car.CarSummaryDTO;
+import sia.sever.dto.car.UpdateCarDTO;
 import sia.sever.dto.serviceRecord.CreateServiceRecordDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
+import sia.sever.dto.serviceRecord.UpdateServiceRecordDTO;
 import sia.sever.exception.InvalidClassException;
 import sia.sever.exception.InvalidMileageException;
 import sia.sever.exception.ResourceNotFoundException;
@@ -227,7 +229,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void validateDuplicateRecord_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException() throws Exception{
+    void validateDuplicateRecord_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException() throws Exception {
 
         doThrow(new ResourceNotFoundException("Car not found"))
                 .when(serviceHistoryService).validateDuplicateRecord(
@@ -253,7 +255,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void validateDuplicateRecord_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception{
+    void validateDuplicateRecord_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
 
         doThrow(new RuntimeException("Something went wrong"))
                 .when(serviceHistoryService).validateDuplicateRecord(
@@ -279,7 +281,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getAllServiceRecords_shouldReturnOk() throws Exception{
+    void getAllServiceRecords_shouldReturnOk() throws Exception {
 
         CarSummaryDTO carSummaryDTO = new CarSummaryDTO(
                 1L,
@@ -333,7 +335,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getAllServiceRecords_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception{
+    void getAllServiceRecords_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
 
         doThrow(new RuntimeException("Something went wrong"))
                 .when(serviceHistoryService).getAllServiceRecords();
@@ -344,15 +346,171 @@ public class ServiceHistoryControllerTest {
 
         verify(serviceHistoryService, times(1)).getAllServiceRecords();
     }
+
+    @Test
+    void updateServiceRecord_shouldReturnOk() throws Exception {
+
+        CarSummaryDTO carSummaryDTO = new CarSummaryDTO(
+                1L,
+                "Toyota",
+                "Corolla RXI",
+                2001,
+                150000
+        );
+
+        UpdateServiceRecordDTO updateServiceRecordDTO = new UpdateServiceRecordDTO(
+                "Changed oil and filter updated",
+                450.0
+        );
+
+        ServiceRecordResponseDTO serviceRecordResponseDTO = new ServiceRecordResponseDTO(
+                1L,
+                LocalDate.of(2026, 1, 2),
+                150000,
+                160000,
+                LocalDate.of(2026, 6, 2),
+                ENGINE_OIL_AND_FILTER,
+                450.0,
+                "Changed oil and filter updated",
+                10000,
+                182,
+                carSummaryDTO,
+                true
+        );
+
+        when(serviceHistoryService
+                .updateServiceHistory(
+                        eq(1L),
+                        any(UpdateServiceRecordDTO.class),
+                        eq(1L))
+
+        ).thenReturn(serviceRecordResponseDTO);
+
+        mockMvc.perform(put("/api/service-records/car/1/service/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateServiceRecordDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.serviceDate").value("2026-01-02"))
+                .andExpect(jsonPath("$.mileageAtService").value(150000))
+                .andExpect(jsonPath("$.nextDueMileage").value(160000))
+                .andExpect(jsonPath("$.nextDueDate").value("2026-06-02"))
+                .andExpect(jsonPath("$.serviceType").value("ENGINE_OIL_AND_FILTER"))
+                .andExpect(jsonPath("$.cost").value(450.0))
+                .andExpect(jsonPath("$.description").value("Changed oil and filter updated"))
+                .andExpect(jsonPath("$.remainingKm").value(10000))
+                .andExpect(jsonPath("$.remainingDays").value(182))
+                .andExpect(jsonPath("$.car.id").value(1))
+                .andExpect(jsonPath("$.car.brand").value("Toyota"))
+                .andExpect(jsonPath("$.car.model").value("Corolla RXI"))
+                .andExpect(jsonPath("$.car.year").value(2001))
+                .andExpect(jsonPath("$.car.currentMileage").value(150000))
+                .andExpect(jsonPath("$.latestRecord").value(true));
+
+        verify(serviceHistoryService, times(1)).updateServiceHistory(
+                eq(1L),
+                any(UpdateServiceRecordDTO.class),
+                eq(1L)
+        );
+    }
+
+    @Test
+    void updateServiceRecord_shouldReturnBadRequestWhenServiceThrowsValidationException() throws Exception {
+
+        UpdateServiceRecordDTO updateServiceRecordDTO = new UpdateServiceRecordDTO(
+                "Changed oil and filter",
+                450.0
+        );
+
+        when(serviceHistoryService.updateServiceHistory(eq(1L), any(UpdateServiceRecordDTO.class), eq(1L)))
+                .thenThrow(new InvalidClassException("Description cannot be empty"));
+
+        mockMvc.perform(put("/api/service-records/car/1/service/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateServiceRecordDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Description cannot be empty"));
+
+        verify(serviceHistoryService, times(1)).updateServiceHistory(
+                eq(1L),
+                any(UpdateServiceRecordDTO.class),
+                eq(1L)
+        );
+    }
+
+    @Test
+    void updateServiceRecord_shouldReturnBadRequestWhenRequestIsInvalid() throws Exception {
+
+        UpdateServiceRecordDTO updateServiceRecordDTO = new UpdateServiceRecordDTO(
+                "",
+                0.0
+        );
+
+        mockMvc.perform(put("/api/service-records/car/1/service/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateServiceRecordDTO)))
+                .andExpect(status().isBadRequest());
+
+        verify(serviceHistoryService, never()).updateServiceHistory(
+                anyLong(),
+                any(UpdateServiceRecordDTO.class),
+                anyLong()
+        );
+    }
+
+    @Test
+    void updateServiceRecord_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException() throws Exception {
+
+        UpdateServiceRecordDTO updateServiceRecordDTO = new UpdateServiceRecordDTO(
+                "Updated",
+                100.0
+        );
+
+        when(serviceHistoryService.updateServiceHistory(eq(1L), any(UpdateServiceRecordDTO.class), eq(1L)))
+                .thenThrow(new ResourceNotFoundException("Service not found for this car"));
+
+        mockMvc.perform(put("/api/service-records/car/1/service/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateServiceRecordDTO)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Service not found for this car"));
+
+        verify(serviceHistoryService, times(1)).updateServiceHistory(
+                eq(1L),
+                any(UpdateServiceRecordDTO.class),
+                eq(1L)
+        );
+    }
+
+    @Test
+    void updateServiceRecord_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
+
+        UpdateServiceRecordDTO updateServiceRecordDTO = new UpdateServiceRecordDTO(
+                "Updated",
+                100.0
+        );
+
+        when(serviceHistoryService.updateServiceHistory(eq(1L), any(UpdateServiceRecordDTO.class), eq(1L)))
+                .thenThrow(new RuntimeException("Something went wrong"));
+
+        mockMvc.perform(put("/api/service-records/car/1/service/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateServiceRecordDTO)))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("Something went wrong"));
+
+        verify(serviceHistoryService, times(1)).updateServiceHistory(
+                eq(1L),
+                any(UpdateServiceRecordDTO.class),
+                eq(1L)
+        );
+    }
+
+    @Test
+    void getServiceHistoryByCar_shouldReturnOk(){}
 }
 
 //ServiceHistoryControllerTest checklist
-//Update service record
-//- [ ] updateServiceRecord_shouldReturnOk
-//- [ ] updateServiceRecord_shouldReturnBadRequestWhenServiceThrowsValidationException
-//- [ ] updateServiceRecord_shouldReturnBadRequestWhenRequestIsInvalid
-//- [ ] updateServiceRecord_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException
-//- [ ] updateServiceRecord_shouldReturnInternalServerErrorWhenServiceThrowsException
 
 //Get service history by car
 //- [ ] getServiceHistoryByCar_shouldReturnOk
