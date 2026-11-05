@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -508,7 +511,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getServiceHistoryByCar_shouldReturnOk() throws Exception{
+    void getServiceHistoryByCar_shouldReturnOk() throws Exception {
 
         CarSummaryDTO carSummaryDTO = new CarSummaryDTO(
                 1L,
@@ -548,7 +551,7 @@ public class ServiceHistoryControllerTest {
                 true
         );
 
-        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList =new ArrayList<>();
+        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList = new ArrayList<>();
         serviceRecordResponseDTOList.add(serviceRecordResponseDTO);
         serviceRecordResponseDTOList.add(serviceRecordResponseDTO2);
 
@@ -594,7 +597,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getServiceHistoryByCar_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException() throws Exception{
+    void getServiceHistoryByCar_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException() throws Exception {
 
         when(serviceHistoryService.getServiceHistoryByCar(eq(1L)))
                 .thenThrow(new ResourceNotFoundException("Car not found"));
@@ -609,7 +612,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getServiceHistoryByCar_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception{
+    void getServiceHistoryByCar_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
 
         when(serviceHistoryService.getServiceHistoryByCar(eq(1L)))
                 .thenThrow(new RuntimeException("Something went wrong"));
@@ -624,7 +627,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getLatestServiceInfo_shouldReturnOk() throws Exception{
+    void getLatestServiceInfo_shouldReturnOk() throws Exception {
 
         LatestServiceInfoDTO latestServiceInfoDTO = new LatestServiceInfoDTO(
                 150000,
@@ -645,7 +648,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getLatestServiceInfo_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException() throws Exception{
+    void getLatestServiceInfo_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException() throws Exception {
 
         when(serviceHistoryService.getLatestServiceInfo(eq(1L)))
                 .thenThrow(new ResourceNotFoundException("Car not found"));
@@ -660,7 +663,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getLatestServiceInfo_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception{
+    void getLatestServiceInfo_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
 
         when(serviceHistoryService.getLatestServiceInfo(eq(1L)))
                 .thenThrow(new RuntimeException("Something went wrong"));
@@ -675,7 +678,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getUpcomingServiceRecords_shouldReturnOk() throws Exception{
+    void getUpcomingServiceRecords_shouldReturnOk() throws Exception {
 
         CarSummaryDTO carSummaryDTO = new CarSummaryDTO(
                 1L,
@@ -700,7 +703,7 @@ public class ServiceHistoryControllerTest {
                 true
         );
 
-        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList =new ArrayList<>();
+        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList = new ArrayList<>();
         serviceRecordResponseDTOList.add(serviceRecordResponseDTO);
 
         when(serviceHistoryService.getUpcomingServiceRecords())
@@ -729,7 +732,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getUpcomingServiceRecords_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception{
+    void getUpcomingServiceRecords_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
 
         when(serviceHistoryService.getUpcomingServiceRecords())
                 .thenThrow(new RuntimeException("Something went wrong"));
@@ -742,7 +745,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getOverdueServiceRecords_shouldReturnOk() throws Exception{
+    void getOverdueServiceRecords_shouldReturnOk() throws Exception {
 
         CarSummaryDTO carSummaryDTO = new CarSummaryDTO(
                 1L,
@@ -767,7 +770,7 @@ public class ServiceHistoryControllerTest {
                 true
         );
 
-        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList =new ArrayList<>();
+        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList = new ArrayList<>();
         serviceRecordResponseDTOList.add(serviceRecordResponseDTO);
 
         when(serviceHistoryService.getOverdueServiceRecords())
@@ -796,7 +799,7 @@ public class ServiceHistoryControllerTest {
     }
 
     @Test
-    void getOverdueServiceRecords_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception{
+    void getOverdueServiceRecords_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
 
         when(serviceHistoryService.getOverdueServiceRecords())
                 .thenThrow(new RuntimeException("Something went wrong"));
@@ -807,25 +810,480 @@ public class ServiceHistoryControllerTest {
 
         verify(serviceHistoryService, times(1)).getOverdueServiceRecords();
     }
+
+    @Test
+    void getServiceHistoryByCarPaginated_shouldReturnOk() throws Exception {
+
+        CarSummaryDTO carSummaryDTO = new CarSummaryDTO(
+                1L,
+                "Toyota",
+                "Corolla RXI",
+                2001,
+                150000
+        );
+
+        ServiceRecordResponseDTO serviceRecordResponseDTO = new ServiceRecordResponseDTO(
+                1L,
+                LocalDate.of(2026, 1, 2),
+                150000,
+                160000,
+                LocalDate.of(2026, 6, 2),
+                ENGINE_OIL_AND_FILTER,
+                400.0,
+                "Changed oil and filter",
+                10000,
+                182,
+                carSummaryDTO,
+                true
+        );
+
+        ServiceRecordResponseDTO serviceRecordResponseDTO2 = new ServiceRecordResponseDTO(
+                2L,
+                LocalDate.of(2026, 1, 2),
+                150000,
+                160000,
+                LocalDate.of(2026, 6, 2),
+                AIR_FILTER,
+                400.0,
+                "Changed Air filter",
+                15000,
+                364,
+                carSummaryDTO,
+                true
+        );
+
+        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList = new ArrayList<>();
+        serviceRecordResponseDTOList.add(serviceRecordResponseDTO);
+        serviceRecordResponseDTOList.add(serviceRecordResponseDTO2);
+
+        Page<ServiceRecordResponseDTO> serviceRecordPage =
+                new PageImpl<>(
+                        serviceRecordResponseDTOList,
+                        PageRequest.of(0, 10),
+                        2
+                );
+
+        when(serviceHistoryService.getServiceHistoryByCar(
+                anyList(),
+                anyList(),
+                eq(1L),
+                eq(0),
+                eq(10)
+        )).thenReturn(serviceRecordPage);
+
+        mockMvc.perform(get("/api/service-records/car/1/page"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.number").value(0))
+                .andExpect(jsonPath("$.first").value(true))
+                .andExpect(jsonPath("$.last").value(true))
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].serviceDate").value("2026-01-02"))
+                .andExpect(jsonPath("$.content[0].mileageAtService").value(150000))
+                .andExpect(jsonPath("$.content[0].nextDueMileage").value(160000))
+                .andExpect(jsonPath("$.content[0].nextDueDate").value("2026-06-02"))
+                .andExpect(jsonPath("$.content[0].serviceType").value("ENGINE_OIL_AND_FILTER"))
+                .andExpect(jsonPath("$.content[0].cost").value(400))
+                .andExpect(jsonPath("$.content[0].description").value("Changed oil and filter"))
+                .andExpect(jsonPath("$.content[0].remainingKm").value(10000))
+                .andExpect(jsonPath("$.content[0].remainingDays").value(182))
+                .andExpect(jsonPath("$.content[0].car.id").value(1))
+                .andExpect(jsonPath("$.content[0].car.brand").value("Toyota"))
+                .andExpect(jsonPath("$.content[0].car.model").value("Corolla RXI"))
+                .andExpect(jsonPath("$.content[0].car.year").value(2001))
+                .andExpect(jsonPath("$.content[0].car.currentMileage").value(150000))
+                .andExpect(jsonPath("$.content[0].latestRecord").value(true))
+                .andExpect(jsonPath("$.content[1].id").value(2))
+                .andExpect(jsonPath("$.content[1].serviceDate").value("2026-01-02"))
+                .andExpect(jsonPath("$.content[1].mileageAtService").value(150000))
+                .andExpect(jsonPath("$.content[1].nextDueMileage").value(160000))
+                .andExpect(jsonPath("$.content[1].nextDueDate").value("2026-06-02"))
+                .andExpect(jsonPath("$.content[1].serviceType").value("AIR_FILTER"))
+                .andExpect(jsonPath("$.content[1].cost").value(400))
+                .andExpect(jsonPath("$.content[1].description").value("Changed Air filter"))
+                .andExpect(jsonPath("$.content[1].remainingKm").value(15000))
+                .andExpect(jsonPath("$.content[1].remainingDays").value(364))
+                .andExpect(jsonPath("$.content[1].car.id").value(1))
+                .andExpect(jsonPath("$.content[1].car.brand").value("Toyota"))
+                .andExpect(jsonPath("$.content[1].car.model").value("Corolla RXI"))
+                .andExpect(jsonPath("$.content[1].car.year").value(2001))
+                .andExpect(jsonPath("$.content[1].car.currentMileage").value(150000))
+                .andExpect(jsonPath("$.content[1].latestRecord").value(true));
+
+        verify(serviceHistoryService, times(1)).getServiceHistoryByCar(
+                anyList(),
+                anyList(),
+                eq(1L),
+                eq(0),
+                eq(10)
+        );
+    }
+
+    @Test
+    void getServiceHistoryByCarPaginated_shouldReturnBadRequestWhenServiceThrowsValidationException() throws Exception {
+
+        when(serviceHistoryService.getServiceHistoryByCar(
+                anyList(),
+                anyList(),
+                eq(1L),
+                eq(0),
+                eq(10)
+        )).thenThrow(new InvalidClassException("Invalid pagination request"));
+
+        mockMvc.perform(get("/api/service-records/car/1/page"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid pagination request"));
+
+        verify(serviceHistoryService, times(1)).getServiceHistoryByCar(
+                anyList(),
+                anyList(),
+                eq(1L),
+                eq(0),
+                eq(10)
+        );
+    }
+
+    @Test
+    void getServiceHistoryByCarPaginated_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException() throws Exception {
+
+        when(serviceHistoryService.getServiceHistoryByCar(
+                anyList(),
+                anyList(),
+                eq(1L),
+                eq(0),
+                eq(10)
+        )).thenThrow(new ResourceNotFoundException("Car not found"));
+
+        mockMvc.perform(get("/api/service-records/car/1/page"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Car not found"));
+
+        verify(serviceHistoryService, times(1)).getServiceHistoryByCar(
+                anyList(),
+                anyList(),
+                eq(1L),
+                eq(0),
+                eq(10)
+        );
+    }
+
+    @Test
+    void getServiceHistoryByCarPaginated_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
+
+        when(serviceHistoryService.getServiceHistoryByCar(
+                anyList(),
+                anyList(),
+                eq(1L),
+                eq(0),
+                eq(10)
+        )).thenThrow(new RuntimeException("Something went wrong"));
+
+        mockMvc.perform(get("/api/service-records/car/1/page"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("Something went wrong"));
+
+        verify(serviceHistoryService, times(1)).getServiceHistoryByCar(
+                anyList(),
+                anyList(),
+                eq(1L),
+                eq(0),
+                eq(10)
+        );
+    }
+
+    @Test
+    void getAllServiceRecordsPaginated_shouldReturnOk() throws Exception {
+
+        CarSummaryDTO carSummaryDTO = new CarSummaryDTO(
+                1L,
+                "Toyota",
+                "Corolla RXI",
+                2001,
+                150000
+        );
+
+        ServiceRecordResponseDTO serviceRecordResponseDTO = new ServiceRecordResponseDTO(
+                1L,
+                LocalDate.of(2026, 1, 2),
+                150000,
+                160000,
+                LocalDate.of(2026, 6, 2),
+                ENGINE_OIL_AND_FILTER,
+                400.0,
+                "Changed oil and filter",
+                10000,
+                182,
+                carSummaryDTO,
+                true
+        );
+
+        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList = new ArrayList<>();
+        serviceRecordResponseDTOList.add(serviceRecordResponseDTO);
+
+        Page<ServiceRecordResponseDTO> serviceRecordPage =
+                new PageImpl<>(
+                        serviceRecordResponseDTOList,
+                        PageRequest.of(0, 10),
+                        1
+                );
+
+        when(serviceHistoryService.getAllServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        )).thenReturn(serviceRecordPage);
+
+        mockMvc.perform(get("/api/service-records/page"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.number").value(0))
+                .andExpect(jsonPath("$.first").value(true))
+                .andExpect(jsonPath("$.last").value(true))
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].serviceDate").value("2026-01-02"))
+                .andExpect(jsonPath("$.content[0].mileageAtService").value(150000))
+                .andExpect(jsonPath("$.content[0].nextDueMileage").value(160000))
+                .andExpect(jsonPath("$.content[0].nextDueDate").value("2026-06-02"))
+                .andExpect(jsonPath("$.content[0].serviceType").value("ENGINE_OIL_AND_FILTER"))
+                .andExpect(jsonPath("$.content[0].cost").value(400))
+                .andExpect(jsonPath("$.content[0].description").value("Changed oil and filter"))
+                .andExpect(jsonPath("$.content[0].remainingKm").value(10000))
+                .andExpect(jsonPath("$.content[0].remainingDays").value(182))
+                .andExpect(jsonPath("$.content[0].car.id").value(1))
+                .andExpect(jsonPath("$.content[0].car.brand").value("Toyota"))
+                .andExpect(jsonPath("$.content[0].car.model").value("Corolla RXI"))
+                .andExpect(jsonPath("$.content[0].car.year").value(2001))
+                .andExpect(jsonPath("$.content[0].car.currentMileage").value(150000))
+                .andExpect(jsonPath("$.content[0].latestRecord").value(true));
+
+        verify(serviceHistoryService, times(1)).getAllServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        );
+    }
+
+    @Test
+    void getAllServiceRecordsPaginated_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
+
+        when(serviceHistoryService.getAllServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        )).thenThrow(new RuntimeException("Something went wrong"));
+
+        mockMvc.perform(get("/api/service-records/page"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("Something went wrong"));
+
+        verify(serviceHistoryService, times(1)).getAllServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        );
+    }
+
+    @Test
+    void getUpcomingServiceRecordsPaginated_shouldReturnOk() throws Exception {
+
+        CarSummaryDTO carSummaryDTO = new CarSummaryDTO(
+                1L,
+                "Toyota",
+                "Corolla RXI",
+                2001,
+                150000
+        );
+
+        ServiceRecordResponseDTO serviceRecordResponseDTO = new ServiceRecordResponseDTO(
+                1L,
+                LocalDate.of(2026, 1, 2),
+                150000,
+                160000,
+                LocalDate.of(2026, 6, 2),
+                ENGINE_OIL_AND_FILTER,
+                400.0,
+                "Changed oil and filter",
+                900,
+                182,
+                carSummaryDTO,
+                true
+        );
+
+        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList = new ArrayList<>();
+        serviceRecordResponseDTOList.add(serviceRecordResponseDTO);
+
+        Page<ServiceRecordResponseDTO> serviceRecordPage =
+                new PageImpl<>(
+                        serviceRecordResponseDTOList,
+                        PageRequest.of(0, 10),
+                        1
+                );
+
+        when(serviceHistoryService.getUpcomingServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        )).thenReturn(serviceRecordPage);
+
+        mockMvc.perform(get("/api/service-records/upcoming/page"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.number").value(0))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.first").value(true))
+                .andExpect(jsonPath("$.last").value(true))
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].serviceDate").value("2026-01-02"))
+                .andExpect(jsonPath("$.content[0].mileageAtService").value(150000))
+                .andExpect(jsonPath("$.content[0].nextDueMileage").value(160000))
+                .andExpect(jsonPath("$.content[0].nextDueDate").value("2026-06-02"))
+                .andExpect(jsonPath("$.content[0].serviceType").value("ENGINE_OIL_AND_FILTER"))
+                .andExpect(jsonPath("$.content[0].cost").value(400))
+                .andExpect(jsonPath("$.content[0].description").value("Changed oil and filter"))
+                .andExpect(jsonPath("$.content[0].remainingKm").value(900))
+                .andExpect(jsonPath("$.content[0].remainingDays").value(182))
+                .andExpect(jsonPath("$.content[0].car.id").value(1))
+                .andExpect(jsonPath("$.content[0].car.brand").value("Toyota"))
+                .andExpect(jsonPath("$.content[0].car.model").value("Corolla RXI"))
+                .andExpect(jsonPath("$.content[0].car.year").value(2001))
+                .andExpect(jsonPath("$.content[0].car.currentMileage").value(150000))
+                .andExpect(jsonPath("$.content[0].latestRecord").value(true));
+
+        verify(serviceHistoryService, times(1)).getUpcomingServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        );
+    }
+
+    @Test
+    void getUpcomingServiceRecordsPaginated_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception{
+
+        when(serviceHistoryService.getUpcomingServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        )).thenThrow(new RuntimeException("Something went wrong"));
+
+        mockMvc.perform(get("/api/service-records/upcoming/page"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("Something went wrong"));
+
+        verify(serviceHistoryService, times(1)).getUpcomingServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        );
+    }
+
+    @Test
+    void getOverdueServiceRecordsPaginated_shouldReturnOk() throws Exception{
+
+        CarSummaryDTO carSummaryDTO = new CarSummaryDTO(
+                1L,
+                "Toyota",
+                "Corolla RXI",
+                2001,
+                150000
+        );
+
+        ServiceRecordResponseDTO serviceRecordResponseDTO = new ServiceRecordResponseDTO(
+                1L,
+                LocalDate.of(2026, 1, 2),
+                150000,
+                160000,
+                LocalDate.of(2026, 6, 2),
+                ENGINE_OIL_AND_FILTER,
+                400.0,
+                "Changed oil and filter",
+                -120,
+                182,
+                carSummaryDTO,
+                true
+        );
+
+        List<ServiceRecordResponseDTO> serviceRecordResponseDTOList = new ArrayList<>();
+        serviceRecordResponseDTOList.add(serviceRecordResponseDTO);
+
+        Page<ServiceRecordResponseDTO> serviceRecordPage =
+                new PageImpl<>(
+                        serviceRecordResponseDTOList,
+                        PageRequest.of(0, 10),
+                        1
+                );
+
+        when(serviceHistoryService.getOverdueServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        )).thenReturn(serviceRecordPage);
+
+        mockMvc.perform(get("/api/service-records/overdue/page"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.number").value(0))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.first").value(true))
+                .andExpect(jsonPath("$.last").value(true))
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].serviceDate").value("2026-01-02"))
+                .andExpect(jsonPath("$.content[0].mileageAtService").value(150000))
+                .andExpect(jsonPath("$.content[0].nextDueMileage").value(160000))
+                .andExpect(jsonPath("$.content[0].nextDueDate").value("2026-06-02"))
+                .andExpect(jsonPath("$.content[0].serviceType").value("ENGINE_OIL_AND_FILTER"))
+                .andExpect(jsonPath("$.content[0].cost").value(400))
+                .andExpect(jsonPath("$.content[0].description").value("Changed oil and filter"))
+                .andExpect(jsonPath("$.content[0].remainingKm").value(-120))
+                .andExpect(jsonPath("$.content[0].remainingDays").value(182))
+                .andExpect(jsonPath("$.content[0].car.id").value(1))
+                .andExpect(jsonPath("$.content[0].car.brand").value("Toyota"))
+                .andExpect(jsonPath("$.content[0].car.model").value("Corolla RXI"))
+                .andExpect(jsonPath("$.content[0].car.year").value(2001))
+                .andExpect(jsonPath("$.content[0].car.currentMileage").value(150000))
+                .andExpect(jsonPath("$.content[0].latestRecord").value(true));
+
+        verify(serviceHistoryService, times(1)).getOverdueServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        );
+    }
+
+    @Test
+    void getOverdueServiceRecordsPaginated_shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception{
+
+        when(serviceHistoryService.getOverdueServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        )).thenThrow(new RuntimeException("Something went wrong"));
+
+        mockMvc.perform(get("/api/service-records/overdue/page"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("Something went wrong"));
+
+        verify(serviceHistoryService, times(1)).getOverdueServiceRecords(
+                anyList(),
+                anyList(),
+                eq(0),
+                eq(10)
+        );
+    }
 }
-
-//ServiceHistoryControllerTest checklist
-
-//Paginated endpoints
-//Get service history by car — paginated
-//- [ ] getServiceHistoryByCarPaginated_shouldReturnOk
-//- [ ] getServiceHistoryByCarPaginated_shouldReturnBadRequestWhenServiceThrowsValidationException
-//- [ ] getServiceHistoryByCarPaginated_shouldReturnNotFoundWhenServiceThrowsResourceNotFoundException
-//- [ ] getServiceHistoryByCarPaginated_shouldReturnInternalServerErrorWhenServiceThrowsException
-
-//Get all service records — paginated
-//- [ ] getAllServiceRecordsPaginated_shouldReturnOk
-//- [ ] getAllServiceRecordsPaginated_shouldReturnInternalServerErrorWhenServiceThrowsException
-
-//Get upcoming service records — paginated
-//- [ ] getUpcomingServiceRecordsPaginated_shouldReturnOk
-//- [ ] getUpcomingServiceRecordsPaginated_shouldReturnInternalServerErrorWhenServiceThrowsException
-
-//Get overdue service records — paginated
-//- [ ] getOverdueServiceRecordsPaginated_shouldReturnOk
-//- [ ] getOverdueServiceRecordsPaginated_shouldReturnInternalServerErrorWhenServiceThrowsException
