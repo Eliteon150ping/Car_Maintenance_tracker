@@ -1,5 +1,8 @@
 package sia.sever.dto.car;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CarSummaryDTO {
 
     /*  Made a summary of car info to use in other dtos to show only the necessary info                      */
@@ -12,7 +15,13 @@ public class CarSummaryDTO {
     private int currentMileage;
 
     // Constructor
-    public CarSummaryDTO(Long id, String brand, String model, int year, int currentMileage) {
+    @JsonCreator
+    public CarSummaryDTO(
+            @JsonProperty("id") Long id,
+            @JsonProperty("brand") String brand,
+            @JsonProperty("model") String model,
+            @JsonProperty("year") int year,
+            @JsonProperty("currentMileage") int currentMileage) {
 
         this.id = id;
         this.brand = brand;

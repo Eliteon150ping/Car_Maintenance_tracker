@@ -2,6 +2,8 @@ package sia.sever.dto.serviceRecord;
 
 import sia.sever.dto.car.CarSummaryDTO;
 import sia.sever.enums.ServiceType;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 
@@ -22,17 +24,20 @@ public class ServiceRecordResponseDTO {
     private boolean isLatestRecord;
 
     // Constructor
-    public ServiceRecordResponseDTO(Long id, LocalDate serviceDate,
-                                    int mileageAtService,
-                                    Integer nextDueMileage,
-                                    LocalDate nextDueDate,
-                                    ServiceType serviceType,
-                                    double cost,
-                                    String description,
-                                    Integer remainingKm,
-                                    Integer remainingDays,
-                                    CarSummaryDTO car,
-                                    boolean isLatestRecord) {
+    @JsonCreator
+    public ServiceRecordResponseDTO(
+            @JsonProperty("id") Long id,
+            @JsonProperty("serviceDate") LocalDate serviceDate,
+            @JsonProperty("mileageAtService") int mileageAtService,
+            @JsonProperty("nextDueMileage") Integer nextDueMileage,
+            @JsonProperty("nextDueDate") LocalDate nextDueDate,
+            @JsonProperty("serviceType") ServiceType serviceType,
+            @JsonProperty("cost") double cost,
+            @JsonProperty("description") String description,
+            @JsonProperty("remainingKm") Integer remainingKm,
+            @JsonProperty("remainingDays") Integer remainingDays,
+            @JsonProperty("car")  CarSummaryDTO car,
+            @JsonProperty("latestRecord")  boolean isLatestRecord) {
 
         this.id = id;
         this.serviceDate = serviceDate;
@@ -93,7 +98,7 @@ public class ServiceRecordResponseDTO {
         return car;
     }
 
-    public boolean isLatestRecord(){
+    public boolean isLatestRecord() {
         return isLatestRecord;
     }
 }

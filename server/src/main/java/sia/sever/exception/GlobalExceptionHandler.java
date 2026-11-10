@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice // Better than @ControllerAdvice for rest apis, returning json instead of for returning html
@@ -33,6 +31,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidInput(InvalidClassException invalidInput, HttpServletRequest request) {
         ErrorResponse invalidInputEntered = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), invalidInput.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(invalidInputEntered, HttpStatus.BAD_REQUEST);
+    }
+
+    // Handle Duplicate Record
+    @ExceptionHandler(DuplicateServiceRecordException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateServiceRecord(DuplicateServiceRecordException invalidInput, HttpServletRequest request) {
+        ErrorResponse invalidDuplicateServiceRecordException = new ErrorResponse(LocalDateTime.now(), HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(), invalidInput.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(invalidDuplicateServiceRecordException, HttpStatus.CONFLICT);
     }
 
     // Handle Invalid mileage

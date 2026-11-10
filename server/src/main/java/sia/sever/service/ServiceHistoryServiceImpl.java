@@ -19,6 +19,7 @@ import sia.sever.exception.*;
 import sia.sever.repository.CarRepository;
 import sia.sever.repository.ServiceHistoryRepository;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -40,15 +41,21 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
 
+    private final Clock clock;
+
     private static final int UPCOMING_DAYS_THRESHOLD = 30;
     private static final int UPCOMING_KM_THRESHOLD = 1500;
 
     @Autowired
-    public ServiceHistoryServiceImpl(ServiceHistoryRepository serviceHistoryRepository,
-                                     CarRepository carRepository, UserRepository userRepository) {
+    public ServiceHistoryServiceImpl(
+            ServiceHistoryRepository serviceHistoryRepository,
+            CarRepository carRepository,
+            UserRepository userRepository,
+            Clock clock) {
         this.serviceHistoryRepository = serviceHistoryRepository;
         this.carRepository = carRepository;
         this.userRepository = userRepository;
+        this.clock = clock;
     }
 
     // Mapper for DTO and service to return a service record object for a car to the frontend
@@ -105,7 +112,6 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         }
     }
 
-
     // Create a service record
     @Override
     public ServiceRecordResponseDTO createServiceHistory(CreateServiceRecordDTO serviceHistory, Long carId) {
@@ -148,7 +154,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
         boolean isExistingRecord = serviceHistoryRepository.existsByCarAndServiceTypeAndServiceDateAndMileageAtService(car,
                 serviceHistory.getServiceType(), serviceHistory.getServiceDate(), serviceHistory.getMileageAtService());
         if (isExistingRecord) {
-            throw new InvalidClassException("Cannot add duplicate service record for the same service type with same mileage and date");
+            throw new DuplicateServiceRecordException("Cannot add duplicate service record for the same service type with same mileage and date");
         }
 
         // Check if 'Other' service is selected then make use of custom notes for it
@@ -647,7 +653,7 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService {
 
     // Check if user did not do a service, give the days remaining
     private int calculateRemainingDays(ServiceHistory serviceHistory) {
-        return (int) ChronoUnit.DAYS.between(LocalDate.now(), serviceHistory.getNextDueDate());
+        return (int) ChronoUnit.DAYS.between(LocalDate.now(clock), serviceHistory.getNextDueDate());
     }
 
     // Get authenticated user helper method
