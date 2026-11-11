@@ -12,6 +12,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import sia.sever.security.jwt.JwtAuthenticationFilter;
 import sia.sever.security.jwt.JwtUtility;
 import sia.sever.security.userDetails.CustomUserDetailsService;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 import java.util.List;
 
@@ -46,9 +48,20 @@ public class SecurityConfig {
                         .permitAll()
                         // Everything else requires authentication
                         .anyRequest().authenticated()
+
                 )
+
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+                        )
+                )
+
                 // No sessions (JWT = stateless)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(
+                        session -> session
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 // Add JWT filter before Spring's authentication filter
                 .addFilterBefore(new JwtAuthenticationFilter(userService, jwtUtility), UsernamePasswordAuthenticationFilter.class);
         return http.build();

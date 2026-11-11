@@ -8,7 +8,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import sia.sever.dto.car.CarSummaryDTO;
 import sia.sever.dto.serviceRecord.ServiceRecordResponseDTO;
 import sia.sever.dto.serviceRecord.UpdateServiceRecordDTO;
 import sia.sever.entity.Car;
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Import;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
