@@ -1,0 +1,43 @@
+services:
+  # For PostgreSQL DB configuration
+  db:
+    image: postgres:17
+    container_name: car-maintenance-db
+    environment:
+      POSTGRES_DB: Car_Maintenance_tracker
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # For SpringBoot backend configuration
+  app:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: car-maintenance-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/Car_Maintenance_tracker
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
+#  Configuration	                      Purpose
+#  services	                Defines the containers Docker Compose manages.
+#  db	                    The service name. The backend will use this name to connect to PostgreSQL.
+#  image	                Uses the official PostgreSQL 17 image.
+#  container_name	        Gives the container a recognisable name.
+#  environment	            Configures the database name, username and password.
+#  ports	                Makes PostgreSQL accessible from your Windows computer.
+#  volumes	                Preserves database data between container restarts and recreations.
