@@ -1,4 +1,4 @@
-package sia.sever;
+package sia.sever.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

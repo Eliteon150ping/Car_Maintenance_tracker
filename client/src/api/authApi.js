@@ -4,7 +4,7 @@ export async function register(userName, email, password) {
     const user = { userName, email, password };
     const jsonString = JSON.stringify(user);
 
-    const response = await fetch("http://localhost:8080/api/users/auth/register", {
+    const response = await fetch("/api/users/auth/register", {
 
         method: "POST",
         body: jsonString,
@@ -30,7 +30,7 @@ export async function login(email, password) {
     const user = { email, password };
     const jsonString = JSON.stringify(user);
 
-    const response = await fetch("http://localhost:8080/api/users/auth/login", {  /* fetch() has two parameters:
+    const response = await fetch("/api/users/auth/login", {  /* fetch() has two parameters:
                                                                                     1) URL
                                                                                     2) Options object
                                                                                     (to either recieve or send data)
@@ -69,7 +69,7 @@ export async function getCurrentUser() {
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch("http://localhost:8080/api/users/profile", {
+    const response = await fetch("/api/users/profile", {
 
         method: "GET",
         headers: {
@@ -91,7 +91,7 @@ export async function updateUserDetails(profile) {
     const token = localStorage.getItem("token");
     const jsonUpdateProfile = JSON.stringify(profile);
 
-    const response = await fetch("http://localhost:8080/api/users/profile", {
+    const response = await fetch("/api/users/profile", {
 
         method: "PUT",
         body: jsonUpdateProfile,
@@ -120,7 +120,7 @@ export async function validateUserName(userName) {
     const token = localStorage.getItem("token");
     const profileUserName = JSON.stringify({userName});
 
-    const response = await fetch("http://localhost:8080/api/users/profile/username",{
+    const response = await fetch("/api/users/profile/username",{
 
         method: "PUT",
         body: profileUserName,
@@ -145,7 +145,7 @@ export async function deleteAccount(){
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch("http://localhost:8080/api/users/profile", {
+    const response = await fetch("/api/users/profile", {
 
         method: "DELETE",
         headers: {

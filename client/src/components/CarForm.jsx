@@ -33,7 +33,7 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
             setImageName("");
 
             if (editingCarForm.carImageUrl) {
-                setImagePreview(`http://localhost:8080${editingCarForm.carImageUrl}`);
+                setImagePreview(`${editingCarForm.carImageUrl}`);
             } else {
                 setImagePreview("/images/generic_car.png");
             }

@@ -14,7 +14,7 @@ function VehicleInformationCard({ brand, model, year, colour, currentMileage, on
 
             <img 
             className="vehicle-info-image" 
-            src={carImageUrl ? `http://localhost:8080${carImageUrl}` : "/images/generic_car.png"} 
+            src={carImageUrl ? `${carImageUrl}` : "/images/generic_car.png"} 
             alt={`${year} ${brand} ${year}`}
             />
 

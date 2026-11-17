@@ -15,7 +15,7 @@ function VehicleCard({ id, brand, model, year, currentMileage, onEdit, onDelete,
                     <div className="vehicle-card">
                         <img
                             className="vehicle-image"
-                            src={carImageUrl ? `http://localhost:8080${carImageUrl}` : "/images/generic_car.png"}
+                            src={carImageUrl ? `${carImageUrl}` : "/images/generic_car.png"}
                             alt={`${year} ${brand} ${model}`}
                         />
                         <h3 className="vehicle-name">{year} {brand} {model}</h3>

@@ -3,7 +3,7 @@ export async function getCarById(id) {
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:8080/api/my-cars/${id}`, {
+    const response = await fetch(`/api/my-cars/${id}`, {
 
         method: "GET",
         headers: {
@@ -26,7 +26,7 @@ export async function getServiceRecordsByCarId(id) {
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:8080/api/service-records/car/${id}`, {
+    const response = await fetch(`/api/service-records/car/${id}`, {
 
         method: "GET",
         headers: {
@@ -60,7 +60,7 @@ export async function getServiceRecordsByCarIdPaginated(id, page = 0, size = 6, 
         params.append("serviceCategories", serviceCategory);
     });
 
-    const response = await fetch(`http://localhost:8080/api/service-records/car/${id}/page?${params.toString()}`, {
+    const response = await fetch(`/api/service-records/car/${id}/page?${params.toString()}`, {
 
         method: "GET",
         headers: {
@@ -82,7 +82,7 @@ export async function getLatestServiceInfo(carId) {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        `http://localhost:8080/api/service-records/car/${carId}/latest-info`,
+        `/api/service-records/car/${carId}/latest-info`,
         {
             method: "GET",
             headers: {
@@ -106,7 +106,7 @@ export async function addServiceRecord(carId, serviceRecord) {
     const token = localStorage.getItem("token");
     const jsonServiceRecord = JSON.stringify(serviceRecord);
 
-    const response = await fetch(`http://localhost:8080/api/service-records/car/${carId}`, {
+    const response = await fetch(`/api/service-records/car/${carId}`, {
 
         method: "POST",
         body: jsonServiceRecord,
@@ -135,7 +135,7 @@ export async function validateDuplicateRecord(carId, serviceType, serviceDate, m
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        `http://localhost:8080/api/service-records/car/${carId}/validate-duplicate?serviceType=${serviceType}&serviceDate=${serviceDate}&mileageAtService=${mileageAtService}`,
+        `/api/service-records/car/${carId}/validate-duplicate?serviceType=${serviceType}&serviceDate=${serviceDate}&mileageAtService=${mileageAtService}`,
         {
             method: "POST",
             headers: {
@@ -163,7 +163,7 @@ export async function editServiceRecord(carId, id, serviceRecord){
     const token = localStorage.getItem("token");
     const jsonServiceRecord = JSON.stringify(serviceRecord);
 
-    const response = await fetch(`http://localhost:8080/api/service-records/car/${carId}/service/${id}`, {
+    const response = await fetch(`/api/service-records/car/${carId}/service/${id}`, {
 
         method: "PUT",
         body: jsonServiceRecord,
@@ -187,7 +187,7 @@ export async function getAllServiceRecords() {
     
     const token = localStorage.getItem("token");
 
-    const response = await fetch("http://localhost:8080/api/service-records", {
+    const response = await fetch("/api/service-records", {
 
         method: "GET",
         headers: {
@@ -220,7 +220,7 @@ export async function getAllServiceRecordsPaginated(page = 0, size = 6, serviceT
         params.append("serviceCategories", serviceCategory);
     });
 
-    const response = await fetch(`http://localhost:8080/api/service-records/page?${params.toString()}`,
+    const response = await fetch(`/api/service-records/page?${params.toString()}`,
         {
             method: "GET",
             headers:{
@@ -241,7 +241,7 @@ export async function getServiceTypes(){
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:8080/api/lookups/service-types`, {
+    const response = await fetch(`/api/lookups/service-types`, {
 
         method: "GET",
         headers: {
@@ -263,7 +263,7 @@ export async function getUpcomingRecords(){
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch("http://localhost:8080/api/service-records/upcoming", {
+    const response = await fetch("/api/service-records/upcoming", {
 
         method: "GET",
         headers: {
@@ -298,7 +298,7 @@ export async function getUpcomingRecordsPaginated(page = 0, size = 6, serviceTyp
     });
 
     const response = await fetch(
-        `http://localhost:8080/api/service-records/upcoming/page?${params.toString()}`,
+        `/api/service-records/upcoming/page?${params.toString()}`,
         {
             method: "GET",
             headers: {
@@ -319,7 +319,7 @@ export async function getOverdueRecords(){
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch("http://localhost:8080/api/service-records/overdue", {
+    const response = await fetch("/api/service-records/overdue", {
 
         method: "GET",
         headers: {
@@ -354,7 +354,7 @@ export async function getOverdueRecordsPaginated(page = 0, size = 6, serviceType
     });
 
     const response = await fetch(
-        `http://localhost:8080/api/service-records/overdue/page?${params.toString()}`,
+        `/api/service-records/overdue/page?${params.toString()}`,
         {
             method: "GET",
             headers: {

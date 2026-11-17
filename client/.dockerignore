@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.vscode
+.idea
+npm-debug.log*
+
+# Why are we doing this?
+# - node_modules contains locally installed dependencies. Docker installs its own dependencies inside the image.
+# - dist contains an old frontend build. Docker will generate a fresh one.
+# - .git, .vscode and .idea aren't needed to build or serve the frontend.

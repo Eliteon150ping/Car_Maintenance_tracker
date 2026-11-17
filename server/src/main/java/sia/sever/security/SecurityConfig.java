@@ -72,7 +72,7 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Trusted frontend URL to
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000")); // Trusted frontend URL to
         // accept requests
         // For get, post, put etc.
         configuration.setAllowedMethods(List.of("POST", "GET", "PUT", "DELETE", "OPTIONS"));

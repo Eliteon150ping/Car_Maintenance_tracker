@@ -30,14 +30,16 @@ services:
     depends_on:
       - db
 
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: car-maintenance-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - app
+
 volumes:
   postgres_data:
-
-#  Configuration	                      Purpose
-#  services	                Defines the containers Docker Compose manages.
-#  db	                    The service name. The backend will use this name to connect to PostgreSQL.
-#  image	                Uses the official PostgreSQL 17 image.
-#  container_name	        Gives the container a recognisable name.
-#  environment	            Configures the database name, username and password.
-#  ports	                Makes PostgreSQL accessible from your Windows computer.
-#  volumes	                Preserves database data between container restarts and recreations.
+  

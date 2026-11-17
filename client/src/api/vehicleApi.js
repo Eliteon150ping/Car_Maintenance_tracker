@@ -3,7 +3,7 @@ export async function getAllVehicles() { // Async functions performs work that t
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch("http://localhost:8080/api/my-cars", { // Await means Pause this function until the 
+    const response = await fetch("/api/my-cars", { // Await means Pause this function until the 
         // backend replies with the JSON response body.
 
         method: "GET",
@@ -26,7 +26,7 @@ export async function addCar(carData) {
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch("http://localhost:8080/api/my-cars", {
+    const response = await fetch("/api/my-cars", {
 
         method: "POST",
         body: carData,
@@ -48,7 +48,7 @@ export async function editCar(id, carData) {
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:8080/api/my-cars/${id}`, {
+    const response = await fetch(`/api/my-cars/${id}`, {
 
         method: "PUT",
         body: carData,
@@ -75,7 +75,7 @@ export async function validateMileage(id, mileage) {
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:8080/api/my-cars/${id}/mileage`, {
+    const response = await fetch(`/api/my-cars/${id}/mileage`, {
 
         method: "PUT",
         body: JSON.stringify({ mileage }),
@@ -100,7 +100,7 @@ export async function deleteCar(id) {
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:8080/api/my-cars/${id}`, {
+    const response = await fetch(`/api/my-cars/${id}`, {
 
         method: "DELETE",
         headers: {
@@ -126,7 +126,7 @@ export async function searchVehicles(search) {
     }
 
     const response = await fetch(
-        `http://localhost:8080/api/my-cars/search?${params.toString()}`,
+        `/api/my-cars/search?${params.toString()}`,
         {
             method: "GET",
             headers: {
