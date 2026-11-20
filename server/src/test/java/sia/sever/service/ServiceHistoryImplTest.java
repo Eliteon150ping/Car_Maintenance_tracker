@@ -27,6 +27,7 @@ import sia.sever.repository.ServiceHistoryRepository;
 import sia.sever.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +51,8 @@ public class ServiceHistoryImplTest {
     @Mock
     private ServiceHistoryRepository serviceHistoryRepository;
 
-    @InjectMocks
+    private final Clock clock = Clock.systemDefaultZone();
+
     private ServiceHistoryServiceImpl serviceHistoryService;
 
     @BeforeEach
@@ -61,6 +63,13 @@ public class ServiceHistoryImplTest {
                         "password",
                         java.util.List.of()
                 )
+        );
+
+        serviceHistoryService = new ServiceHistoryServiceImpl(
+                serviceHistoryRepository,
+                carRepository,
+                userRepository,
+                clock
         );
     }
 
@@ -384,7 +393,7 @@ public class ServiceHistoryImplTest {
         );
 
         assertThrows(
-                InvalidClassException.class,
+                DuplicateServiceRecordException.class,
                 () -> serviceHistoryService.createServiceHistory(serviceRecordDTO, 1L)
         );
 

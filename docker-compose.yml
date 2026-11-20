@@ -39,7 +39,16 @@ services:
       - "3000:80"
     depends_on:
       - app
+    networks:
+      default:
+        ipv4_address: 172.18.0.10
 
 volumes:
   postgres_data:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
   

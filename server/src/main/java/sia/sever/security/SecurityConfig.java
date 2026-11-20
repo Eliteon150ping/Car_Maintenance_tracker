@@ -14,6 +14,8 @@ import sia.sever.security.jwt.JwtUtility;
 import sia.sever.security.userDetails.CustomUserDetailsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.context.annotation.Profile;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.List;
 
@@ -29,7 +31,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            ObjectProvider<RateLimitingFilter> rateLimitingFilterProvider
+
+    ) throws Exception {
 
         // Disable CSRF (stateless API)
         http.csrf(csrf -> csrf.disable())
@@ -63,8 +69,22 @@ public class SecurityConfig {
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 // Add JWT filter before Spring's authentication filter
-                .addFilterBefore(new JwtAuthenticationFilter(userService, jwtUtility), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(userService, jwtUtility),
+                        UsernamePasswordAuthenticationFilter.class
+                );
+
+        rateLimitingFilterProvider.ifAvailable(filter ->
+                http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+        );
+
         return http.build();
+    }
+
+    @Bean
+    @Profile("!test")
+    public RateLimitingFilter rateLimitingFilter() {
+        return new RateLimitingFilter();
     }
 
     @Bean
