@@ -1,22 +1,22 @@
-.vehicle-page{
+.vehicle-page {
     width: 500px;
     margin: 40px auto;
     padding: 20px;
     box-sizing: border-box;
 }
 
-.vehicle-search{
-    width: 100vw;
+.vehicle-search {
+    width: 100%;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     box-sizing: border-box;
-    padding-right: 213px;
-    margin-left: calc((500px - 100vw) / 2);
-    margin-bottom: 10px;
+    padding: 0 30px;
+    margin: 0 auto 10px;
 }
 
-.vehicle-search input{
+.vehicle-search input {
     width: 400px;
+    max-width: 100%;
     padding: 5px 15px;
     border: 1px solid deepskyblue;
     border-radius: 20px;
@@ -25,30 +25,38 @@
     box-sizing: border-box;
 }
 
-.vehicle-search input:focus{
+.vehicle-search input:focus {
     border: 1px solid deepskyblue;
     animation: colourGlowSearch 1.5s ease-in-out infinite;
 }
 
 @keyframes colourGlowSearch {
-    0%,100%{
+
+    0%,
+    100% {
         box-shadow: 0 0 3px deepskyblue;
     }
-    50%{
+
+    50% {
         box-shadow: 0 0 12px deepskyblue;
     }
 }
 
-.card-flow{
+.card-flow {
     display: grid;
-    grid-template-columns: repeat(10 , 140px);
+    width: min(calc(100vw - 40px), 1535px);
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+
+    grid-template-columns: repeat(auto-fit, 140px);
     grid-auto-rows: 250px;
     gap: 15px;
-    justify-content: center;
+    justify-content: start;
     padding-top: 10px;
 }
 
-.add-button{
+.add-button {
     width: 100%;
     height: 100%;
     padding: 10px;
@@ -66,28 +74,70 @@
     background-color: aliceblue;
 }
 
-.add-button:hover{
+.add-button:hover {
     opacity: 0.9;
     transform: translateY(-6px);
     animation: orangeGlow 1.5s ease-in-out infinite;
 }
 
 @keyframes orangeGlow {
-    0%, 100%{
+
+    0%,
+    100% {
         box-shadow: 0 0 3px orange;
     }
 
-    50%{
+    50% {
         box-shadow: 0 0 12px orange;
     }
 }
 
-.no-cars{
+.no-cars {
     grid-column: 1 / -1;
-    padding: 50px;
+    width: 100%;
+    padding: 30px 10px;
     color: grey;
-    font-size: 50px;
-    margin-left: -350px;
-    margin-right: -350px;
+    font-size: 30px;
+    margin: 0;
     text-align: center;
+    box-sizing: border-box;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+    .vehicle-page {
+        width: 100%;
+        max-width: 500px;
+        padding: 15px;
+        margin: 20px auto;
+    }
+
+    .card-flow {
+        width: 100%;
+        left: auto;
+        transform: none;
+        grid-template-columns: repeat(2, 140px);
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .vehicle-search {
+        width: 100%;
+        margin: 0 0 10px 0;
+        padding: 0 15px;
+        justify-content: center;
+    }
+
+    .vehicle-search input {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .no-cars {
+        margin-left: 0;
+        margin-right: 0;
+        font-size: 24px;
+        padding: 20px;
+    }
 }

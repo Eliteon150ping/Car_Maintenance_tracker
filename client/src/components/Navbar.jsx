@@ -1,28 +1,68 @@
 // Components are reusable pieces of UI that can be shared across multiple pages to avoid duplicating code
+
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import "../styles/Navbar.css"
+import "../styles/Navbar.css";
 import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
 
     const { user } = useAuth();
 
-    return (
-        <nav>
-            <h2>Car Maintenance Tracker</h2>
-            {user ? (
-                <ul>
-                    <Link className="link" to="/">Dashboard</Link>
-                    <Link className="link" to="/vehicles">My Garage</Link>
-                    <Link className="link" to="/profile">Profile</Link>
+    // Controls whether the mobile menu is open
+    const [menuOpen, setMenuOpen] = useState(false);
 
-                </ul>
-            ) : (
-                <ul>
-                    <Link className="link" to="/login">Login</Link>
-                    <Link className="link" to="/register">Register</Link>
-                </ul>
-            )}
+    // Closes the menu after selecting a link
+    const closeMenu = () => {
+        setMenuOpen(false);
+    };
+
+    return (
+        <nav className="navbar">
+
+            <h2 className="navbar-brand">
+                Car Maintenance Tracker
+            </h2>
+
+            <button
+                className="navbar-toggle"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="Toggle navigation menu"
+                aria-expanded={menuOpen}
+                type="button"
+            >
+                {menuOpen ? "✕" : "☰"}
+            </button>
+
+            <ul className={`navbar-links ${menuOpen ? "is-open" : ""}`}>
+
+                {user ? (
+                    <>
+                        <Link className="link" to="/" onClick={closeMenu}>
+                            Dashboard
+                        </Link>
+
+                        <Link className="link" to="/vehicles" onClick={closeMenu}>
+                            My Garage
+                        </Link>
+
+                        <Link className="link" to="/profile" onClick={closeMenu}>
+                            Profile
+                        </Link>
+                    </>
+                ) : (
+                    <>
+                        <Link className="link" to="/login" onClick={closeMenu}>
+                            Login
+                        </Link>
+
+                        <Link className="link" to="/register" onClick={closeMenu}>
+                            Register
+                        </Link>
+                    </>
+                )}
+
+            </ul>
 
         </nav>
     );

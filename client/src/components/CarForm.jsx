@@ -82,6 +82,8 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
         function validateYear() {
             if (!year) {
                 validationErrors.year = "Year cannot be empty";
+            }else if(Number(year) > new Date().getFullYear()){
+                validationErrors.year = "Year cannot be in the future";
             }
         }
 

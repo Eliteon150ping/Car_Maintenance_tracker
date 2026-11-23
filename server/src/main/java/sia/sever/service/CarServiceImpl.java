@@ -22,11 +22,8 @@ import sia.sever.repository.UserRepository;
 import sia.sever.specification.CarSpecification;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.UUID;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 

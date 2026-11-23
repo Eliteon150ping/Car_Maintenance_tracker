@@ -1,5 +1,7 @@
 .dashboard-page {
-    width: 500px;
+    width: 100%;
+    max-width: 540px;
+    box-sizing: border-box;
     margin: 40px auto;
     padding: 20px;
 }
@@ -72,10 +74,13 @@
 }
 
 .dashboard-info {
-    width: 100vw;
+    width: 100%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     margin-top: 20px;
-    margin-left: calc(50% - 50vw);
-    padding: 40px 10%;
+    margin-left: 0;
+    padding: 40px 0px;
     box-sizing: border-box;
     background-color: #f7f7f7;
     text-align: center;
@@ -87,6 +92,7 @@
     border: 1px solid orange;
     padding: 15px;
     border-radius: 15px;
+    box-sizing: border-box;
 }
 
 .dashboard-info-section:last-child {
@@ -103,4 +109,20 @@
     font-size: 16px;
     line-height: 1.7;
     margin: 0;
+}
+
+/* Mobile look */
+@media (max-width: 480px) {
+
+    .dashboard-page {
+        width: 100%;
+        padding: 15px;
+        margin: 20px auto;
+    }
+
+    .summary-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 15px;
+    }
+
 }
