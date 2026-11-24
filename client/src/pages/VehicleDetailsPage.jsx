@@ -265,49 +265,54 @@ function VehicleDetailsPage({ showExtraDetails }) {
                 />
             )}
 
-            {!showServiceForm && !showCarForm && (
-                <div className={`service-record-header ${showExtraDetails ? "with-car" : "without-car"}`}>
-                    <div>Service Date</div>
-                    <div>Mileage at service</div>
-                    <div>Service Type</div>
-                    <div>Description</div>
-                    <div>Cost</div>
-                    <div>Next due mileage</div>
-                    <div>Next due date</div>
-                    <div>Remaining KM</div>
-                    <div>Remaining Days</div>
-                    <div>Edit</div>
-                </div>
+            <div className="service-record-scroll">
+
+                {!showServiceForm && !showCarForm && (
+                    <div className={`service-record-header ${showExtraDetails ? "with-car" : "without-car"}`}>
+                        <div>Service Date</div>
+                        <div>Mileage at service</div>
+                        <div>Service Type</div>
+                        <div>Description</div>
+                        <div>Cost</div>
+                        <div>Next due mileage</div>
+                        <div>Next due date</div>
+                        <div>Remaining KM</div>
+                        <div>Remaining Days</div>
+                        <div>Edit</div>
+                    </div>
+                )}
+
+                {!showServiceForm && !showCarForm && serviceRecords.map(serviceRecord => (
+                    <VehicleDetailsCard
+                        key={serviceRecord.id}
+                        id={serviceRecord.id}
+                        serviceDate={serviceRecord.serviceDate}
+                        mileageAtService={serviceRecord.mileageAtService}
+                        nextDueMileage={serviceRecord.nextDueMileage}
+                        nextDueDate={serviceRecord.nextDueDate}
+                        serviceType={serviceRecord.serviceType}
+                        isLatestRecord={serviceRecord.latestRecord}
+                        cost={serviceRecord.cost}
+                        description={serviceRecord.description}
+                        remainingKm={serviceRecord.remainingKm}
+                        remainingDays={serviceRecord.remainingDays}
+                        highlightRemaining={true}
+
+                        // Store the selected service record in state and open the form.
+                        // The form receives this object as a prop and fills the inputs using useEffect. 
+                        onEdit={() => {
+                            setEditingServiceRecord(serviceRecord);
+                            setShowServiceForm(true);
+                        }}
+                    />
+                ))}
+            </div>
+
+            {!showServiceForm && !showCarForm && serviceRecords.length === 0 && (
+                <p className="not-available">
+                    No service records exist for this car yet...
+                </p>
             )}
-
-            {!showServiceForm && serviceRecords.length === 0 && (
-                <p className="not-available">No service records exist for this car yet...</p>
-            )}
-
-            {!showServiceForm && !showCarForm && serviceRecords.map(serviceRecord => (
-                <VehicleDetailsCard
-                    key={serviceRecord.id}
-                    id={serviceRecord.id}
-                    serviceDate={serviceRecord.serviceDate}
-                    mileageAtService={serviceRecord.mileageAtService}
-                    nextDueMileage={serviceRecord.nextDueMileage}
-                    nextDueDate={serviceRecord.nextDueDate}
-                    serviceType={serviceRecord.serviceType}
-                    isLatestRecord={serviceRecord.latestRecord}
-                    cost={serviceRecord.cost}
-                    description={serviceRecord.description}
-                    remainingKm={serviceRecord.remainingKm}
-                    remainingDays={serviceRecord.remainingDays}
-                    highlightRemaining={true}
-
-                    // Store the selected service record in state and open the form.
-                    // The form receives this object as a prop and fills the inputs using useEffect. 
-                    onEdit={() => {
-                        setEditingServiceRecord(serviceRecord);
-                        setShowServiceForm(true);
-                    }}
-                />
-            ))}
 
             {serviceRecords.length > 0 && !showServiceForm && !showCarForm && (
                 <div className="pagination-controls">

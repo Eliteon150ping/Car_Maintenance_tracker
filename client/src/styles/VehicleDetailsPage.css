@@ -1,5 +1,7 @@
 .vehicle-details-page {
-    width: 500px;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
     margin: 40px auto;
     padding: 20px;
     position: relative;
@@ -54,7 +56,7 @@
     animation: deepskyblueGlow 1.5s ease-in-out infinite;
 }
 
-.service-filter-panel h3{
+.service-filter-panel h3 {
     text-align: center;
 }
 
@@ -95,7 +97,7 @@
     transition: all 0.25s ease;
 }
 
-.service-filter-actions button:hover{
+.service-filter-actions button:hover {
     opacity: 0.9;
     transform: translateY(-6px);
 }
@@ -128,7 +130,7 @@
     border-right: none;
 }
 
-.pagination-controls{
+.pagination-controls {
     display: flex;
     padding: 10px;
     justify-content: end;
@@ -136,13 +138,13 @@
     color: black;
 }
 
-.pagination-info{
+.pagination-info {
     padding-left: 10px;
     padding-right: 10px;
     margin-top: 10px;
 }
 
-.pagination-button{
+.pagination-button {
     padding: 8px;
     background-color: deepskyblue;
     border: none;
@@ -151,7 +153,87 @@
     width: 70px;
 }
 
-.pagination-button:not(:disabled):hover{
+.pagination-button:not(:disabled):hover {
     animation: deepskyblueGlow 1.5s ease-in-out infinite;
     cursor: pointer;
+}
+
+@media (max-width: 600px) {
+
+    .service-record-scroll {
+        width: calc(100vw - 30px);
+        overflow-x: auto;
+        overflow-y: hidden;
+        margin-top: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .service-record-header,
+    .vehicle-details-card {
+        margin-left: 0;
+    }
+
+    .service-record-actions {
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .add-service-record-button {
+        margin-left: 0;
+        margin-top: 20px;
+        width: auto;
+        font-size: 14px;
+    }
+
+    .service-filter-button {
+        margin-right: 0;
+        margin-top: 20px;
+    }
+
+    .pagination-controls {
+        width: 100%;
+        margin-right: 0;
+        padding: 10px 0;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    .pagination-info {
+        padding: 0;
+        margin: 0;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .pagination-button {
+        width: 65px;
+        padding: 8px 4px;
+        font-size: 13px;
+    }
+
+    .service-filter-panel {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100%;
+        margin: 10px 0 15px;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .not-available {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        text-align: center;
+        padding: 0 5px;
+        margin: 15px auto;
+        font-size: 17px;
+    }
 }

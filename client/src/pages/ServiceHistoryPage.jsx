@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import VehicleDetailsCard from "../components/VehicleDetailsCard";
-import { getAllServiceRecordsPaginated} from "../api/vehicleDetailsApi";
+import { getAllServiceRecordsPaginated } from "../api/vehicleDetailsApi";
 import { useNavigate } from "react-router-dom";
 import "../styles/ServiceHistoryPage.css";
 import { FaFilter } from "react-icons/fa";
@@ -21,7 +21,7 @@ function ServiceHistoryPage({ showExtraDetails }) {
     const navigate = useNavigate();
 
     const serviceTypeOptions = [
-        
+
         { value: "ENGINE_OIL_AND_FILTER", label: "Engine Oil & Filter" },
         { value: "AIR_FILTER", label: "Air Filter" },
         { value: "SPARK_PLUGS", label: "Spark Plugs" },
@@ -123,60 +123,63 @@ function ServiceHistoryPage({ showExtraDetails }) {
                 showFilters={showFilters}
             />
 
-            <div className={`service-record-header ${showExtraDetails ? "without-car" : "with-car"}`}>
-                <div>Car</div>
-                <div>Service Date</div>
-                <div>Mileage at service</div>
-                <div>Service Type</div>
-                <div>Description</div>
-                <div>Cost</div>
-                <div>Next due mileage</div>
-                <div>Next due date</div>
-                <div>Remaining KM</div>
-                <div>Remaining Days</div>
-                <div>Edit</div>
+            <div className="service-record-scroll">
+
+                <div className={`service-record-header ${showExtraDetails ? "without-car" : "with-car"}`}>
+                    <div>Car</div>
+                    <div>Service Date</div>
+                    <div>Mileage at service</div>
+                    <div>Service Type</div>
+                    <div>Description</div>
+                    <div>Cost</div>
+                    <div>Next due mileage</div>
+                    <div>Next due date</div>
+                    <div>Remaining KM</div>
+                    <div>Remaining Days</div>
+                    <div>Edit</div>
+                </div>
+
+                {serviceRecords.map(serviceRecord => (
+                    <VehicleDetailsCard
+                        key={serviceRecord.id}
+                        id={serviceRecord.car.id}
+
+                        brand={serviceRecord.car.brand}
+                        model={serviceRecord.car.model}
+                        year={serviceRecord.car.year}
+
+                        serviceDate={serviceRecord.serviceDate}
+                        mileageAtService={serviceRecord.mileageAtService}
+                        nextDueMileage={serviceRecord.nextDueMileage}
+                        nextDueDate={serviceRecord.nextDueDate}
+                        serviceType={serviceRecord.serviceType}
+                        isLatestRecord={serviceRecord.latestRecord}
+                        cost={serviceRecord.cost}
+                        description={serviceRecord.description}
+                        remainingKm={serviceRecord.remainingKm}
+                        remainingDays={serviceRecord.remainingDays}
+                        showExtraDetails={true}
+                        highlightRemaining={true}
+
+                        onEdit={() => {
+                            navigate(`/vehicles/${serviceRecord.car.id}`, {
+                                state: { editingServiceRecordId: serviceRecord.id }
+                            });
+                        }}
+
+                    />
+                ))}
             </div>
 
             {serviceRecords.length === 0 && (
                 <p className="not-available">No recorded service records yet...</p>
             )}
 
-            {serviceRecords.map(serviceRecord => (
-                <VehicleDetailsCard
-                    key={serviceRecord.id}
-                    id={serviceRecord.car.id}
-
-                    brand={serviceRecord.car.brand}
-                    model={serviceRecord.car.model}
-                    year={serviceRecord.car.year}
-
-                    serviceDate={serviceRecord.serviceDate}
-                    mileageAtService={serviceRecord.mileageAtService}
-                    nextDueMileage={serviceRecord.nextDueMileage}
-                    nextDueDate={serviceRecord.nextDueDate}
-                    serviceType={serviceRecord.serviceType}
-                    isLatestRecord={serviceRecord.latestRecord}
-                    cost={serviceRecord.cost}
-                    description={serviceRecord.description}
-                    remainingKm={serviceRecord.remainingKm}
-                    remainingDays={serviceRecord.remainingDays}
-                    showExtraDetails={true}
-                    highlightRemaining={true}
-
-                    onEdit={() => {
-                        navigate(`/vehicles/${serviceRecord.car.id}`, {
-                            state: { editingServiceRecordId: serviceRecord.id }
-                        });
-                    }}
-
-                />
-            ))}
-
             {serviceRecords.length > 0 && (
                 <div className="pagination-controls">
 
                     <button
-                    className="pagination-button"
+                        className="pagination-button"
                         type="button"
                         onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 0}
@@ -185,7 +188,7 @@ function ServiceHistoryPage({ showExtraDetails }) {
                     <p className="pagination-info">Page {currentPage + 1} of {totalPages}</p>
 
                     <button
-                    className="pagination-button"
+                        className="pagination-button"
                         type="button"
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={(currentPage === totalPages - 1)}

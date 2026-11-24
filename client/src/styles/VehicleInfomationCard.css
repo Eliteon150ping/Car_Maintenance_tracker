@@ -66,3 +66,57 @@
     object-fit: cover;
     margin-right: 50px;
 }
+
+@media (max-width: 600px) {
+
+    .vehicle-information {
+        width: 100%;
+        margin-left: 0;
+        height: auto;
+        padding: 15px;
+        box-sizing: border-box;
+
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 10px;
+    }
+
+    .vehicle-info-content {
+        display: contents;
+    }
+
+    .vehicle-info {
+        grid-row: 1;
+        text-align: center;
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .vehicle-info-image {
+        grid-row: 2;
+        width: 180px;
+        height: 150px;
+        object-fit: contain;
+        margin: 0;
+    }
+
+    .vehicle-colour {
+        grid-row: 3;
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .vehicle-info-mileage {
+        grid-row: 4;
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .vehicle-info-edit {
+        grid-row: 5;
+        margin-top: 10px;
+        font-size: 18px;
+    }
+
+}

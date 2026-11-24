@@ -89,3 +89,48 @@
 .cancel-cancel {
     background-color: deepskyblue;
 }
+
+/* Mobile  */
+@media (max-width: 600px) {
+
+    .confirmation-modal {
+        width: calc(100% - 40px);
+        max-width: 400px;
+        box-sizing: border-box;
+        padding: 25px 15px;
+        transform: translateY(-30px);
+    }
+
+    .modal-h2 {
+        height: auto;
+        font-size: 20px;
+    }
+
+    .modal-p {
+        font-size: 16px;
+        padding: 10px 5px;
+        overflow-wrap: anywhere;
+    }
+
+    .modal-buttons {
+        padding-left: 0;
+        padding-right: 0;
+        gap: 8px;
+    }
+
+    .modal-button {
+        font-size: 14px;
+        padding: 10px 6px;
+        top: 15px;
+    }
+
+    @keyframes modalSlideUp {
+        from {
+            transform: translateY(30px);
+        }
+
+        to {
+            transform: translateY(-30px);
+        }
+    }
+}

@@ -121,53 +121,56 @@ function OverdueServicesPage({ showExtraDetails }) {
                 showFilters={showFilters}
             />
 
-            <div className={`service-record-header ${showExtraDetails ? "without-car" : "with-car"}`}>
-                <div>Car</div>
-                <div>Service Date</div>
-                <div>Mileage at service</div>
-                <div>Service Type</div>
-                <div>Description</div>
-                <div>Cost</div>
-                <div>Next due mileage</div>
-                <div>Next due date</div>
-                <div>Remaining KM</div>
-                <div>Remaining Days</div>
-                <div>Edit</div>
+            <div className="service-record-scroll">
+
+                <div className={`service-record-header ${showExtraDetails ? "without-car" : "with-car"}`}>
+                    <div>Car</div>
+                    <div>Service Date</div>
+                    <div>Mileage at service</div>
+                    <div>Service Type</div>
+                    <div>Description</div>
+                    <div>Cost</div>
+                    <div>Next due mileage</div>
+                    <div>Next due date</div>
+                    <div>Remaining KM</div>
+                    <div>Remaining Days</div>
+                    <div>Edit</div>
+                </div>
+
+                {serviceRecords.map(serviceRecord => (
+                    <VehicleDetailsCard
+                        key={serviceRecord.id}
+                        id={serviceRecord.car.id}
+
+                        brand={serviceRecord.car.brand}
+                        model={serviceRecord.car.model}
+                        year={serviceRecord.car.year}
+
+                        serviceDate={serviceRecord.serviceDate}
+                        mileageAtService={serviceRecord.mileageAtService}
+                        nextDueMileage={serviceRecord.nextDueMileage}
+                        nextDueDate={serviceRecord.nextDueDate}
+                        serviceType={serviceRecord.serviceType}
+                        isLatestRecord={serviceRecord.latestRecord}
+                        cost={serviceRecord.cost}
+                        description={serviceRecord.description}
+                        remainingKm={serviceRecord.remainingKm}
+                        remainingDays={serviceRecord.remainingDays}
+                        showExtraDetails={true}
+                        highlightRemaining={true}
+
+                        onEdit={() => {
+                            navigate(`/vehicles/${serviceRecord.car.id}`, {
+                                state: { editingServiceRecordId: serviceRecord.id }
+                            });
+                        }}
+                    />
+                ))}
             </div>
 
             {serviceRecords.length === 0 && (
                 <p className="not-available">No overdue services yet...</p>
             )}
-
-            {serviceRecords.map(serviceRecord => (
-                <VehicleDetailsCard
-                    key={serviceRecord.id}
-                    id={serviceRecord.car.id}
-
-                    brand={serviceRecord.car.brand}
-                    model={serviceRecord.car.model}
-                    year={serviceRecord.car.year}
-
-                    serviceDate={serviceRecord.serviceDate}
-                    mileageAtService={serviceRecord.mileageAtService}
-                    nextDueMileage={serviceRecord.nextDueMileage}
-                    nextDueDate={serviceRecord.nextDueDate}
-                    serviceType={serviceRecord.serviceType}
-                    isLatestRecord={serviceRecord.latestRecord}
-                    cost={serviceRecord.cost}
-                    description={serviceRecord.description}
-                    remainingKm={serviceRecord.remainingKm}
-                    remainingDays={serviceRecord.remainingDays}
-                    showExtraDetails={true}
-                    highlightRemaining={true}
-
-                    onEdit={() => {
-                        navigate(`/vehicles/${serviceRecord.car.id}`, {
-                            state: { editingServiceRecordId: serviceRecord.id }
-                        });
-                    }}
-                />
-            ))}
 
             {serviceRecords.length > 0 && (
                 <div className="pagination-controls">

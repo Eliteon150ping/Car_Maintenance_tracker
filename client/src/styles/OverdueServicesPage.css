@@ -17,3 +17,50 @@
     margin-bottom: 10px;
     margin-top: -40px;
 }
+
+@media (max-width: 600px) {
+
+    .service-overdue-page {
+        width: 100%;
+        max-width: 500px;
+        box-sizing: border-box;
+        padding: 15px;
+        margin: 20px auto;
+    }
+
+    .service-record-scroll {
+        width: calc(100vw - 30px);
+        overflow-x: auto;
+        overflow-y: hidden;
+        margin-top: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .service-record-header,
+    .vehicle-details-card {
+        margin-left: 0;
+    }
+
+    .service-overdue-page .service-filter-panel {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100%;
+        margin: 10px 0 15px;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .service-overdue-page .not-available {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        text-align: center;
+        padding: 0 5px;
+        margin: 15px auto;
+        font-size: 26px;
+    }
+}
