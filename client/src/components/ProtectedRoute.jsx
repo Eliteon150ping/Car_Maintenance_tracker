@@ -5,10 +5,15 @@ function ProtectedRoute({ children }) {
 
     const { user, loading } = useAuth();            // Bring the user auth state and loading from authContext
 
-    if (loading) {                                  // Redirect unauthenticated users to the login page
-        return <p>Loading...</p>
-    }
-
+    // Redirect unauthenticated users to the login page
+    if (loading) {
+    return (
+        <div className="loading-screen">
+            <div className="loading-spinner"></div>
+            <p>Loading...</p>
+        </div>
+    );
+}
     if (!user) {                    // If user is not logged in then redirect to login page 
         return (
             <Navigate to="/login" />

@@ -20,11 +20,11 @@ function App() {
       <Routes>
 
         <Route path="/" element={
-          <ProtectedRoute>
-            <MainLayout>
+          <MainLayout>
+            <ProtectedRoute>
               <DashboardPage />
-            </MainLayout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </MainLayout>
         } />
 
         <Route path="/login" element={
@@ -40,63 +40,63 @@ function App() {
         } />
 
         <Route path="/profile" element={
-          <ProtectedRoute>
-            <MainLayout>
+          <MainLayout>
+            <ProtectedRoute>
               <ProfilePage />
-            </MainLayout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </MainLayout>
         } />
 
         <Route path="/vehicles" element={
-          <ProtectedRoute>
-            <MainLayout>
+          <MainLayout>
+            <ProtectedRoute>
               <VehiclesPage />
-            </MainLayout>
-          </ProtectedRoute>
+            </ProtectedRoute>
+          </MainLayout>
         } />
 
         <Route
           path="/vehicles/:id"
           element={
-            <ProtectedRoute>
-              <MainLayout>
+            <MainLayout>
+              <ProtectedRoute>
                 <VehicleDetailsPage />
-              </MainLayout>
-            </ProtectedRoute>
+              </ProtectedRoute>
+            </MainLayout>
           }
         />
 
         <Route
           path="/service-history"
           element={
-            <ProtectedRoute>
-              <MainLayout>
+            <MainLayout>
+              <ProtectedRoute>
                 <ServiceHistoryPage />
-              </MainLayout>
-            </ProtectedRoute>
+              </ProtectedRoute>
+            </MainLayout>
           }
         />
 
-        <Route 
-        path="/upcoming-services"
-        element={
-          <ProtectedRoute>
+        <Route
+          path="/upcoming-services"
+          element={
             <MainLayout>
-              <UpcomingServicesPage />
+              <ProtectedRoute>
+                <UpcomingServicesPage />
+              </ProtectedRoute>
             </MainLayout>
-          </ProtectedRoute>
-        }
+          }
         />
 
-        <Route 
-        path="/overdue-services"
-        element={
-          <ProtectedRoute>
+        <Route
+          path="/overdue-services"
+          element={
             <MainLayout>
-              <OverdueServicesPage />
+              <ProtectedRoute>
+                <OverdueServicesPage />
+              </ProtectedRoute>
             </MainLayout>
-          </ProtectedRoute>
-        }
+          }
         />
 
       </Routes>

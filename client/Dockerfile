@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Copy the remaining frontend source code
 COPY . .
@@ -31,6 +31,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # AS build	                Names this stage so we can reference it later.
 # WORKDIR /app	            Sets the working directory inside the container.
 # COPY package*.json ./	    Copies package files before the source code.
-# RUN npm install	        Installs the frontend dependencies.
+# RUN npm ci	            Installs the frontend dependencies.
 # COPY . .	                Copies the rest of your React project.
 # RUN npm run build	        Creates the production-ready dist folder.

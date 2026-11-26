@@ -182,6 +182,7 @@ function CarForm({ onCancel, onSave, editingCarForm, carId }) {
             console.error("Error caught: " + error.message);
             setErrors(error.errors ? error.errors : { general: error.message });
             triggerShake();
+            throw error;
         }
     }
 

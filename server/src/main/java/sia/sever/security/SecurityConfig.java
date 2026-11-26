@@ -50,7 +50,8 @@ public class SecurityConfig {
                                 "/uploads/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html")
+                                "/swagger-ui.html",
+                                "/actuator/health")
                         .permitAll()
                         // Everything else requires authentication
                         .anyRequest().authenticated()
