@@ -66,3 +66,9 @@
 .cancel{
     background-color: red;
 }
+
+@media (max-width: 768px) {
+    .update-profile-page .password-input-container input.password-update-input {
+        padding-right: 55px;
+    }
+}

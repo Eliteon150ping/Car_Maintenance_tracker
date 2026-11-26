@@ -128,8 +128,8 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
 
             <label className="update-field">Enter a New Password
                 <PasswordInput
-                    className={errors.password ? (shake ? `input-error input-shake` : `input-error`) : ""}
-                    placeholder="(Optional) Enter a new password"
+                    className={`password-update-input ${errors.password ? (shake ? `input-error input-shake` : `input-error`) : ""}`}
+                    placeholder="New password (Optional)"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)} />
 
@@ -142,8 +142,8 @@ function UpdateProfileForm({ profile, onSave, onCancel }) {
 
             <label className="update-field">Confirm New Password
                 <PasswordInput
-                    className={errors.confirmPassword ? (shake ? `input-error input-shake` : `input-error`) : ""}
-                    placeholder="Confirm your new password before saving"
+                    className={`password-update-input ${errors.password ? (shake ? `input-error input-shake` : `input-error`) : ""}`}
+                    placeholder="Confirm new password"
                     value={confirmPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)} />
 

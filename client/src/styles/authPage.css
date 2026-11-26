@@ -112,3 +112,9 @@
 .password-toggle:hover {
     color: black;
 }
+
+@media (max-width: 768px) {
+    .password-input-container input {
+        padding-right: 50px;
+    }
+}
