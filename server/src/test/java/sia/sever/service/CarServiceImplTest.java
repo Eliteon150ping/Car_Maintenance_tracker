@@ -30,11 +30,19 @@ import sia.sever.entity.Car;
 import sia.sever.entity.User;
 import sia.sever.exception.InvalidMileageException;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.mock.web.MockMultipartFile;
+import org.junit.jupiter.api.io.TempDir;
+import java.nio.file.Path;
+import java.nio.file.Files;
+
 import org.junit.jupiter.api.AfterEach;
+
+import javax.imageio.ImageIO;
 
 @ExtendWith(MockitoExtension.class) // Enables Mockito
 class CarServiceImplTest {
@@ -48,6 +56,9 @@ class CarServiceImplTest {
     @InjectMocks // Creates CarServiceImpl and injects the mocked repositories into it.
     private CarServiceImpl carService;
 
+    @TempDir
+    Path tempDir;
+
     @BeforeEach
         // Runs setup before each test.
     void setUp() {
@@ -57,6 +68,12 @@ class CarServiceImplTest {
                         "password",
                         java.util.List.of()
                 )
+        );
+
+        org.springframework.test.util.ReflectionTestUtils.setField(
+                carService,
+                "uploadDir",
+                tempDir.toString()
         );
     }
 
@@ -835,4 +852,292 @@ class CarServiceImplTest {
                 any(Sort.class)
         );
     }
+
+    @Test
+    void createCar_shouldSaveCarWithValidPngImage() throws IOException {
+
+        User user = new User();
+
+        CreateCarDTO carDTO = new CreateCarDTO(
+                "Toyota",
+                "Corolla",
+                2001,
+                "Silver",
+                150000
+        );
+
+        // A small, valid 1x1 PNG image.
+        byte[] pngBytes = java.util.Base64.getDecoder().decode(
+                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l8sAAAAASUVORK5CYII="
+        );
+
+        MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "test.png",
+                "image/png",
+                pngBytes
+        );
+
+        when(userRepository.findByEmail("test@example.com"))
+                .thenReturn(user);
+
+        when(carRepository.save(any(Car.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        CarResponseDTO result = carService.createCar(carDTO, image);
+
+        assertNotNull(result.getCarImageUrl());
+        assertTrue(result.getCarImageUrl().endsWith(".png"));
+
+        // Confirm that the image was physically saved.
+        String fileName = result.getCarImageUrl()
+                .substring(result.getCarImageUrl().lastIndexOf("/") + 1);
+
+        assertTrue(Files.exists(tempDir.resolve(fileName)));
+
+        verify(carRepository).save(any(Car.class));
+    }
+
+    @Test
+    void createCar_shouldRejectInvalidImage() {
+
+        User user = new User();
+
+        CreateCarDTO carDTO = new CreateCarDTO(
+                "Toyota",
+                "Corolla",
+                2001,
+                "Silver",
+                150000
+        );
+
+        byte[] invalidBytes = "This is not an image".getBytes();
+
+        MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "fake.png",
+                "image/png",
+                invalidBytes
+        );
+
+        when(userRepository.findByEmail("test@example.com"))
+                .thenReturn(user);
+
+        assertThrows(
+                sia.sever.exception.ValidationException.class,
+                () -> carService.createCar(carDTO, image)
+        );
+
+        verify(carRepository, never()).save(any(Car.class));
+    }
+
+    @Test
+    void createCar_shouldRejectImageLargerThan10MB() {
+
+        User user = new User();
+
+        CreateCarDTO carDTO = new CreateCarDTO(
+                "Toyota",
+                "Corolla",
+                2001,
+                "Silver",
+                150000
+        );
+
+        // Create a file slightly larger than 10 MB.
+        byte[] oversizedBytes = new byte[10 * 1024 * 1024 + 1];
+
+        MultipartFile image = new MockMultipartFile(
+                "image",
+                "large.png",
+                "image/png",
+                oversizedBytes
+        );
+
+        when(userRepository.findByEmail("test@example.com"))
+                .thenReturn(user);
+
+        assertThrows(
+                sia.sever.exception.ValidationException.class,
+                () -> carService.createCar(carDTO, image)
+        );
+
+        verify(carRepository, never()).save(any(Car.class));
+    }
+
+    @Test
+    void createCar_shouldRejectCorruptedImageWithValidPngSignature() {
+
+        User user = new User();
+
+        CreateCarDTO carDTO = new CreateCarDTO(
+                "Toyota",
+                "Corolla",
+                2001,
+                "Silver",
+                150000
+        );
+
+        // Valid PNG signature, but the remaining image data is corrupted.
+        byte[] corruptedBytes = new byte[] {
+                (byte) 0x89, 0x50, 0x4E, 0x47,
+                0x0D, 0x0A, 0x1A, 0x0A,
+                0x00, 0x00, 0x00, 0x00
+        };
+
+        MultipartFile image = new MockMultipartFile(
+                "image",
+                "corrupted.png",
+                "image/png",
+                corruptedBytes
+        );
+
+        when(userRepository.findByEmail("test@example.com"))
+                .thenReturn(user);
+
+        assertThrows(
+                sia.sever.exception.ValidationException.class,
+                () -> carService.createCar(carDTO, image)
+        );
+
+        verify(carRepository, never()).save(any(Car.class));
+    }
+
+    @Test
+    void createCar_shouldRejectImageExceedingMaximumDimension() throws IOException {
+
+        User user = new User();
+
+        CreateCarDTO carDTO = new CreateCarDTO(
+                "Toyota",
+                "Corolla",
+                2001,
+                "Silver",
+                150000
+        );
+
+        // Create a valid PNG that exceeds the 6000-pixel width limit.
+        BufferedImage largeImage = new BufferedImage(
+                6001,
+                1,
+                BufferedImage.TYPE_INT_RGB
+        );
+
+        java.io.ByteArrayOutputStream outputStream =
+                new java.io.ByteArrayOutputStream();
+
+        ImageIO.write(largeImage, "png", outputStream);
+
+        MultipartFile image = new MockMultipartFile(
+                "image",
+                "large-dimensions.png",
+                "image/png",
+                outputStream.toByteArray()
+        );
+
+        when(userRepository.findByEmail("test@example.com"))
+                .thenReturn(user);
+
+        assertThrows(
+                sia.sever.exception.ValidationException.class,
+                () -> carService.createCar(carDTO, image)
+        );
+
+        verify(carRepository, never()).save(any(Car.class));
+    }
+
+    @Test
+    void createCar_shouldSaveCarWithValidJpegImage() throws IOException {
+
+        User user = new User();
+
+        CreateCarDTO carDTO = new CreateCarDTO(
+                "Toyota",
+                "Corolla",
+                2001,
+                "Silver",
+                150000
+        );
+
+        BufferedImage validImage = new BufferedImage(
+                1,
+                1,
+                BufferedImage.TYPE_INT_RGB
+        );
+
+        java.io.ByteArrayOutputStream outputStream =
+                new java.io.ByteArrayOutputStream();
+
+        ImageIO.write(validImage, "jpg", outputStream);
+
+        MultipartFile image = new MockMultipartFile(
+                "image",
+                "valid.jpg",
+                "image/jpeg",
+                outputStream.toByteArray()
+        );
+
+        when(userRepository.findByEmail("test@example.com"))
+                .thenReturn(user);
+
+        when(carRepository.save(any(Car.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        CarResponseDTO createdCar = carService.createCar(carDTO, image);
+
+        assertNotNull(createdCar.getCarImageUrl());
+        assertTrue(createdCar.getCarImageUrl().endsWith(".jpg"));
+
+        String fileName = createdCar.getCarImageUrl()
+                .substring(createdCar.getCarImageUrl().lastIndexOf("/") + 1);
+
+        assertTrue(Files.exists(tempDir.resolve(fileName)));
+
+        verify(carRepository).save(any(Car.class));
+    }
+
+
+    @Test
+    void createCar_shouldSaveCarWithValidWebpImage() throws IOException {
+
+        User user = new User();
+
+        CreateCarDTO carDTO = new CreateCarDTO(
+                "Toyota",
+                "Corolla",
+                2001,
+                "Silver",
+                150000
+        );
+
+        byte[] webpBytes = java.util.Base64.getDecoder().decode(
+                "UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA"
+        );
+
+        MultipartFile image = new MockMultipartFile(
+                "image",
+                "valid.webp",
+                "image/webp",
+                webpBytes
+        );
+
+        when(userRepository.findByEmail("test@example.com"))
+                .thenReturn(user);
+
+        when(carRepository.save(any(Car.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        CarResponseDTO createdCar = carService.createCar(carDTO, image);
+
+        assertNotNull(createdCar.getCarImageUrl());
+        assertTrue(createdCar.getCarImageUrl().endsWith(".webp"));
+
+        String fileName = createdCar.getCarImageUrl()
+                .substring(createdCar.getCarImageUrl().lastIndexOf("/") + 1);
+
+        assertTrue(Files.exists(tempDir.resolve(fileName)));
+
+        verify(carRepository).save(any(Car.class));
+    }
+
 }

@@ -1,0 +1,25 @@
+# Car Maintenance Tracker - Testing Commands
+
+## Running Backend Tests
+
+**Step 1:** Open PowerShell in the `server` folder.
+
+**Step 2:** Load the database password from `.env`:
+
+```powershell
+$env:DB_PASSWORD = (Get-Content ..\.env | Where-Object { $_ -match '^DB_PASSWORD=' } | Select-Object -First 1) -replace '^DB_PASSWORD=', ''
+```
+
+**Step 3:** Run the backend tests:
+
+```powershell
+.\mvnw test
+```
+
+**Expected result:**
+- 213 tests run
+- 0 failures
+- 0 errors
+- BUILD SUCCESS
+
+**Note:** Load the database password again whenever you open a new PowerShell session.

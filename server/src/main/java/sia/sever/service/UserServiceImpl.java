@@ -14,9 +14,7 @@ import sia.sever.security.jwt.JwtUtility;
 import sia.sever.security.userDetails.CustomUserDetails;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {

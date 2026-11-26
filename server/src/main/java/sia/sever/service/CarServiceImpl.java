@@ -17,15 +17,22 @@ import sia.sever.entity.User;
 import sia.sever.exception.InvalidMileageException;
 import sia.sever.exception.ResourceNotFoundException;
 import sia.sever.exception.UnauthorizedException;
+import sia.sever.exception.ValidationException;
 import sia.sever.repository.CarRepository;
 import sia.sever.repository.UserRepository;
 import sia.sever.specification.CarSpecification;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 @Service
 public class CarServiceImpl implements CarService {
@@ -103,20 +110,48 @@ public class CarServiceImpl implements CarService {
         return mapToCarResponseDTO(savedCar);
     }
 
-    // This helps when a user adds an image of the car by taking the original
-    // file name and keeping only the ".png or any original file extension" and concat-ing
-    // a randomly generated uuid characters to .png.
-    private String generateUniqueFileName(MultipartFile image) {
+    private String detectImageFormat(byte[] imageBytes) {
 
-        String originalFileName = image.getOriginalFilename();
-
-        String extension = "";
-
-        if (originalFileName != null && originalFileName.contains(".")) {
-            extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        // JPEG signature
+        if (imageBytes.length >= 3 &&
+                (imageBytes[0] & 0xFF) == 0xFF &&
+                (imageBytes[1] & 0xFF) == 0xD8 &&
+                (imageBytes[2] & 0xFF) == 0xFF) {
+            return "jpg";
         }
 
-        return UUID.randomUUID() + extension;
+        // PNG signature
+        if (imageBytes.length >= 8 &&
+                (imageBytes[0] & 0xFF) == 0x89 &&
+                imageBytes[1] == 0x50 &&
+                imageBytes[2] == 0x4E &&
+                imageBytes[3] == 0x47 &&
+                imageBytes[4] == 0x0D &&
+                imageBytes[5] == 0x0A &&
+                imageBytes[6] == 0x1A &&
+                imageBytes[7] == 0x0A) {
+            return "png";
+        }
+
+        // WebP signature
+        if (imageBytes.length >= 12 &&
+                imageBytes[0] == 'R' &&
+                imageBytes[1] == 'I' &&
+                imageBytes[2] == 'F' &&
+                imageBytes[3] == 'F' &&
+                imageBytes[8] == 'W' &&
+                imageBytes[9] == 'E' &&
+                imageBytes[10] == 'B' &&
+                imageBytes[11] == 'P') {
+            return "webp";
+        }
+
+        return null;
+    }
+
+    // Generate a unique filename using the detected image format.
+    private String generateUniqueFileName(String imageFormat) {
+        return UUID.randomUUID() + "." + imageFormat;
     }
 
     // This generates a unique filename by keeping the original file extension
@@ -132,11 +167,99 @@ public class CarServiceImpl implements CarService {
             return null;
         }
 
-        String fileName = generateUniqueFileName(image);
+        // Reject images larger than 10 MB.
+        if (image.getSize() > 10 * 1024 * 1024) {
+            throw new ValidationException(
+                    "Image upload failed",
+                    Map.of("image", "Image size cannot exceed 10 MB")
+            );
+        }
 
-        Path filePath = createFilePath(fileName);
+        // Check the image's actual contents.
+        byte[] imageBytes = image.getBytes();
+        String imageFormat = detectImageFormat(imageBytes);
 
-        image.transferTo(filePath);
+        if (imageFormat == null) {
+            throw new ValidationException(
+                    "Image upload failed",
+                    Map.of("image", "Only JPEG, PNG and WebP images are supported")
+            );
+        }
+
+        // Check whether the uploaded image can actually be decoded.
+        int maxDimension = 6000;
+        BufferedImage decodedImage;
+
+        try (ImageInputStream inputStream = ImageIO.createImageInputStream(
+                new ByteArrayInputStream(imageBytes))) {
+
+            if (inputStream == null) {
+                throw new ValidationException(
+                        "Image upload failed",
+                        Map.of("image", "The uploaded image is invalid or corrupted")
+                );
+            }
+
+            // Find an ImageIO reader that supports the uploaded format.
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(inputStream);
+
+            if (!readers.hasNext()) {
+                throw new ValidationException(
+                        "Image upload failed",
+                        Map.of("image", "The uploaded image is invalid or corrupted")
+                );
+            }
+
+            ImageReader reader = readers.next();
+
+            try {
+                reader.setInput(inputStream, true, true);
+
+                // Check dimensions before fully decoding the image.
+                int width = reader.getWidth(0);
+                int height = reader.getHeight(0);
+
+                long totalPixels = (long) width * height;
+
+                if (width > maxDimension || height > maxDimension ||
+                        totalPixels > 20_000_000L) {
+                    throw new ValidationException(
+                            "Image upload failed",
+                            Map.of("image", "Image dimensions cannot exceed 6000 x 6000 pixels")
+                    );
+                }
+
+                // Now fully decode the image.
+                decodedImage = reader.read(0);
+
+                if (decodedImage == null) {
+                    throw new ValidationException(
+                            "Image upload failed",
+                            Map.of("image", "The uploaded image is invalid or corrupted")
+                    );
+                }
+
+            } finally {
+                reader.dispose();
+            }
+
+        } catch (IOException e) {
+            throw new ValidationException(
+                    "Image upload failed",
+                    Map.of("image", "The uploaded image is invalid or corrupted")
+            );
+        }
+
+        // Generate a filename using the detected image format.
+        String fileName = generateUniqueFileName(imageFormat);
+
+        // Create the upload directory if it doesn't exist.
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Files.createDirectories(uploadPath);
+
+        // Save the image.
+        Path filePath = uploadPath.resolve(fileName);
+        Files.write(filePath, imageBytes);
 
         return "/uploads/cars/" + fileName;
     }
@@ -177,9 +300,6 @@ public class CarServiceImpl implements CarService {
         // First Check if an entity exists before continuing with updating
         Car existingCar = getUserCar(id, user);
 
-        String oldImageUrl = existingCar.getCarImageUrl();
-        String imageUrl = saveImage(image);
-
         // Check if the new mileage is NOT lower than the current mileage
         if (updatedCar.getCurrentMileage() != null && updatedCar.getCurrentMileage()
                 < existingCar.getCurrentMileage()) {
@@ -188,6 +308,9 @@ public class CarServiceImpl implements CarService {
         if (!errors.isEmpty()) {
             throw new InvalidMileageException("Updated failed", errors);
         }
+
+        String oldImageUrl = existingCar.getCarImageUrl();
+        String imageUrl = saveImage(image);
 
         updateEntityFromDTO(updatedCar, existingCar, imageUrl);
 
@@ -224,7 +347,7 @@ public class CarServiceImpl implements CarService {
 
     // Delete a car
     @Override
-    public void deleteCar(Long id) throws IOException{
+    public void deleteCar(Long id) throws IOException {
         User user = getAuthenticatedUser();
         // First check if an entity exists before trying to delete it
         Car existingCar = getUserCar(id, user);

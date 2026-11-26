@@ -12,6 +12,7 @@ import sia.sever.exception.JwtExpiredException;
 import sia.sever.exception.JwtInvalidException;
 import sia.sever.security.userDetails.CustomUserDetailsService;
 import java.io.IOException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 // Runs on EVERY request to check JWT authentication
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -62,6 +63,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (JwtInvalidException e) {
                 SecurityContextHolder.clearContext();
                 response.sendError(401, "JWT token is invalid, please try again");
+                return;
+            }catch (UsernameNotFoundException e) {
+                SecurityContextHolder.clearContext();
+                response.sendError(401, "User not found, please log in again");
                 return;
             }catch (Exception e){
                 SecurityContextHolder.clearContext();
